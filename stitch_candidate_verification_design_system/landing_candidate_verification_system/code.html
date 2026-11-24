@@ -1,0 +1,453 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Candidate Verification System — Traceable Recruitment Verification</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">/** @type {import('tailwindcss').Config} */
+globalThis.tailwind = globalThis.tailwind || {};
+globalThis.tailwind.config = {
+  darkMode: 'class',
+  theme: {
+    extend: {
+      colors: {
+        'primary': '#FF4D1C',
+        'on-primary': '#0E0E0C',
+        'primary-container': '#3C0800',
+        'on-primary-container': '#FFDBD2',
+        'surface': '#0E0E0C',
+        'surface-container-low': '#141411',
+        'surface-container': '#1A1A16',
+        'surface-container-high': '#23231E',
+        'on-surface': '#E8E3D6',
+        'on-surface-variant': '#9E9B90',
+        'outline': '#5F5E5B',
+        'outline-variant': '#2B2A26',
+        'success': '#58D68D',
+        'on-success': '#0E0E0C',
+        'warning': '#F59E0B',
+        'on-warning': '#0E0E0C',
+        'error': '#FF5449',
+        'on-error': '#0E0E0C',
+        'info': '#63A4FF',
+        'on-info': '#0E0E0C',
+      },
+      borderRadius: {
+        'none': '0px',
+        'sm': '2px',
+        'DEFAULT': '4px',
+        'md': '6px',
+        'lg': '8px',
+        'full': '9999px',
+      },
+      spacing: {
+        'xs': '4px',
+        'sm': '8px',
+        'md': '16px',
+        'lg': '24px',
+        'xl': '32px',
+        '2xl': '48px',
+      },
+      fontFamily: {
+        'display': ['"Red Hat Display"', 'sans-serif'],
+        'headline': ['"Red Hat Display"', 'sans-serif'],
+        'title': ['"Carrois Gothic"', 'sans-serif'],
+        'body': ['"Carrois Gothic"', 'sans-serif'],
+        'label': ['"Geist Mono"', 'sans-serif'],
+      },
+      fontSize: {
+        'display-lg': ['44px', { lineHeight: '48px', letterSpacing: '-1.6px', fontWeight: '500' }],
+        'display-lg-mobile': ['32px', { lineHeight: '36px', letterSpacing: '-1.0px', fontWeight: '500' }],
+        'headline-lg': ['30px', { lineHeight: '34px', letterSpacing: '-0.9px', fontWeight: '500' }],
+        'headline-md': ['22px', { lineHeight: '28px', letterSpacing: '-0.5px', fontWeight: '500' }],
+        'title-lg': ['18px', { lineHeight: '24px', letterSpacing: '-0.3px', fontWeight: '500' }],
+        'title-md': ['15px', { lineHeight: '22px', letterSpacing: '-0.1px', fontWeight: '500' }],
+        'body-md': ['14px', { lineHeight: '22px', letterSpacing: '0px', fontWeight: '400' }],
+        'body-sm': ['13px', { lineHeight: '20px', letterSpacing: '0px', fontWeight: '400' }],
+        'label-lg': ['12px', { lineHeight: '16px', letterSpacing: '0.72px', fontWeight: '500' }],
+        'label-sm': ['11px', { lineHeight: '14px', letterSpacing: '0.66px', fontWeight: '400' }],
+      },
+      transitionDuration: {
+        'state-change': '150ms',
+        'row-shift': '280ms',
+        'surface-enter': '240ms',
+      },
+      transitionDelay: {
+        'state-change': '0ms',
+        'row-shift': '0ms',
+        'surface-enter': '0ms',
+      },
+      transitionTimingFunction: {
+        'state-change': 'cubic-bezier(0.2, 0, 0, 1)',
+        'row-shift': 'cubic-bezier(0.6, 0, 0.2, 1)',
+        'surface-enter': 'cubic-bezier(0.2, 0, 0, 1)',
+      },
+    },
+  },
+};
+if (typeof module !== 'undefined') module.exports = globalThis.tailwind.config;
+</script>
+  <link href="https://fonts.googleapis.com/css2?family=Carrois+Gothic&amp;family=Geist+Mono:wght@400;500&amp;family=Red+Hat+Display:wght@400;500;600&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block" rel="stylesheet">
+  <style>
+    .material-symbols-outlined, .material-symbols-rounded, .material-symbols-sharp, .material-icons {
+      display: inline-block; width: 1em; height: 1em; line-height: 1 !important;
+      box-sizing: content-box; overflow: hidden; white-space: nowrap; direction: ltr; vertical-align: middle;
+    }
+  </style>
+</head>
+<body class="bg-surface text-on-surface font-body text-body-md antialiased selection:bg-primary selection:text-on-primary">
+  <canvas id="bg-grain" class="fixed inset-0 z-0 pointer-events-none opacity-5" aria-hidden="true"></canvas>
+  <canvas id="bg-scene" class="fixed inset-0 z-0 pointer-events-none opacity-35" aria-hidden="true"></canvas>
+
+  <div class="relative z-10 min-h-[1024px] flex flex-col" data-stitch-vh="min-h-[1024px]===min-h-screen">
+    <!-- Top Site Navigation -->
+    <header class="sticky top-0 z-20 h-16 bg-surface/90 border-b border-outline-variant px-md sm:px-2xl flex items-center justify-between gap-md">
+      <a href="#top" class="flex items-center gap-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary rounded-sm shrink-0">
+        <svg class="w-6 h-6 text-primary shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <polygon points="12 2 21 6.5 21 13.5 12 22 3 13.5 3 6.5 12 2"></polygon>
+          <polyline points="8.5 12.5 11 15 15.5 9.5"></polyline>
+        </svg>
+        <span class="font-headline text-title-lg text-on-surface tracking-tight">CVS <span class="text-primary">.01</span></span>
+      </a>
+
+      <nav aria-label="Landing navigation" class="hidden md:flex items-center gap-xl">
+        <a href="#workflow" class="font-label text-label-sm uppercase text-on-surface-variant hover:text-on-surface transition-colors duration-state-change whitespace-nowrap"><span class="text-primary mr-xs">01</span>Workflow</a>
+        <a href="#roles" class="font-label text-label-sm uppercase text-on-surface-variant hover:text-on-surface transition-colors duration-state-change whitespace-nowrap"><span class="text-primary mr-xs">02</span>Roles</a>
+        <a href="#security" class="font-label text-label-sm uppercase text-on-surface-variant hover:text-on-surface transition-colors duration-state-change whitespace-nowrap"><span class="text-primary mr-xs">03</span>Security</a>
+      </nav>
+
+      <div class="flex items-center gap-md shrink-0">
+        <div class="hidden lg:flex items-center gap-xs px-sm py-xs bg-surface-container border border-outline-variant rounded-sm">
+          <!-- COMPONENT: badge-dot -->
+          <span data-component-id="badge-dot" data-component-type="badge" data-component-variant="dot" role="status" aria-label="Go Auth and Node API online" class="inline-block w-2 h-2 rounded-full bg-success"></span>
+          <span class="font-label text-label-sm uppercase text-on-surface-variant whitespace-nowrap">OIDC · API Ready</span>
+        </div>
+
+        <!-- COMPONENT: button-primary -->
+        <a href="#login" data-component-id="button-primary" data-component-type="button" data-component-variant="primary" class="inline-flex items-center justify-center gap-sm px-md py-sm bg-primary text-on-primary rounded border border-primary font-label text-label-lg uppercase tracking-wider whitespace-nowrap transition-colors duration-state-change ease-state-change hover:bg-on-primary-container hover:border-on-primary-container focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+          <span data-design-text-token="label-lg">Sign in</span>
+        </a>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main id="top" class="flex-1 w-full max-w-[1440px] mx-auto px-md sm:px-2xl flex flex-col">
+      <!-- Hero Section -->
+      <section class="min-h-[839px] flex flex-col justify-end py-2xl border-b border-outline-variant" data-stitch-vh="min-h-[839px]===min-h-[82vh]">
+        <div class="max-w-3xl flex flex-col gap-lg">
+          <span class="font-label text-label-sm uppercase text-primary">Candidate Verification System</span>
+          <!-- COMPONENT: typography-display -->
+          <h1 data-component-id="typography-display" data-component-type="typography" data-component-variant="display" data-design-text-token="display-lg" class="font-display text-display-lg-mobile sm:text-display-lg text-on-surface text-balance">Verification <span class="text-primary">with</span> depth.</h1>
+          <p class="font-body text-body-md text-on-surface-variant max-w-prose text-pretty">
+            An operational recruitment verification platform for managing candidate records, validating CSV bulk imports, surfacing automated resume indicators, and recording accountable human review decisions.
+          </p>
+          <div class="flex flex-wrap items-center gap-md pt-sm">
+            <!-- COMPONENT: button-with-icon -->
+            <a href="#login" data-component-id="button-with-icon" data-component-type="button" data-component-variant="with-icon" class="inline-flex items-center justify-center gap-sm px-lg py-sm bg-primary text-on-primary rounded border border-primary font-label text-label-lg uppercase tracking-wider whitespace-nowrap transition-colors duration-state-change ease-state-change hover:bg-on-primary-container hover:border-on-primary-container focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+              <span class="material-symbols-outlined text-body-md" aria-hidden="true">login</span>
+              <span data-design-text-token="label-lg">Continue with Google</span>
+            </a>
+            <a href="#workflow" class="inline-flex items-center justify-center gap-sm px-lg py-sm bg-surface-container text-on-surface rounded border border-outline-variant font-label text-label-lg uppercase tracking-wider whitespace-nowrap transition-colors duration-state-change ease-state-change hover:border-primary hover:text-primary">
+              <span>Inspect workflow</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="mt-2xl pt-lg border-t border-outline-variant flex flex-wrap items-center justify-between gap-md">
+          <span class="font-label text-label-sm uppercase text-on-surface-variant">Go OAuth 2.0 · Node.js API · PostgreSQL</span>
+          <span class="font-label text-label-sm uppercase text-on-surface-variant">Admin · Recruiter · Reviewer</span>
+        </div>
+      </section>
+
+      <!-- (01) Editorial Workflow Rows -->
+      <section id="workflow" class="py-2xl border-b border-outline-variant flex flex-col gap-lg">
+        <div class="flex items-baseline justify-between gap-md pb-md border-b border-outline-variant">
+          <span class="font-label text-label-sm uppercase text-primary">(01) Core Workflow</span>
+          <span class="font-label text-label-sm uppercase text-on-surface-variant">End-to-End Traceability</span>
+        </div>
+
+        <div class="flex flex-col divide-y divide-outline-variant border-b border-outline-variant">
+          <div class="py-lg grid grid-cols-1 md:grid-cols-12 items-baseline gap-md group">
+            <span class="md:col-span-1 font-label text-label-sm text-on-surface-variant group-hover:text-primary transition-colors duration-state-change">01</span>
+            <h2 class="md:col-span-5 font-headline text-headline-md text-on-surface group-hover:text-primary transition-colors duration-state-change">Candidate &amp; Resume Intake</h2>
+            <p class="md:col-span-6 font-body text-body-sm text-on-surface-variant">Private PDF and DOCX storage outside the public web root with authenticated text extraction and metadata parsing.</p>
+          </div>
+
+          <div class="py-lg grid grid-cols-1 md:grid-cols-12 items-baseline gap-md group">
+            <span class="md:col-span-1 font-label text-label-sm text-on-surface-variant group-hover:text-primary transition-colors duration-state-change">02</span>
+            <h2 class="md:col-span-5 font-headline text-headline-md text-on-surface group-hover:text-primary transition-colors duration-state-change">CSV Bulk Onboarding</h2>
+            <p class="md:col-span-6 font-body text-body-sm text-on-surface-variant">Header validation, row-level duplicate detection against existing records, and explicit confirmation before batch import.</p>
+          </div>
+
+          <div class="py-lg grid grid-cols-1 md:grid-cols-12 items-baseline gap-md group">
+            <span class="md:col-span-1 font-label text-label-sm text-on-surface-variant group-hover:text-primary transition-colors duration-state-change">03</span>
+            <h2 class="md:col-span-5 font-headline text-headline-md text-on-surface group-hover:text-primary transition-colors duration-state-change">Automated Check Indicators</h2>
+            <p class="md:col-span-6 font-body text-body-sm text-on-surface-variant">Explainable signals for date anomalies, missing sections, or contact mismatches—always framed for human review, never as proof of fraud.</p>
+          </div>
+
+          <div class="py-lg grid grid-cols-1 md:grid-cols-12 items-baseline gap-md group">
+            <span class="md:col-span-1 font-label text-label-sm text-on-surface-variant group-hover:text-primary transition-colors duration-state-change">04</span>
+            <h2 class="md:col-span-5 font-headline text-headline-md text-on-surface group-hover:text-primary transition-colors duration-state-change">Accountable Reviewer Sign-off</h2>
+            <p class="md:col-span-6 font-body text-body-sm text-on-surface-variant">Dedicated reviewer queues with required rationale for rejections or information requests, logged to a chronological audit trail.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- (02) Role-Based Workspace -->
+      <section id="roles" class="py-2xl border-b border-outline-variant flex flex-col gap-lg">
+        <div class="flex items-baseline justify-between gap-md pb-md border-b border-outline-variant">
+          <span class="font-label text-label-sm uppercase text-primary">(02) Role-Based Access</span>
+          <span class="font-label text-label-sm uppercase text-on-surface-variant">Server-Enforced RBAC</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-lg items-stretch">
+          <!-- COMPONENT: card-elevated -->
+          <article data-component-id="card-elevated" data-component-type="card" data-component-variant="elevated" class="h-full bg-surface-container border border-outline-variant rounded-md p-lg flex flex-col justify-between gap-md">
+            <header class="flex items-center justify-between gap-sm">
+              <h3 data-design-text-token="label-sm" class="font-label text-label-sm uppercase text-primary">Role 01 / Admin</h3>
+              <span class="material-symbols-outlined text-title-md text-on-surface-variant" aria-hidden="true">admin_panel_settings</span>
+            </header>
+            <div class="flex flex-col gap-xs">
+              <p class="font-headline text-title-lg text-on-surface">Operational Oversight</p>
+              <p class="font-body text-body-sm text-on-surface-variant">Manage users and role assignments, monitor reviewer capacity, and inspect system-wide audit logs and reports.</p>
+            </div>
+          </article>
+
+          <article data-component-id="card-elevated" data-component-type="card" data-component-variant="elevated" class="h-full bg-surface-container border border-outline-variant rounded-md p-lg flex flex-col justify-between gap-md">
+            <header class="flex items-center justify-between gap-sm">
+              <h3 data-design-text-token="label-sm" class="font-label text-label-sm uppercase text-primary">Role 02 / Recruiter</h3>
+              <span class="material-symbols-outlined text-title-md text-on-surface-variant" aria-hidden="true">person_search</span>
+            </header>
+            <div class="flex flex-col gap-xs">
+              <p class="font-headline text-title-lg text-on-surface">Candidate Onboarding</p>
+              <p class="font-body text-body-sm text-on-surface-variant">Create candidate records, upload PDF/DOCX resumes, run CSV bulk imports, and initiate verification cases.</p>
+            </div>
+          </article>
+
+          <article data-component-id="card-elevated" data-component-type="card" data-component-variant="elevated" class="h-full bg-surface-container border border-outline-variant rounded-md p-lg flex flex-col justify-between gap-md">
+            <header class="flex items-center justify-between gap-sm">
+              <h3 data-design-text-token="label-sm" class="font-label text-label-sm uppercase text-primary">Role 03 / Reviewer</h3>
+              <span class="material-symbols-outlined text-title-md text-on-surface-variant" aria-hidden="true">verified_user</span>
+            </header>
+            <div class="flex flex-col gap-xs">
+              <p class="font-headline text-title-lg text-on-surface">Case Evaluation</p>
+              <p class="font-body text-body-sm text-on-surface-variant">Work assigned verification queues, inspect resumes and automated indicators, and submit Approved, Rejected, or Needs Info decisions.</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- (03) Security & Architecture -->
+      <section id="security" class="py-2xl flex flex-col gap-lg">
+        <div class="flex items-baseline justify-between gap-md pb-md border-b border-outline-variant">
+          <span class="font-label text-label-sm uppercase text-primary">(03) Security Posture</span>
+          <span class="font-label text-label-sm uppercase text-on-surface-variant">Zero Client-Side Secrets</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-xl items-center">
+          <p class="font-headline text-headline-md text-on-surface text-balance">
+            Built around existing Go OIDC cookie sessions and private resume streaming—never browser storage tokens.
+          </p>
+          <div class="flex flex-wrap gap-sm font-label text-label-sm uppercase">
+            <span class="px-md py-xs bg-surface-container border border-outline-variant rounded-sm text-on-surface">Google OAuth / OIDC</span>
+            <span class="px-md py-xs bg-surface-container border border-outline-variant rounded-sm text-on-surface">HTTP-Only Cookies</span>
+            <span class="px-md py-xs bg-surface-container border border-outline-variant rounded-sm text-on-surface">Private Resume Routes</span>
+            <span class="px-md py-xs bg-surface-container border border-outline-variant rounded-sm text-on-surface">Chronological Audit Logs</span>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-outline-variant px-md sm:px-2xl py-lg flex flex-wrap items-center justify-between gap-md font-label text-label-sm uppercase text-on-surface-variant">
+      <span>© 2026 Candidate Verification System</span>
+      <span>Red Hat Display · Carrois Gothic · Geist Mono</span>
+    </footer>
+  </div>
+
+  <script>
+    (function () {
+      var grainCanvas = document.getElementById('bg-grain');
+      if (grainCanvas) {
+        var gCtx = grainCanvas.getContext('2d');
+        if (gCtx) {
+          var gw = 160, gh = 160;
+          grainCanvas.width = gw;
+          grainCanvas.height = gh;
+          grainCanvas.style.width = '100%';
+          grainCanvas.style.height = '100%';
+          var img = gCtx.createImageData(gw, gh);
+          for (var gi = 0; gi < img.data.length; gi += 4) {
+            var v = (Math.random() * 200) | 0;
+            img.data[gi] = v;
+            img.data[gi + 1] = v;
+            img.data[gi + 2] = v;
+            img.data[gi + 3] = 90;
+          }
+          gCtx.putImageData(img, 0, 0);
+        }
+      }
+
+      var canvas = document.getElementById('bg-scene');
+      if (!canvas) return;
+      var ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      var reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var w = 0, h = 0, dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+      function resize() {
+        w = window.innerWidth;
+        h = window.innerHeight;
+        canvas.width = w * dpr;
+        canvas.height = h * dpr;
+        canvas.style.width = w + 'px';
+        canvas.style.height = h + 'px';
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      var phi = (1 + Math.sqrt(5)) / 2;
+      var rawVerts = [
+        [-1, phi, 0], [1, phi, 0], [-1, -phi, 0], [1, -phi, 0],
+        [0, -1, phi], [0, 1, phi], [0, -1, -phi], [0, 1, -phi],
+        [phi, 0, -1], [phi, 0, 1], [-phi, 0, -1], [-phi, 0, 1]
+      ];
+      var verts = rawVerts.map(function (v) {
+        var len = Math.hypot(v[0], v[1], v[2]);
+        return [v[0] / len, v[1] / len, v[2] / len];
+      });
+      var faces = [
+        [0,11,5],[0,5,1],[0,1,7],[0,7,10],[0,10,11],
+        [1,5,9],[5,11,4],[11,10,2],[10,7,6],[7,1,8],
+        [3,9,4],[3,4,2],[3,2,6],[3,6,8],[3,8,9],
+        [4,9,5],[2,4,11],[6,2,10],[8,6,7],[9,8,1]
+      ];
+
+      var ringPts = [];
+      var ringSteps = 80;
+      for (var i = 0; i < ringSteps; i++) {
+        var a = (i / ringSteps) * Math.PI * 2;
+        ringPts.push([Math.cos(a) * 1.52, Math.sin(a) * 1.52 * 0.36, Math.sin(a) * 1.52 * 0.93]);
+      }
+
+      var mx = 0, my = 0, sp = 0;
+      var tx = 0, ty = 0, tr = 0;
+      window.addEventListener('mousemove', function (e) {
+        mx = e.clientX / Math.max(1, w) - 0.5;
+        my = e.clientY / Math.max(1, h) - 0.5;
+      });
+      window.addEventListener('scroll', function () {
+        var maxScroll = Math.max(1, document.body.scrollHeight - window.innerHeight);
+        sp = window.scrollY / maxScroll;
+      });
+
+      function rot(p, rx, ry, rz) {
+        var x = p[0], y = p[1], z = p[2];
+        var cy = Math.cos(ry), sy = Math.sin(ry);
+        var x1 = x * cy - z * sy, z1 = x * sy + z * cy;
+        var cx = Math.cos(rx), sx = Math.sin(rx);
+        var y2 = y * cx - z1 * sx, z2 = y * sx + z1 * cx;
+        var cz = Math.cos(rz), sz = Math.sin(rz);
+        return [x1 * cz - y2 * sz, x1 * sz + y2 * cz, z2];
+      }
+
+      function norm(v) {
+        var l = Math.hypot(v[0], v[1], v[2]) || 1;
+        return [v[0] / l, v[1] / l, v[2] / l];
+      }
+      var keyDir = norm([0.55, -0.65, 0.72]);
+      var rimDir = norm([-0.75, 0.35, 0.45]);
+
+      var start = performance.now();
+      function draw(now) {
+        var t = (now - start) * 0.001;
+        ctx.clearRect(0, 0, w, h);
+
+        var targetX = w > 1024 ? (w * 0.76 - sp * w * 0.25) : w * 0.5;
+        var targetY = h * (0.42 + sp * 0.14);
+        tx += (targetX - tx || targetX) * (tx === 0 ? 1 : 0.06);
+        ty += (targetY - ty || targetY) * (ty === 0 ? 1 : 0.06);
+        tr += (sp * Math.PI * 1.5 - tr) * 0.06;
+
+        var scale = Math.min(w, h) * 0.25;
+        var rx = 0.24 + Math.sin(t * 0.22) * 0.12 + my * 0.4;
+        var ry = t * 0.12 + tr + mx * 0.6;
+
+        var glow = ctx.createRadialGradient(tx, ty, scale * 0.15, tx, ty, scale * 2.4);
+        glow.addColorStop(0, 'rgba(255, 77, 28, 0.28)');
+        glow.addColorStop(0.45, 'rgba(60, 8, 0, 0.22)');
+        glow.addColorStop(1, 'rgba(14, 14, 12, 0)');
+        ctx.fillStyle = glow;
+        ctx.beginPath();
+        ctx.arc(tx, ty, scale * 2.4, 0, Math.PI * 2);
+        ctx.fill();
+
+        var rotated = verts.map(function (v) { return rot(v, rx, ry, 0.15); });
+        var proj = rotated.map(function (r) {
+          var persp = 4 / (4 - r[2]);
+          return [tx + r[0] * scale * persp, ty + r[1] * scale * persp, r[2]];
+        });
+
+        var sorted = faces.map(function (f) {
+          var a = rotated[f[0]], b = rotated[f[1]], c = rotated[f[2]];
+          var u = [b[0] - a[0], b[1] - a[1], b[2] - a[2]];
+          var v = [c[0] - a[0], c[1] - a[1], c[2] - a[2]];
+          var n = norm([
+            u[1] * v[2] - u[2] * v[1],
+            u[2] * v[0] - u[0] * v[2],
+            u[0] * v[1] - u[1] * v[0]
+          ]);
+          var zAvg = (a[2] + b[2] + c[2]) / 3;
+          return { f: f, n: n, z: zAvg };
+        }).sort(function (p, q) { return p.z - q.z; });
+
+        for (var fi = 0; fi < sorted.length; fi++) {
+          var item = sorted[fi];
+          if (item.n[2] < -0.15) continue;
+          var p0 = proj[item.f[0]], p1 = proj[item.f[1]], p2 = proj[item.f[2]];
+          var keyDot = Math.max(0, item.n[0] * keyDir[0] + item.n[1] * keyDir[1] + item.n[2] * keyDir[2]);
+          var rimDot = Math.max(0, item.n[0] * rimDir[0] + item.n[1] * rimDir[1] + item.n[2] * rimDir[2]);
+
+          var rCol = Math.min(255, (38 + keyDot * 155 + rimDot * 120) | 0);
+          var gCol = Math.min(255, (36 + keyDot * 146 + rimDot * 32) | 0);
+          var bCol = Math.min(255, (32 + keyDot * 130 + rimDot * 12) | 0);
+
+          ctx.fillStyle = 'rgba(' + rCol + ',' + gCol + ',' + bCol + ', 0.36)';
+          ctx.strokeStyle = 'rgba(232, 227, 214, 0.24)';
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(p0[0], p0[1]);
+          ctx.lineTo(p1[0], p1[1]);
+          ctx.lineTo(p2[0], p2[1]);
+          ctx.closePath();
+          ctx.fill();
+          ctx.stroke();
+        }
+
+        ctx.strokeStyle = 'rgba(255, 77, 28, 0.6)';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        for (var k = 0; k <= ringSteps; k++) {
+          var rp = ringPts[k % ringSteps];
+          var rr = rot(rp, rx + 0.32, ry * 0.8 + t * 0.1, -0.25);
+          var rPersp = 4 / (4 - rr[2]);
+          var px = tx + rr[0] * scale * rPersp;
+          var py = ty + rr[1] * scale * rPersp;
+          if (k === 0) ctx.moveTo(px, py);
+          else ctx.lineTo(px, py);
+        }
+        ctx.stroke();
+
+        if (!reducedMotion) {
+          requestAnimationFrame(draw);
+        }
+      }
+
+      requestAnimationFrame(draw);
+    })();
+  </script>
+
+
+</body></html>

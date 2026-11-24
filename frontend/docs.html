@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Platform Documentation & Workflow Guide — Candidate Verification System</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">
+    globalThis.tailwind = globalThis.tailwind || {};
+    globalThis.tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            'primary': '#FF4D1C',
+            'on-primary': '#0E0E0C',
+            'primary-container': '#3C0800',
+            'on-primary-container': '#FFDBD2',
+            'surface': '#0E0E0C',
+            'surface-container-low': '#141411',
+            'surface-container': '#1A1A16',
+            'surface-container-high': '#23231E',
+            'on-surface': '#E8E3D6',
+            'on-surface-variant': '#9E9B90',
+            'outline': '#5F5E5B',
+            'outline-variant': '#2B2A26',
+            'success': '#58D68D',
+            'warning': '#F59E0B',
+            'error': '#FF5449',
+            'info': '#63A4FF',
+          },
+          fontFamily: {
+            'display': ['"Red Hat Display"', 'sans-serif'],
+            'headline': ['"Red Hat Display"', 'sans-serif'],
+            'title': ['"Carrois Gothic"', 'sans-serif'],
+            'body': ['"Carrois Gothic"', 'sans-serif'],
+            'label': ['"Geist Mono"', 'monospace'],
+          },
+        },
+      },
+    };
+  </script>
+  <link rel="stylesheet" href="css/design-system.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+</head>
+<body class="bg-surface text-on-surface font-body antialiased selection:bg-primary selection:text-on-primary">
+  <canvas id="bg-grain" class="fixed inset-0 z-0 pointer-events-none opacity-5" aria-hidden="true"></canvas>
+  <canvas id="bg-scene" class="fixed inset-0 z-0 pointer-events-none opacity-20" aria-hidden="true"></canvas>
+
+  <div class="relative z-10 min-h-screen flex flex-col lg:flex-row">
+    <!-- Mobile Sidebar Backdrop -->
+    <div id="sidebarBackdrop" class="fixed inset-0 bg-surface/80 z-30 hidden lg:hidden" aria-hidden="true"></div>
+
+    <!-- Persistent Left Sidebar -->
+    <aside id="sidebar" class="fixed inset-y-0 left-0 z-40 w-64 bg-surface-container-low border-r border-outline-variant flex flex-col justify-between transform -translate-x-full transition-transform duration-200 lg:static lg:translate-x-0 lg:shrink-0">
+      <div class="flex flex-col">
+        <!-- Brand Header -->
+        <div class="h-16 px-6 border-b border-outline-variant flex items-center justify-between">
+          <a href="index.html" class="flex items-center gap-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary rounded-sm">
+            <svg class="w-6 h-6 text-primary shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <polygon points="12 2 21 6.5 21 13.5 12 22 3 13.5 3 6.5 12 2"></polygon>
+              <polyline points="8.5 12.5 11 15 15.5 9.5"></polyline>
+            </svg>
+            <span class="font-headline text-lg text-on-surface tracking-tight font-semibold">CVS <span class="text-primary font-mono text-sm">.01</span></span>
+          </a>
+          <button id="closeSidebarBtn" class="lg:hidden text-on-surface-variant hover:text-on-surface p-1">
+            <span class="material-symbols-outlined text-xl">close</span>
+          </button>
+        </div>
+
+        <!-- Navigation Menu -->
+        <nav aria-label="Documentation sidebar" class="p-4 flex flex-col gap-6">
+          <div class="flex flex-col gap-1">
+            <span class="px-2 font-label text-[11px] uppercase text-on-surface-variant">01 / Overview</span>
+            <a href="dashboard.html" class="flex items-center gap-2 px-3 py-2 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container text-xs transition-colors">
+              <span class="material-symbols-outlined text-sm">dashboard</span>
+              <span>Admin Dashboard</span>
+            </a>
+          </div>
+
+          <div class="flex flex-col gap-1">
+            <span class="px-2 font-label text-[11px] uppercase text-on-surface-variant">02 / Operations</span>
+            <a href="candidates.html" class="flex items-center gap-2 px-3 py-2 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container text-xs transition-colors">
+              <span class="material-symbols-outlined text-sm">group</span>
+              <span>Candidates Directory</span>
+            </a>
+          </div>
+
+          <div class="flex flex-col gap-1">
+            <span class="px-2 font-label text-[11px] uppercase text-on-surface-variant">03 / Verification</span>
+            <a href="reviewer.html" class="flex items-center justify-between px-3 py-2 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container text-xs transition-colors">
+              <span class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-sm">assignment</span>
+                <span>Reviewer Queue</span>
+              </span>
+            </a>
+          </div>
+
+          <div class="flex flex-col gap-1">
+            <span class="px-2 font-label text-[11px] uppercase text-on-surface-variant">04 / Compliance & Docs</span>
+            <a href="docs.html" aria-current="page" class="flex items-center justify-between px-3 py-2 rounded bg-surface-container-high border border-outline-variant text-on-surface font-body text-xs font-medium">
+              <span class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-sm text-primary">menu_book</span>
+                <span>System Documentation</span>
+              </span>
+              <span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+            </a>
+          </div>
+        </nav>
+      </div>
+
+      <!-- User Profile / Session Footer in Sidebar -->
+      <div class="p-4 border-t border-outline-variant bg-surface-container flex flex-col gap-2">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2 overflow-hidden">
+            <div class="w-7 h-7 rounded-full bg-primary/20 text-primary flex items-center justify-center font-mono text-xs font-bold shrink-0">
+              <span class="material-symbols-outlined text-sm">person</span>
+            </div>
+            <div class="truncate">
+              <span class="user-name-display font-headline text-xs font-medium text-on-surface block truncate">Workspace User</span>
+              <span class="user-roles-display font-label text-[10px] text-primary block truncate">ACTIVE</span>
+            </div>
+          </div>
+          <button class="logout-trigger text-on-surface-variant hover:text-error p-1" title="Sign out">
+            <span class="material-symbols-outlined text-base">logout</span>
+          </button>
+        </div>
+        <div class="flex items-center gap-1 pt-1 border-t border-outline-variant/60 font-label text-[10px]">
+          <span class="text-on-surface-variant text-[9px]">Session:</span>
+          <button type="button" class="switch-role-admin px-1.5 py-0.5 rounded bg-surface-container-high border border-outline-variant hover:border-primary text-on-surface" title="Admin Session (Dhruv Dobariya)">Admin</button>
+          <button type="button" class="switch-role-recruiter px-1.5 py-0.5 rounded bg-surface-container-high border border-outline-variant hover:border-primary text-on-surface" title="Recruiter Session (Elena Vance)">Recruiter</button>
+          <button type="button" class="switch-role-reviewer px-1.5 py-0.5 rounded bg-surface-container-high border border-outline-variant hover:border-warning text-warning" title="Reviewer Session (Sarah Jenkins)">Reviewer</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="flex-1 flex flex-col min-w-0">
+      <!-- Top Sticky App Bar -->
+      <header class="sticky top-0 z-20 h-16 bg-surface/90 backdrop-blur-md border-b border-outline-variant px-4 sm:px-8 flex items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <button id="openSidebarBtn" class="lg:hidden text-on-surface-variant hover:text-on-surface p-1">
+            <span class="material-symbols-outlined text-xl">menu</span>
+          </button>
+          <span class="font-label text-xs uppercase tracking-wider text-on-surface-variant">
+            Compliance & Documentation <span class="text-outline mx-1">/</span> <span class="text-on-surface font-medium">System Documentation</span>
+          </span>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <div class="hidden sm:flex items-center gap-2 px-3 py-1 bg-surface-container border border-outline-variant rounded text-xs font-label">
+            <span class="w-2 h-2 rounded-full bg-success animate-pulse"></span>
+            <span class="text-on-surface-variant uppercase text-[11px]">System Online</span>
+          </div>
+
+          <a href="candidates.html" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary text-on-primary rounded font-label text-xs uppercase font-medium hover:bg-on-primary-container hover:text-primary transition-colors">
+            <span class="material-symbols-outlined text-sm">group</span>
+            <span>Candidates Directory</span>
+          </a>
+        </div>
+      </header>
+
+      <!-- Main Document Body -->
+      <main class="flex-1 p-4 sm:p-8 flex flex-col gap-8 max-w-[1200px] mx-auto w-full">
+        <!-- Title Banner -->
+        <div class="flex flex-col gap-2 border-b border-outline-variant pb-6">
+          <div class="flex items-center gap-2">
+            <span class="px-2 py-0.5 bg-primary/10 border border-primary/30 text-primary font-mono text-[11px] uppercase font-semibold rounded">Operational Guide</span>
+            <span class="text-on-surface-variant font-mono text-xs">CVS Version 1.0</span>
+          </div>
+          <h1 class="font-headline text-3xl sm:text-4xl text-on-surface font-semibold tracking-tight">
+            Candidate Verification System: Platform & Workflow Guide
+          </h1>
+          <p class="font-body text-sm sm:text-base text-on-surface-variant max-w-3xl leading-relaxed">
+            Candidate Verification System (CVS) is an enterprise-grade platform uniting high-volume applicant intake, automated background screening, anomaly detection, and accountable human compliance review sign-offs.
+          </p>
+        </div>
+
+        <!-- 5-Step End-to-End Operational Lifecycle -->
+        <section class="flex flex-col gap-4">
+          <div class="flex items-center justify-between border-b border-outline-variant pb-2">
+            <div class="flex items-center gap-2">
+              <span class="font-label text-xs text-primary font-bold uppercase tracking-wider">01 // PROCESS LIFECYCLE</span>
+              <h2 class="font-headline text-xl text-on-surface font-semibold">How The Verification Pipeline Works</h2>
+            </div>
+            <span class="font-label text-xs text-on-surface-variant">5 Sequential Stages</span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- Stage 1 -->
+            <div class="p-5 bg-surface-container border border-outline-variant rounded flex flex-col gap-3">
+              <div class="flex items-center justify-between">
+                <span class="w-8 h-8 rounded bg-primary/20 border border-primary/40 text-primary flex items-center justify-center font-mono font-bold text-sm">01</span>
+                <span class="font-label text-[11px] text-on-surface-variant uppercase">Intake</span>
+              </div>
+              <h3 class="font-headline text-base text-on-surface font-semibold">Candidate Onboarding</h3>
+              <p class="font-body text-xs text-on-surface-variant leading-relaxed">
+                Recruiters or Admins register applicant profiles manually or execute high-volume CSV batch uploads (up to 10,000+ rows). The system sanitizes names, synthesizes missing applicant emails, validates phone numbers, and registers isolated candidate dossiers.
+              </p>
+              <div class="mt-auto pt-3 border-t border-outline-variant text-[11px] font-label text-primary flex items-center gap-1">
+                <span>Action:</span> <span class="text-on-surface">Add Profile / Import CSV</span>
+              </div>
+            </div>
+
+            <!-- Stage 2 -->
+            <div class="p-5 bg-surface-container border border-outline-variant rounded flex flex-col gap-3">
+              <div class="flex items-center justify-between">
+                <span class="w-8 h-8 rounded bg-primary/20 border border-primary/40 text-primary flex items-center justify-center font-mono font-bold text-sm">02</span>
+                <span class="font-label text-[11px] text-on-surface-variant uppercase">Extraction</span>
+              </div>
+              <h3 class="font-headline text-base text-on-surface font-semibold">Resume Ingestion & Parsing</h3>
+              <p class="font-body text-xs text-on-surface-variant leading-relaxed">
+                Upload resume files (PDF, DOCX, TXT). The extraction engine parses text content, identifies contact details, work history, and job titles, and computes a cryptographic SHA-256 checksum to ensure tamper prevention.
+              </p>
+              <div class="mt-auto pt-3 border-t border-outline-variant text-[11px] font-label text-primary flex items-center gap-1">
+                <span>Action:</span> <span class="text-on-surface">Upload Resume / Extract Text</span>
+              </div>
+            </div>
+
+            <!-- Stage 3 -->
+            <div class="p-5 bg-surface-container border border-outline-variant rounded flex flex-col gap-3">
+              <div class="flex items-center justify-between">
+                <span class="w-8 h-8 rounded bg-primary/20 border border-primary/40 text-primary flex items-center justify-center font-mono font-bold text-sm">03</span>
+                <span class="font-label text-[11px] text-on-surface-variant uppercase">Automated Checks</span>
+              </div>
+              <h3 class="font-headline text-base text-on-surface font-semibold">Automated Screening</h3>
+              <p class="font-body text-xs text-on-surface-variant leading-relaxed">
+                The automated screening rules engine cross-examines candidate claims against resume contents. It flags employment timeline gaps, qualification mismatches, and compliance discrepancies, calculating an automated verification score.
+              </p>
+              <div class="mt-auto pt-3 border-t border-outline-variant text-[11px] font-label text-primary flex items-center gap-1">
+                <span>Action:</span> <span class="text-on-surface">Run Automated Verification</span>
+              </div>
+            </div>
+
+            <!-- Stage 4 -->
+            <div class="p-5 bg-surface-container border border-outline-variant rounded flex flex-col gap-3">
+              <div class="flex items-center justify-between">
+                <span class="w-8 h-8 rounded bg-warning/20 border border-warning/40 text-warning flex items-center justify-center font-mono font-bold text-sm">04</span>
+                <span class="font-label text-[11px] text-warning uppercase">Compliance Queue</span>
+              </div>
+              <h3 class="font-headline text-base text-on-surface font-semibold">Reviewer Sign-off</h3>
+              <p class="font-body text-xs text-on-surface-variant leading-relaxed">
+                Verifications requiring human sign-off are routed to certified Compliance Reviewers. Reviewers inspect candidate dossiers side-by-side with original resume evidence, evaluate flagged issues, and issue binding decisions: Approved, Rejected, or Needs Info.
+              </p>
+              <div class="mt-auto pt-3 border-t border-outline-variant text-[11px] font-label text-warning flex items-center gap-1">
+                <span>Action:</span> <span class="text-on-surface">Submit Audit Decision</span>
+              </div>
+            </div>
+
+            <!-- Stage 5 -->
+            <div class="p-5 bg-surface-container border border-outline-variant rounded flex flex-col gap-3 md:col-span-2 lg:col-span-2">
+              <div class="flex items-center justify-between">
+                <span class="w-8 h-8 rounded bg-success/20 border border-success/40 text-success flex items-center justify-center font-mono font-bold text-sm">05</span>
+                <span class="font-label text-[11px] text-success uppercase">Audit Trail</span>
+              </div>
+              <h3 class="font-headline text-base text-on-surface font-semibold">Immutable Audit Trail & Regulatory Governance</h3>
+              <p class="font-body text-xs text-on-surface-variant leading-relaxed">
+                Every state transition, automated check outcome, reviewer decision, and document view is permanently logged into the immutable audit repository with chronological timestamps, operator identities, and cryptographic checksums. This provides defensible, audit-ready compliance reporting.
+              </p>
+              <div class="mt-auto pt-3 border-t border-outline-variant text-[11px] font-label text-success flex items-center gap-1">
+                <span>Result:</span> <span class="text-on-surface">Audit-Ready Compliance Certificate & Chronological History</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Role Permissions & Responsibilities Matrix -->
+        <section class="flex flex-col gap-4">
+          <div class="flex items-center justify-between border-b border-outline-variant pb-2">
+            <div class="flex items-center gap-2">
+              <span class="font-label text-xs text-primary font-bold uppercase tracking-wider">02 // ROLE WORKSPACES</span>
+              <h2 class="font-headline text-xl text-on-surface font-semibold">Operational Roles & Privileges</h2>
+            </div>
+            <span class="font-label text-xs text-on-surface-variant">Role-Based Access Control</span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Admin Card -->
+            <div class="p-5 bg-surface-container border border-outline-variant rounded flex flex-col gap-3">
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary text-xl">shield_person</span>
+                <h3 class="font-headline text-base text-on-surface font-semibold">Administrator</h3>
+              </div>
+              <p class="font-body text-xs text-on-surface-variant">Full system oversight and governance authority.</p>
+              <ul class="text-xs text-on-surface-variant flex flex-col gap-2 font-body">
+                <li class="flex items-start gap-2">
+                  <span class="material-symbols-outlined text-success text-sm shrink-0">check</span>
+                  <span>View global system metrics & telemetry</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <span class="material-symbols-outlined text-success text-sm shrink-0">check</span>
+                  <span>Assign verifications to compliance reviewers</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <span class="material-symbols-outlined text-success text-sm shrink-0">check</span>
+                  <span>Execute bulk 10,000+ CSV candidate imports</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <span class="material-symbols-outlined text-success text-sm shrink-0">check</span>
+                  <span>Inspect chronological audit logs</span>
+                </li>
+              </ul>
+              <div class="mt-auto pt-3">
+                <a href="dashboard.html" class="inline-flex items-center gap-1 text-xs font-label text-primary hover:underline">
+                  <span>Open Admin Dashboard</span>
+                  <span class="material-symbols-outlined text-xs">arrow_forward</span>
+                </a>
+              </div>
+            </div>
+
+            <!-- Recruiter Card -->
+            <div class="p-5 bg-surface-container border border-outline-variant rounded flex flex-col gap-3">
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-info text-xl">person_search</span>
+                <h3 class="font-headline text-base text-on-surface font-semibold">Recruiter</h3>
+              </div>
+              <p class="font-body text-xs text-on-surface-variant">Candidate intake and onboarding specialist.</p>
+              <ul class="text-xs text-on-surface-variant flex flex-col gap-2 font-body">
+                <li class="flex items-start gap-2">
+                  <span class="material-symbols-outlined text-success text-sm shrink-0">check</span>
+                  <span>Create individual candidate profiles</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <span class="material-symbols-outlined text-success text-sm shrink-0">check</span>
+                  <span>Upload resumes & extract content</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <span class="material-symbols-outlined text-success text-sm shrink-0">check</span>
+                  <span>Filter candidates by country & qualification</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <span class="material-symbols-outlined text-success text-sm shrink-0">check</span>
+                  <span>Trigger automated verification checks</span>
+                </li>
+              </ul>
+              <div class="mt-auto pt-3">
+                <a href="candidates.html" class="inline-flex items-center gap-1 text-xs font-label text-primary hover:underline">
+                  <span>Open Candidate Directory</span>
+                  <span class="material-symbols-outlined text-xs">arrow_forward</span>
+                </a>
+              </div>
+            </div>
+
+            <!-- Reviewer Card -->
+            <div class="p-5 bg-surface-container border border-outline-variant rounded flex flex-col gap-3">
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-warning text-xl">verified_user</span>
+                <h3 class="font-headline text-base text-on-surface font-semibold">Compliance Reviewer</h3>
+              </div>
+              <p class="font-body text-xs text-on-surface-variant">Independent compliance evaluation and audit authority.</p>
+              <ul class="text-xs text-on-surface-variant flex flex-col gap-2 font-body">
+                <li class="flex items-start gap-2">
+                  <span class="material-symbols-outlined text-success text-sm shrink-0">check</span>
+                  <span>Access dedicated personal review queue</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <span class="material-symbols-outlined text-success text-sm shrink-0">check</span>
+                  <span>Inspect candidate dossiers with extracted evidence</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <span class="material-symbols-outlined text-success text-sm shrink-0">check</span>
+                  <span>Review flagged anomalies and discrepancy notes</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <span class="material-symbols-outlined text-success text-sm shrink-0">check</span>
+                  <span>Submit final audit decisions (Approve / Reject)</span>
+                </li>
+              </ul>
+              <div class="mt-auto pt-3">
+                <a href="reviewer.html" class="inline-flex items-center gap-1 text-xs font-label text-warning hover:underline">
+                  <span>Open Reviewer Queue</span>
+                  <span class="material-symbols-outlined text-xs">arrow_forward</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Common Operational Scenarios & FAQ -->
+        <section class="flex flex-col gap-4">
+          <div class="flex items-center justify-between border-b border-outline-variant pb-2">
+            <div class="flex items-center gap-2">
+              <span class="font-label text-xs text-primary font-bold uppercase tracking-wider">03 // OPERATIONAL WORKFLOWS</span>
+              <h2 class="font-headline text-xl text-on-surface font-semibold">Step-by-Step Task Procedures</h2>
+            </div>
+            <span class="font-label text-xs text-on-surface-variant">Standard Procedures</span>
+          </div>
+
+          <div class="space-y-4">
+            <!-- Task 1 -->
+            <div class="p-5 bg-surface-container border border-outline-variant rounded flex flex-col gap-2">
+              <h3 class="font-headline text-sm font-semibold text-on-surface flex items-center gap-2">
+                <span class="text-primary font-mono">1.</span>
+                How to Add a Candidate and Run Automated Verification
+              </h3>
+              <p class="font-body text-xs text-on-surface-variant leading-relaxed">
+                Navigate to the <a href="candidates.html" class="text-primary hover:underline">Candidates Directory</a>. Click <strong>Add Candidate</strong> in the top-right corner to open the candidate intake form. Fill in the candidate's first name, last name, email, job title, and country, then click <strong>Create Candidate</strong>. Once the candidate row appears, click the <strong>Verify</strong> button on the candidate's row or open the <strong>Dossier</strong> to run the automated screening engine.
+              </p>
+            </div>
+
+            <!-- Task 2 -->
+            <div class="p-5 bg-surface-container border border-outline-variant rounded flex flex-col gap-2">
+              <h3 class="font-headline text-sm font-semibold text-on-surface flex items-center gap-2">
+                <span class="text-primary font-mono">2.</span>
+                How to Upload and Inspect Resumes
+              </h3>
+              <p class="font-body text-xs text-on-surface-variant leading-relaxed">
+                From the candidate directory, click <strong>Dossier</strong> on any candidate to access their detailed verification profile. Under the <strong>Extracted Resume Evidence</strong> tab, you can drag and drop or select a resume file (PDF, DOCX, or TXT). Once uploaded, the extracted resume text is displayed alongside the candidate information, and you can download the original file at any time.
+              </p>
+            </div>
+
+            <!-- Task 3 -->
+            <div class="p-5 bg-surface-container border border-outline-variant rounded flex flex-col gap-2">
+              <h3 class="font-headline text-sm font-semibold text-on-surface flex items-center gap-2">
+                <span class="text-primary font-mono">3.</span>
+                How to Assign and Complete a Compliance Review
+              </h3>
+              <p class="font-body text-xs text-on-surface-variant leading-relaxed">
+                In the candidate dossier, the <strong>Reviewer Assignment</strong> card allows an Administrator to assign the verification case to a certified compliance specialist (such as Sarah Jenkins). When Sarah logs in or switches to the <strong>Reviewer</strong> session, the case appears in her <a href="reviewer.html" class="text-warning hover:underline">Assigned Reviewer Queue</a>. Clicking <strong>Evaluate</strong> opens the evaluation view where the reviewer selects <strong>Approve (Passed)</strong>, <strong>Reject (Failed)</strong>, or <strong>Needs Info</strong> with justification notes to finalize the sign-off.
+              </p>
+            </div>
+
+            <!-- Task 4 -->
+            <div class="p-5 bg-surface-container border border-outline-variant rounded flex flex-col gap-2">
+              <h3 class="font-headline text-sm font-semibold text-on-surface flex items-center gap-2">
+                <span class="text-primary font-mono">4.</span>
+                How to Switch Roles and Test Permissions
+              </h3>
+              <p class="font-body text-xs text-on-surface-variant leading-relaxed">
+                The application supports instant session switching between test roles. In the bottom-left sidebar or top-right header, use the <strong>Admin</strong>, <strong>Recruiter</strong>, or <strong>Reviewer</strong> buttons to immediately switch your active session role and verify that role-based permissions and queue access operate as expected.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Quick Launch Workspace Cards -->
+        <section class="p-6 bg-surface-container-low border border-primary/30 rounded flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div class="flex flex-col gap-1">
+            <span class="font-label text-xs uppercase text-primary font-semibold">Ready to proceed?</span>
+            <h3 class="font-headline text-lg font-semibold text-on-surface">Explore the live candidate verification workspace</h3>
+            <p class="font-body text-xs text-on-surface-variant">Switch between administrative oversight, candidate directories, and compliance queues.</p>
+          </div>
+          <div class="flex items-center gap-3 shrink-0">
+            <a href="candidates.html" class="px-4 py-2 bg-primary text-on-primary rounded font-label text-xs uppercase font-medium hover:bg-on-primary-container hover:text-primary transition-colors">
+              Candidates Directory
+            </a>
+            <a href="reviewer.html" class="px-4 py-2 bg-surface-container-high border border-outline-variant hover:border-warning text-warning rounded font-label text-xs uppercase transition-colors">
+              Reviewer Queue
+            </a>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <div id="toast-container"></div>
+  <script src="js/background-scene.js"></script>
+  <script type="module">
+    import { checkSession, switchRole } from './js/app.js';
+
+    // Initialize session and UI
+    checkSession();
+
+    // Mobile sidebar toggle
+    const sidebar = document.getElementById('sidebar');
+    const backdrop = document.getElementById('sidebarBackdrop');
+    const openBtn = document.getElementById('openSidebarBtn');
+    const closeBtn = document.getElementById('closeSidebarBtn');
+
+    if (openBtn && sidebar) {
+      openBtn.addEventListener('click', () => {
+        sidebar.classList.remove('-translate-x-full');
+        if (backdrop) backdrop.classList.remove('hidden');
+      });
+    }
+
+    if (closeBtn && sidebar) {
+      closeBtn.addEventListener('click', () => {
+        sidebar.classList.add('-translate-x-full');
+        if (backdrop) backdrop.classList.add('hidden');
+      });
+    }
+
+    if (backdrop && sidebar) {
+      backdrop.addEventListener('click', () => {
+        sidebar.classList.add('-translate-x-full');
+        backdrop.classList.add('hidden');
+      });
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Candidates Directory — Candidate Verification System</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">
+    globalThis.tailwind = globalThis.tailwind || {};
+    globalThis.tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            'primary': '#FF4D1C',
+            'on-primary': '#0E0E0C',
+            'primary-container': '#3C0800',
+            'on-primary-container': '#FFDBD2',
+            'surface': '#0E0E0C',
+            'surface-container-low': '#141411',
+            'surface-container': '#1A1A16',
+            'surface-container-high': '#23231E',
+            'on-surface': '#E8E3D6',
+            'on-surface-variant': '#9E9B90',
+            'outline': '#5F5E5B',
+            'outline-variant': '#2B2A26',
+            'success': '#58D68D',
+            'warning': '#F59E0B',
+            'error': '#FF5449',
+            'info': '#63A4FF',
+          },
+          fontFamily: {
+            'display': ['"Red Hat Display"', 'sans-serif'],
+            'headline': ['"Red Hat Display"', 'sans-serif'],
+            'title': ['"Carrois Gothic"', 'sans-serif'],
+            'body': ['"Carrois Gothic"', 'sans-serif'],
+            'label': ['"Geist Mono"', 'monospace'],
+          },
+        },
+      },
+    };
+  </script>
+  <link rel="stylesheet" href="css/design-system.css">
+</head>
+<body class="bg-surface text-on-surface font-body antialiased selection:bg-primary selection:text-on-primary">
+  <canvas id="bg-grain" class="fixed inset-0 z-0 pointer-events-none opacity-5" aria-hidden="true"></canvas>
+
+  <div class="relative z-10 min-h-screen flex flex-col lg:flex-row">
+    <!-- Mobile Sidebar Backdrop -->
+    <div id="sidebarBackdrop" class="fixed inset-0 bg-surface/80 z-30 hidden lg:hidden" aria-hidden="true"></div>
+
+    <!-- Persistent Left Sidebar -->
+    <aside id="sidebar" class="fixed inset-y-0 left-0 z-40 w-64 bg-surface-container-low border-r border-outline-variant flex flex-col justify-between transform -translate-x-full transition-transform duration-200 lg:static lg:translate-x-0 lg:shrink-0">
+      <div class="flex flex-col">
+        <!-- Brand Header -->
+        <div class="h-16 px-6 border-b border-outline-variant flex items-center justify-between">
+          <a href="index.html" class="flex items-center gap-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary rounded-sm">
+            <svg class="w-6 h-6 text-primary shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <polygon points="12 2 21 6.5 21 13.5 12 22 3 13.5 3 6.5 12 2"></polygon>
+              <polyline points="8.5 12.5 11 15 15.5 9.5"></polyline>
+            </svg>
+            <span class="font-headline text-lg text-on-surface tracking-tight font-semibold">CVS <span class="text-primary font-mono text-sm">.01</span></span>
+          </a>
+          <button id="closeSidebarBtn" type="button" class="lg:hidden text-on-surface-variant hover:text-on-surface">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+
+        <!-- Navigation Groups -->
+        <nav aria-label="Primary navigation" class="p-4 flex flex-col gap-6">
+          <div class="flex flex-col gap-1">
+            <span class="px-2 font-label text-[11px] uppercase text-on-surface-variant">01 / Overview</span>
+            <a href="dashboard.html" class="flex items-center gap-2 px-3 py-2 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container text-xs transition-colors">
+              <span class="material-symbols-outlined text-sm">dashboard</span>
+              <span>Admin Dashboard</span>
+            </a>
+          </div>
+
+          <div class="flex flex-col gap-1">
+            <span class="px-2 font-label text-[11px] uppercase text-on-surface-variant">02 / Operations</span>
+            <a href="candidates.html" aria-current="page" class="flex items-center justify-between px-3 py-2 rounded bg-surface-container-high border border-outline-variant text-on-surface font-body text-xs font-medium">
+              <span class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-sm text-primary">group</span>
+                <span>Candidates Directory</span>
+              </span>
+              <span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+            </a>
+            <button type="button" id="sidebar-import-btn" class="w-full flex items-center gap-2 px-3 py-2 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container text-xs transition-colors text-left">
+              <span class="material-symbols-outlined text-sm">upload_file</span>
+              <span>Bulk CSV Import</span>
+            </button>
+          </div>
+
+          <div class="flex flex-col gap-1">
+            <span class="px-2 font-label text-[11px] uppercase text-on-surface-variant">03 / Verification</span>
+            <a href="reviewer.html" class="flex items-center justify-between px-3 py-2 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container text-xs transition-colors">
+              <span class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-sm">assignment</span>
+                <span>Reviewer Queue</span>
+              </span>
+              <span class="px-1.5 py-0.5 rounded bg-surface-container-high border border-outline-variant font-mono text-[10px] text-on-surface-variant">Queue</span>
+            </a>
+          </div>
+
+          <div class="flex flex-col gap-1">
+            <span class="px-2 font-label text-[11px] uppercase text-on-surface-variant">04 / Compliance & Docs</span>
+            <a href="docs.html" class="flex items-center gap-2 px-3 py-2 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container text-xs transition-colors">
+              <span class="material-symbols-outlined text-sm">menu_book</span>
+              <span>Platform Documentation</span>
+            </a>
+          </div>
+        </nav>
+      </div>
+
+      <!-- User Profile / Session Footer in Sidebar -->
+      <div class="p-4 border-t border-outline-variant bg-surface-container flex flex-col gap-2">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2 overflow-hidden">
+            <div class="w-7 h-7 rounded-full bg-primary/20 text-primary flex items-center justify-center font-mono text-xs font-bold shrink-0">
+              <span class="material-symbols-outlined text-sm">person</span>
+            </div>
+            <div class="truncate">
+              <span class="user-name-display font-headline text-xs font-medium text-on-surface block truncate">User</span>
+              <span class="user-roles-display font-label text-[10px] text-primary block truncate">ROLES</span>
+            </div>
+          </div>
+          <button class="logout-trigger text-on-surface-variant hover:text-error p-1" title="Sign out">
+            <span class="material-symbols-outlined text-base">logout</span>
+          </button>
+        </div>
+        <div class="flex items-center gap-1 pt-1 border-t border-outline-variant/60 font-label text-[10px]">
+          <span class="text-on-surface-variant text-[9px]">Session:</span>
+          <button type="button" class="switch-role-admin px-1.5 py-0.5 rounded bg-surface-container-high border border-outline-variant hover:border-primary text-on-surface" title="Admin Session (Dhruv Dobariya)">Admin</button>
+          <button type="button" class="switch-role-recruiter px-1.5 py-0.5 rounded bg-surface-container-high border border-outline-variant hover:border-primary text-on-surface" title="Recruiter Session (Elena Vance)">Recruiter</button>
+          <button type="button" class="switch-role-reviewer px-1.5 py-0.5 rounded bg-surface-container-high border border-outline-variant hover:border-warning text-warning" title="Reviewer Session (Sarah Jenkins)">Reviewer</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="flex-1 flex flex-col min-w-0">
+      <!-- Top Sticky App Bar -->
+      <header class="sticky top-0 z-20 h-16 bg-surface/90 backdrop-blur-md border-b border-outline-variant px-4 sm:px-8 flex items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <button id="openSidebarBtn" class="lg:hidden text-on-surface-variant hover:text-on-surface p-1">
+            <span class="material-symbols-outlined">menu</span>
+          </button>
+          <div class="flex items-center gap-2 font-label text-xs">
+            <span class="text-on-surface-variant uppercase">Operations</span>
+            <span class="text-outline">/</span>
+            <span class="text-on-surface font-medium uppercase">Candidates Directory</span>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <button id="open-import-modal-btn" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-container text-on-surface border border-outline-variant rounded font-label text-xs uppercase hover:border-primary transition-colors">
+            <span class="material-symbols-outlined text-sm text-info">upload_file</span>
+            <span>Import CSV</span>
+          </button>
+
+          <button id="open-add-candidate-btn" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary text-on-primary rounded font-label text-xs uppercase font-medium hover:bg-on-primary-container hover:text-primary transition-colors">
+            <span class="material-symbols-outlined text-sm">person_add</span>
+            <span>Add Candidate</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Main Directory Workspace -->
+      <main class="flex-1 p-4 sm:p-8 flex flex-col gap-6 max-w-[1440px] mx-auto w-full">
+        <!-- Directory Header & Controls -->
+        <div class="flex flex-col gap-4">
+          <div class="flex flex-col sm:flex-row sm:items-baseline justify-between gap-4 pb-2">
+            <div>
+              <span class="font-label text-xs uppercase text-primary font-semibold tracking-wider block mb-1">(02) APPLICANT DIRECTORY</span>
+              <h1 class="font-headline text-2xl sm:text-3xl text-on-surface font-semibold tracking-tight">Registered Candidates</h1>
+            </div>
+            <div class="flex items-center gap-2 font-label text-xs text-on-surface-variant">
+              <span>Total Records:</span>
+              <span id="candidate-count-badge" class="px-2 py-0.5 rounded bg-surface-container-high border border-outline-variant font-mono font-semibold text-primary">0</span>
+            </div>
+          </div>
+
+          <!-- Search & Filter Bar -->
+          <div class="p-4 bg-surface-container border border-outline-variant rounded flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+            <!-- Search Input -->
+            <div class="relative flex-1">
+              <span class="material-symbols-outlined absolute left-3 top-2.5 text-on-surface-variant text-base">search</span>
+              <input type="text" id="candidate-search-input" placeholder="Search by candidate name, email, or job title..." class="w-full bg-surface-container-low border border-outline-variant rounded pl-9 pr-4 py-2 text-xs text-on-surface placeholder:text-on-surface-variant/60 focus:border-primary focus:outline-none font-body">
+            </div>
+
+            <!-- Country / Location Filter Pills -->
+            <div class="flex items-center gap-1.5 overflow-x-auto py-1 font-label text-xs scrollbar-none">
+              <button type="button" data-location="" class="location-filter-btn px-2.5 py-1.5 rounded bg-primary text-on-primary border border-primary uppercase whitespace-nowrap font-medium">All</button>
+              <button type="button" data-location="United Kingdom" class="location-filter-btn px-2.5 py-1.5 rounded bg-surface-container-low text-on-surface-variant border border-outline-variant hover:border-primary hover:text-on-surface uppercase whitespace-nowrap flex items-center gap-1">
+                <span>UK (494)</span>
+              </button>
+              <button type="button" data-location="Vietnam" class="location-filter-btn px-2.5 py-1.5 rounded bg-surface-container-low text-on-surface-variant border border-outline-variant hover:border-primary hover:text-on-surface uppercase whitespace-nowrap">Vietnam</button>
+              <button type="button" data-location="Philippines" class="location-filter-btn px-2.5 py-1.5 rounded bg-surface-container-low text-on-surface-variant border border-outline-variant hover:border-primary hover:text-on-surface uppercase whitespace-nowrap">Philippines</button>
+              <button type="button" data-location="Netherlands" class="location-filter-btn px-2.5 py-1.5 rounded bg-surface-container-low text-on-surface-variant border border-outline-variant hover:border-primary hover:text-on-surface uppercase whitespace-nowrap">Netherlands</button>
+              <button type="button" data-location="South Africa" class="location-filter-btn px-2.5 py-1.5 rounded bg-surface-container-low text-on-surface-variant border border-outline-variant hover:border-primary hover:text-on-surface uppercase whitespace-nowrap">South Africa</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Candidates Table Card -->
+        <div class="bg-surface-container border border-outline-variant rounded flex flex-col overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-surface-container-low text-on-surface-variant font-label text-[11px] uppercase border-b border-outline-variant">
+                <tr>
+                  <th class="px-4 py-3">Applicant Name</th>
+                  <th class="px-4 py-3">Job Title</th>
+                  <th class="px-4 py-3">Location</th>
+                  <th class="px-4 py-3">Resume Document</th>
+                  <th class="px-4 py-3">Status</th>
+                  <th class="px-4 py-3 text-right">Verification Action</th>
+                </tr>
+              </thead>
+              <tbody id="candidates-tbody" class="divide-y divide-outline-variant font-body">
+                <tr>
+                  <td colspan="6" class="px-4 py-12 text-center text-on-surface-variant font-label">
+                    <span class="material-symbols-outlined animate-spin text-xl text-primary block mb-2">sync</span>
+                    Loading candidates from database...
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination Bar -->
+          <div class="p-4 bg-surface-container-low border-t border-outline-variant flex items-center justify-between gap-4 font-label text-xs">
+            <span id="pagination-info" class="text-on-surface-variant">Showing page 1</span>
+            <div class="flex items-center gap-2">
+              <button id="prev-page-btn" class="px-3 py-1 bg-surface-container border border-outline-variant hover:border-primary text-on-surface rounded disabled:opacity-40 disabled:pointer-events-none transition-colors">Previous</button>
+              <button id="next-page-btn" class="px-3 py-1 bg-surface-container border border-outline-variant hover:border-primary text-on-surface rounded disabled:opacity-40 disabled:pointer-events-none transition-colors">Next</button>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- MODAL: Bulk CSV Import -->
+  <div id="import-modal" class="fixed inset-0 z-50 bg-surface/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-surface-container border border-outline-variant rounded-md max-w-2xl w-full p-6 flex flex-col gap-6 shadow-2xl max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between pb-3 border-b border-outline-variant">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary text-lg">upload_file</span>
+          <h2 class="font-headline text-base font-semibold text-on-surface">Bulk Candidate CSV Import</h2>
+        </div>
+        <button id="close-import-modal-btn" class="text-on-surface-variant hover:text-on-surface">
+          <span class="material-symbols-outlined text-sm">close</span>
+        </button>
+      </div>
+
+      <!-- File Drop Area -->
+      <div id="drop-zone" class="border-2 border-dashed border-outline-variant hover:border-primary rounded-md p-8 flex flex-col items-center justify-center gap-3 text-center cursor-pointer transition-colors bg-surface-container-low">
+        <span class="material-symbols-outlined text-3xl text-primary">cloud_upload</span>
+        <div>
+          <span class="font-headline text-sm font-medium text-on-surface block">Choose CSV File or drag here</span>
+          <span class="font-body text-xs text-on-surface-variant block mt-1">Accepts standard .csv datasets up to 100MB (Applicant Name, Email, Job Roles, Location)</span>
+        </div>
+        <input type="file" id="csv-file-input" accept=".csv" class="hidden">
+        <span id="selected-file-name" class="font-mono text-xs text-primary hidden"></span>
+      </div>
+
+      <!-- Preview Summary Area (Hidden initially) -->
+      <div id="import-preview-area" class="hidden flex flex-col gap-4">
+        <div class="grid grid-cols-3 gap-3 font-label text-xs">
+          <div class="p-3 bg-surface-container-low border border-outline-variant rounded">
+            <span class="text-on-surface-variant block">Total Rows</span>
+            <span id="prev-total" class="font-mono text-base font-semibold text-on-surface">0</span>
+          </div>
+          <div class="p-3 bg-surface-container-low border border-outline-variant rounded">
+            <span class="text-on-surface-variant block">Valid Rows</span>
+            <span id="prev-valid" class="font-mono text-base font-semibold text-success">0</span>
+          </div>
+          <div class="p-3 bg-surface-container-low border border-outline-variant rounded">
+            <span class="text-on-surface-variant block">Duplicates Flagged</span>
+            <span id="prev-dupes" class="font-mono text-base font-semibold text-warning">0</span>
+          </div>
+        </div>
+
+        <div class="max-h-48 overflow-y-auto border border-outline-variant rounded">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-surface-container-low text-on-surface-variant font-label text-[10px] uppercase border-b border-outline-variant">
+              <tr>
+                <th class="px-3 py-2">Row</th>
+                <th class="px-3 py-2">Name</th>
+                <th class="px-3 py-2">Email</th>
+                <th class="px-3 py-2">Status</th>
+              </tr>
+            </thead>
+            <tbody id="preview-tbody" class="divide-y divide-outline-variant font-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Modal Action Buttons -->
+      <div class="flex items-center justify-end gap-3 pt-3 border-t border-outline-variant">
+        <button type="button" id="cancel-import-btn" class="px-4 py-2 bg-surface-container border border-outline-variant hover:border-on-surface-variant rounded font-label text-xs uppercase text-on-surface">Cancel</button>
+        <button type="button" id="preview-csv-btn" class="px-4 py-2 bg-surface-container-high border border-outline-variant hover:border-primary text-on-surface rounded font-label text-xs uppercase">Inspect & Preview</button>
+        <button type="button" id="confirm-import-btn" class="px-4 py-2 bg-primary text-on-primary rounded font-label text-xs uppercase font-medium hover:bg-on-primary-container hover:text-primary transition-colors hidden">Confirm & Ingest Batch</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Add Single Candidate -->
+  <div id="add-candidate-modal" class="fixed inset-0 z-50 bg-surface/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-surface-container border border-outline-variant rounded-md max-w-lg w-full p-6 flex flex-col gap-6 shadow-2xl">
+      <div class="flex items-center justify-between pb-3 border-b border-outline-variant">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary text-lg">person_add</span>
+          <h2 class="font-headline text-base font-semibold text-on-surface">Add Candidate Profile</h2>
+        </div>
+        <button id="close-add-modal-btn" class="text-on-surface-variant hover:text-on-surface">
+          <span class="material-symbols-outlined text-sm">close</span>
+        </button>
+      </div>
+
+      <form id="add-candidate-form" class="flex flex-col gap-4 text-xs font-body">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-on-surface-variant font-label text-[11px] uppercase mb-1">First Name *</label>
+            <input type="text" name="firstName" required class="w-full bg-surface-container-low border border-outline-variant rounded p-2 text-on-surface focus:border-primary focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-on-surface-variant font-label text-[11px] uppercase mb-1">Last Name *</label>
+            <input type="text" name="lastName" required class="w-full bg-surface-container-low border border-outline-variant rounded p-2 text-on-surface focus:border-primary focus:outline-none">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-on-surface-variant font-label text-[11px] uppercase mb-1">Email Address *</label>
+          <input type="email" name="email" required class="w-full bg-surface-container-low border border-outline-variant rounded p-2 text-on-surface focus:border-primary focus:outline-none">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-on-surface-variant font-label text-[11px] uppercase mb-1">Job Title</label>
+            <input type="text" name="currentJobTitle" placeholder="e.g. Software Engineer" class="w-full bg-surface-container-low border border-outline-variant rounded p-2 text-on-surface focus:border-primary focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-on-surface-variant font-label text-[11px] uppercase mb-1">Location / Country</label>
+            <input type="text" name="location" placeholder="e.g. United Kingdom" class="w-full bg-surface-container-low border border-outline-variant rounded p-2 text-on-surface focus:border-primary focus:outline-none">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-on-surface-variant font-label text-[11px] uppercase mb-1">Phone</label>
+          <input type="text" name="phone" placeholder="+44 20 7946 0991" class="w-full bg-surface-container-low border border-outline-variant rounded p-2 text-on-surface focus:border-primary focus:outline-none">
+        </div>
+
+        <div>
+          <label class="block text-on-surface-variant font-label text-[11px] uppercase mb-1">Resume Document (PDF, DOCX, DOC, TXT)</label>
+          <div id="add-resume-drop-zone" class="border border-dashed border-outline-variant hover:border-primary rounded p-3 bg-surface-container-low flex items-center justify-between gap-3 cursor-pointer transition-colors">
+            <div class="flex items-center gap-2 overflow-hidden">
+              <span class="material-symbols-outlined text-primary text-xl">description</span>
+              <div class="truncate">
+                <span id="add-resume-filename" class="font-headline text-xs text-on-surface block truncate">Attach candidate resume (PDF, DOCX, DOC, TXT)</span>
+                <span class="font-label text-[10px] text-on-surface-variant block">Optional · Auto-extracted & verified</span>
+              </div>
+            </div>
+            <button type="button" class="px-2.5 py-1 bg-surface-container-high border border-outline-variant rounded font-label text-[10px] uppercase text-on-surface hover:border-primary shrink-0">Browse PDF</button>
+          </div>
+          <input type="file" id="add-candidate-resume-file" accept=".pdf,.docx,.doc,.txt,.rtf" class="hidden">
+        </div>
+
+        <div class="flex items-center justify-end gap-3 pt-3 border-t border-outline-variant">
+          <button type="button" id="cancel-add-btn" class="px-4 py-2 bg-surface-container border border-outline-variant hover:border-on-surface-variant rounded font-label text-xs uppercase text-on-surface">Cancel</button>
+          <button type="submit" class="px-4 py-2 bg-primary text-on-primary rounded font-label text-xs uppercase font-medium hover:bg-on-primary-container hover:text-primary transition-colors">Create Candidate</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="toast-container"></div>
+  <script src="js/background-scene.js"></script>
+  <script type="module">
+    import { API } from './js/api.js';
+    import { checkSession, showToast } from './js/app.js';
+
+    let currentPage = 1;
+    let currentLimit = 15;
+    let currentSearch = '';
+    let currentLocation = '';
+    let currentStatus = '';
+    let confirmationToken = null;
+
+    // Check query params for quick filters (e.g. candidates.html?location=United+Kingdom)
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('location')) {
+      currentLocation = urlParams.get('location');
+    }
+    if (urlParams.get('openImport') === 'true') {
+      setTimeout(() => openImportModal(), 300);
+    }
+
+    async function loadCandidates() {
+      await checkSession();
+      const tbody = document.getElementById('candidates-tbody');
+      tbody.innerHTML = `<tr><td colspan="6" class="px-4 py-8 text-center text-on-surface-variant font-label"><span class="material-symbols-outlined animate-spin text-lg text-primary block mb-1">sync</span>Filtering records...</td></tr>`;
+
+      try {
+        const queryParams = {
+          page: currentPage,
+          limit: currentLimit,
+          search: currentSearch || currentLocation || undefined,
+          status: currentStatus || undefined
+        };
+
+        const res = await API.candidates.list(queryParams);
+        const candidates = res.data ? (Array.isArray(res.data) ? res.data : res.data.candidates || []) : [];
+        const pagination = res.pagination || res.meta || {};
+        const total = pagination.total !== undefined ? pagination.total : candidates.length;
+
+        document.getElementById('candidate-count-badge').textContent = total;
+        document.getElementById('pagination-info').textContent = `Showing page ${currentPage} of ${pagination.totalPages || 1} (${total} total)`;
+
+        document.getElementById('prev-page-btn').disabled = currentPage <= 1;
+        document.getElementById('next-page-btn').disabled = currentPage >= (pagination.totalPages || 1);
+
+        if (candidates.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="6" class="px-4 py-12 text-center text-on-surface-variant font-label">No candidates found matching the selected filters.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = candidates.map(c => {
+          const isUK = c.location && (c.location.includes('United Kingdom') || c.location.includes('UK'));
+          const locClass = isUK ? 'bg-primary/10 text-primary border-primary/40 font-semibold' : 'bg-surface-container-high text-on-surface border-outline-variant';
+          const locBadge = c.location ? `<span class="px-2 py-0.5 rounded border font-mono text-[10px] ${locClass}">${escapeHtml(c.location)}</span>` : '<span class="text-on-surface-variant text-[11px]">—</span>';
+          
+          return `
+            <tr class="hover:bg-surface-container-high/60 transition-colors">
+              <td class="px-4 py-3">
+                <div class="font-medium text-on-surface">${escapeHtml(c.full_name)}</div>
+                <div class="font-mono text-[11px] text-on-surface-variant">${escapeHtml(c.email)}</div>
+              </td>
+              <td class="px-4 py-3 text-on-surface-variant">${escapeHtml(c.current_job_title || 'Applicant')}</td>
+              <td class="px-4 py-3">${locBadge}</td>
+              <td class="px-4 py-3">
+                <span class="inline-flex items-center gap-1 font-mono text-[11px] text-on-surface-variant">
+                  <span class="material-symbols-outlined text-xs text-info">picture_as_pdf</span>
+                  <span>resume.pdf</span>
+                </span>
+              </td>
+              <td class="px-4 py-3">
+                <span class="px-2 py-0.5 rounded border border-warning/30 bg-warning/10 text-warning font-mono text-[10px] uppercase">${escapeHtml(c.status || 'pending')}</span>
+              </td>
+              <td class="px-4 py-3 text-right">
+                <div class="inline-flex items-center gap-2">
+                  <button type="button" class="start-verification-btn px-2.5 py-1 bg-surface-container border border-outline-variant hover:border-primary hover:text-primary rounded text-[11px] font-label uppercase transition-colors" data-id="${c.id}">
+                    <span>Verify</span>
+                  </button>
+                  <a href="candidate-detail.html?id=${c.id}" class="px-2.5 py-1 bg-primary text-on-primary rounded text-[11px] font-label uppercase font-medium hover:bg-on-primary-container hover:text-primary transition-colors">
+                    <span>Dossier</span>
+                  </a>
+                </div>
+              </td>
+            </tr>
+          `;
+        }).join('');
+
+        // Wire start verification buttons
+        document.querySelectorAll('.start-verification-btn').forEach(btn => {
+          btn.addEventListener('click', async () => {
+            const candidateId = btn.getAttribute('data-id');
+            btn.classList.add('opacity-50', 'pointer-events-none');
+            try {
+              showToast('Initiating automated verification...', 'info');
+              const verRes = await API.verifications.initiate(candidateId);
+              showToast('Verification initiated successfully!', 'success');
+              setTimeout(() => {
+                const verId = verRes.data ? (verRes.data.id || verRes.data.verificationId) : null;
+                window.location.href = `candidate-detail.html?id=${candidateId}`;
+              }, 600);
+            } catch (err) {
+              showToast(err.message || 'Verification initiation failed', 'error');
+              btn.classList.remove('opacity-50', 'pointer-events-none');
+            }
+          });
+        });
+
+      } catch (err) {
+        showToast('Error loading candidates: ' + err.message, 'error');
+      }
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/[&<>"']/g, m => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      })[m]);
+    }
+
+    // Search with debounce
+    let searchTimeout = null;
+    document.getElementById('candidate-search-input').addEventListener('input', (e) => {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => {
+        currentSearch = e.target.value.trim();
+        currentPage = 1;
+        loadCandidates();
+      }, 300);
+    });
+
+    // Location filter pills
+    document.querySelectorAll('.location-filter-btn').forEach(btn => {
+      const loc = btn.getAttribute('data-location');
+      if (loc === currentLocation) {
+        btn.classList.remove('bg-surface-container-low', 'text-on-surface-variant');
+        btn.classList.add('bg-primary', 'text-on-primary', 'border-primary');
+      }
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.location-filter-btn').forEach(b => {
+          b.classList.remove('bg-primary', 'text-on-primary', 'border-primary');
+          b.classList.add('bg-surface-container-low', 'text-on-surface-variant');
+        });
+        btn.classList.remove('bg-surface-container-low', 'text-on-surface-variant');
+        btn.classList.add('bg-primary', 'text-on-primary', 'border-primary');
+        currentLocation = loc;
+        currentPage = 1;
+        loadCandidates();
+      });
+    });
+
+    // Pagination buttons
+    document.getElementById('prev-page-btn').addEventListener('click', () => {
+      if (currentPage > 1) {
+        currentPage--;
+        loadCandidates();
+      }
+    });
+    document.getElementById('next-page-btn').addEventListener('click', () => {
+      currentPage++;
+      loadCandidates();
+    });
+
+    // Modal helpers
+    const importModal = document.getElementById('import-modal');
+    const addModal = document.getElementById('add-candidate-modal');
+
+    function openImportModal() { importModal.classList.remove('hidden'); }
+    function closeImportModal() { importModal.classList.add('hidden'); }
+
+    document.getElementById('open-import-modal-btn').addEventListener('click', openImportModal);
+    document.getElementById('sidebar-import-btn').addEventListener('click', openImportModal);
+    document.getElementById('close-import-modal-btn').addEventListener('click', closeImportModal);
+    document.getElementById('cancel-import-btn').addEventListener('click', closeImportModal);
+
+    document.getElementById('open-add-candidate-btn').addEventListener('click', () => addModal.classList.remove('hidden'));
+    document.getElementById('close-add-modal-btn').addEventListener('click', () => addModal.classList.add('hidden'));
+    document.getElementById('cancel-add-btn').addEventListener('click', () => addModal.classList.add('hidden'));
+
+    // CSV File Select & Drop
+    const dropZone = document.getElementById('drop-zone');
+    const fileInput = document.getElementById('csv-file-input');
+    const fileNameDisplay = document.getElementById('selected-file-name');
+    let selectedFile = null;
+
+    dropZone.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', (e) => {
+      if (e.target.files.length > 0) {
+        selectedFile = e.target.files[0];
+        fileNameDisplay.textContent = `Selected: ${selectedFile.name} (${(selectedFile.size / 1024).toFixed(1)} KB)`;
+        fileNameDisplay.classList.remove('hidden');
+      }
+    });
+
+    // Preview CSV action
+    document.getElementById('preview-csv-btn').addEventListener('click', async () => {
+      if (!selectedFile) {
+        showToast('Please select a CSV file first', 'warning');
+        return;
+      }
+      try {
+        showToast('Inspecting and validating CSV headers...', 'info');
+        const res = await API.candidates.importPreview(selectedFile);
+        if (res && res.data) {
+          const preview = res.data;
+          confirmationToken = preview.confirmationToken || preview.importId || preview.batchId;
+
+          document.getElementById('import-preview-area').classList.remove('hidden');
+          document.getElementById('prev-total').textContent = (preview.totalRows || 0).toLocaleString();
+          document.getElementById('prev-valid').textContent = (preview.validRows !== undefined ? preview.validRows : (preview.newCandidates || 0)).toLocaleString();
+          document.getElementById('prev-dupes').textContent = ((preview.existingDatabaseDuplicates || 0) + (preview.duplicateRowsWithinCsv || 0)).toLocaleString();
+
+          const rows = preview.rows || preview.validRows || [];
+          document.getElementById('preview-tbody').innerHTML = rows.slice(0, 10).map((r, i) => {
+            const data = r.data || r;
+            const name = data.fullName || data.full_name || data.name || data.job_applicant_name || 'Candidate';
+            const email = data.email || '—';
+            const status = r.status || 'NEW';
+            const statusColor = status === 'NEW' ? 'text-success' : status === 'INVALID' ? 'text-error' : 'text-warning';
+            const statusText = status === 'DUPLICATE_IN_DATABASE' ? 'IN DATABASE' : status === 'DUPLICATE_IN_CSV' ? 'CSV DUP' : status;
+            return `
+            <tr>
+              <td class="px-3 py-1 font-mono text-[10px] text-on-surface-variant">${r.rowNumber || i + 1}</td>
+              <td class="px-3 py-1 text-on-surface font-medium">${escapeHtml(name)}</td>
+              <td class="px-3 py-1 font-mono text-[10px] text-on-surface-variant">${escapeHtml(email)}</td>
+              <td class="px-3 py-1"><span class="${statusColor} font-mono text-[10px] uppercase">${statusText}</span></td>
+            </tr>
+          `;
+          }).join('');
+
+          document.getElementById('confirm-import-btn').classList.remove('hidden');
+          showToast('CSV preview ready. Review items and confirm.', 'success');
+        }
+      } catch (err) {
+        showToast(err.message || 'CSV preview failed', 'error');
+      }
+    });
+
+    // Confirm Import Action
+    document.getElementById('confirm-import-btn').addEventListener('click', async () => {
+      if (!confirmationToken) {
+        showToast('No active confirmation token. Please re-preview CSV.', 'warning');
+        return;
+      }
+      try {
+        showToast('Ingesting candidate batch into database...', 'info');
+        await API.candidates.importConfirm(confirmationToken);
+        showToast('Candidates successfully imported into database!', 'success');
+        closeImportModal();
+        currentPage = 1;
+        loadCandidates();
+      } catch (err) {
+        showToast(err.message || 'Import confirmation failed', 'error');
+      }
+    });
+
+    // Add Candidate Form
+    let candidateResumeFile = null;
+    const addResumeInput = document.getElementById('add-candidate-resume-file');
+    const addResumeDropZone = document.getElementById('add-resume-drop-zone');
+    const addResumeFilename = document.getElementById('add-resume-filename');
+
+    if (addResumeDropZone && addResumeInput) {
+      addResumeDropZone.addEventListener('click', () => addResumeInput.click());
+      addResumeInput.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files[0]) {
+          candidateResumeFile = e.target.files[0];
+          addResumeFilename.textContent = `${candidateResumeFile.name} (${(candidateResumeFile.size / 1024).toFixed(1)} KB)`;
+          addResumeFilename.classList.add('text-primary', 'font-medium');
+        }
+      });
+    }
+
+    document.getElementById('add-candidate-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const firstName = (formData.get('firstName') || '').trim();
+      const lastName = (formData.get('lastName') || '').trim();
+      const fullName = [firstName, lastName].filter(Boolean).join(' ');
+
+      const payload = {
+        firstName,
+        lastName,
+        fullName,
+        full_name: fullName,
+        email: (formData.get('email') || '').trim(),
+        currentJobTitle: (formData.get('currentJobTitle') || '').trim() || undefined,
+        location: (formData.get('location') || '').trim() || undefined,
+        phone: (formData.get('phone') || '').trim() || undefined
+      };
+      try {
+        showToast('Creating candidate...', 'info');
+        const res = await API.candidates.create(payload);
+        const createdCandidate = res.data;
+
+        if (candidateResumeFile && createdCandidate && createdCandidate.id) {
+          showToast('Uploading resume document & extracting content...', 'info');
+          try {
+            await API.candidates.uploadResume(createdCandidate.id, candidateResumeFile);
+            showToast('Candidate profile and resume document uploaded successfully!', 'success');
+          } catch (uploadErr) {
+            showToast('Candidate created, note on resume: ' + uploadErr.message, 'warning');
+          }
+        } else {
+          showToast('Candidate created successfully!', 'success');
+        }
+
+        addModal.classList.add('hidden');
+        e.target.reset();
+        candidateResumeFile = null;
+        if (addResumeFilename) {
+          addResumeFilename.textContent = 'Attach candidate resume (PDF, DOCX, DOC, TXT)';
+          addResumeFilename.classList.remove('text-primary', 'font-medium');
+        }
+        currentPage = 1;
+        loadCandidates();
+      } catch (err) {
+        showToast(err.message || 'Failed to create candidate', 'error');
+      }
+    });
+
+    loadCandidates();
+  </script>
+</body>
+</html>

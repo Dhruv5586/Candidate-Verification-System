@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In — Candidate Verification System</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">
+    globalThis.tailwind = globalThis.tailwind || {};
+    globalThis.tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            'primary': '#FF4D1C',
+            'on-primary': '#0E0E0C',
+            'primary-container': '#3C0800',
+            'on-primary-container': '#FFDBD2',
+            'surface': '#0E0E0C',
+            'surface-container-low': '#141411',
+            'surface-container': '#1A1A16',
+            'surface-container-high': '#23231E',
+            'on-surface': '#E8E3D6',
+            'on-surface-variant': '#9E9B90',
+            'outline': '#5F5E5B',
+            'outline-variant': '#2B2A26',
+            'success': '#58D68D',
+            'warning': '#F59E0B',
+            'error': '#FF5449',
+            'info': '#63A4FF',
+          },
+          fontFamily: {
+            'display': ['"Red Hat Display"', 'sans-serif'],
+            'headline': ['"Red Hat Display"', 'sans-serif'],
+            'title': ['"Carrois Gothic"', 'sans-serif'],
+            'body': ['"Carrois Gothic"', 'sans-serif'],
+            'label': ['"Geist Mono"', 'monospace'],
+          },
+        },
+      },
+    };
+  </script>
+  <link rel="stylesheet" href="css/design-system.css">
+</head>
+<body class="bg-surface text-on-surface font-body antialiased selection:bg-primary selection:text-on-primary">
+  <canvas id="bg-grain" class="fixed inset-0 z-0 pointer-events-none opacity-5" aria-hidden="true"></canvas>
+  <canvas id="bg-scene" class="fixed inset-0 z-0 pointer-events-none opacity-30" aria-hidden="true"></canvas>
+
+  <div class="relative z-10 min-h-screen flex flex-col justify-between p-4 sm:p-12">
+    <!-- Minimal Auth Header -->
+    <header class="w-full max-w-4xl mx-auto flex items-center justify-between gap-4">
+      <a href="index.html" class="inline-flex items-center gap-2 font-label text-xs uppercase text-on-surface-variant hover:text-primary transition-colors">
+        <span class="material-symbols-outlined text-sm">arrow_back</span>
+        <span>Back to Platform Overview</span>
+      </a>
+
+      <div class="flex items-center gap-2 px-3 py-1 bg-surface-container border border-outline-variant rounded-sm text-xs font-label">
+        <span class="inline-block w-2 h-2 rounded-full bg-success animate-pulse"></span>
+        <span class="text-on-surface-variant uppercase">System Online</span>
+      </div>
+    </header>
+
+    <!-- Centered Auth Card -->
+    <main class="w-full max-w-md mx-auto my-auto py-8">
+      <article class="bg-surface-container border border-outline-variant rounded-md p-6 sm:p-8 flex flex-col gap-6 shadow-2xl backdrop-blur-sm">
+        <!-- Brand Identity -->
+        <div class="flex items-center justify-between pb-4 border-b border-outline-variant">
+          <div class="flex items-center gap-2">
+            <svg class="w-7 h-7 text-primary shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <polygon points="12 2 21 6.5 21 13.5 12 22 3 13.5 3 6.5 12 2"></polygon>
+              <polyline points="8.5 12.5 11 15 15.5 9.5"></polyline>
+            </svg>
+            <span class="font-headline text-lg text-on-surface tracking-tight font-semibold">CVS <span class="text-primary font-mono text-sm">.01</span></span>
+          </div>
+          <span class="font-label text-xs uppercase text-on-surface-variant">SSO Gateway</span>
+        </div>
+
+        <!-- Heading -->
+        <div class="flex flex-col gap-1">
+          <h1 class="font-headline text-2xl text-on-surface font-semibold tracking-tight">Sign in to console</h1>
+          <p class="font-body text-xs text-on-surface-variant">
+            Access Candidate Verification System with your verified identity. Select your workspace role below.
+          </p>
+        </div>
+
+        <!-- Session Expired Notification Banner -->
+        <div id="session-expired-banner" class="hidden p-3.5 bg-warning/10 border border-warning/40 rounded flex items-start gap-3 text-xs text-warning">
+          <span class="material-symbols-outlined text-warning text-lg shrink-0">timer_off</span>
+          <div class="flex-1">
+            <span class="font-bold block uppercase tracking-wide">30-Minute Session Expired (Automatic Logout)</span>
+            <span class="text-on-surface-variant block mt-0.5">Your verification session reached its 30-minute limit and you were automatically logged out for security compliance. Please sign in again.</span>
+          </div>
+        </div>
+
+        <!-- Already Logged In Banner -->
+        <div id="already-logged-in-banner" class="hidden p-3.5 bg-success/10 border border-success/40 rounded flex items-center justify-between gap-3 text-xs text-success">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-success text-lg shrink-0">check_circle</span>
+            <div>
+              <span class="font-bold block uppercase tracking-wide">Active Session Detected</span>
+              <span class="text-on-surface-variant block mt-0.5">Signed in as <span id="logged-user-name" class="text-on-surface font-semibold"></span></span>
+            </div>
+          </div>
+          <a href="dashboard.html" class="px-3 py-1.5 bg-success text-on-primary font-label text-xs font-semibold uppercase rounded hover:bg-success/80 transition-colors">
+            Enter Dashboard →
+          </a>
+        </div>
+
+        <!-- Google OAuth 2.0 CTA -->
+        <div class="flex flex-col gap-3">
+          <a href="http://localhost:8080/auth/google/login" id="google-login-btn" class="w-full inline-flex items-center justify-center gap-3 px-4 py-3 bg-surface-container-high text-on-surface rounded border border-outline-variant font-label text-xs uppercase tracking-wider hover:border-primary hover:text-primary transition-colors">
+            <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M21.35 11.1h-9.17v2.73h6.51c-.33 3.81-3.5 5.44-6.5 5.44C8.36 19.27 5 16.25 5 12c0-4.1 3.2-7.27 7.2-7.27 3.09 0 4.9 1.97 4.9 1.97L19 4.72S16.56 2 12.1 2C6.42 2 2.03 6.8 2.03 12c0 5.05 4.13 10 10.22 10 5.35 0 9.25-3.67 9.25-9.09 0-1.15-.15-1.81-.15-1.81z"></path>
+            </svg>
+            <span>Continue with Google</span>
+          </a>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <hr class="flex-1 border-outline-variant">
+          <span class="font-label text-xs uppercase text-on-surface-variant">Or Select Workspace</span>
+          <hr class="flex-1 border-outline-variant">
+        </div>
+
+        <!-- One-Click Instant Dev Workspace Role Selectors -->
+        <div class="flex flex-col gap-3">
+          <!-- Admin Workspace -->
+          <button type="button" data-role="admin" class="role-login-btn p-3 bg-surface-container-low border border-outline-variant hover:border-primary rounded text-left transition-colors flex items-center justify-between group">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded bg-primary-container text-primary flex items-center justify-center font-mono text-sm font-bold">A</div>
+              <div>
+                <span class="font-headline text-xs font-semibold text-on-surface block group-hover:text-primary">Admin Session</span>
+                <span class="font-label text-[11px] text-on-surface-variant block">Dhruv Dobariya (Administrator)</span>
+              </div>
+            </div>
+            <span class="material-symbols-outlined text-sm text-on-surface-variant group-hover:text-primary">arrow_forward</span>
+          </button>
+
+          <!-- Recruiter Workspace -->
+          <button type="button" data-role="recruiter" class="role-login-btn p-3 bg-surface-container-low border border-outline-variant hover:border-primary rounded text-left transition-colors flex items-center justify-between group">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded bg-surface-container-high text-on-surface flex items-center justify-center font-mono text-sm font-bold">R</div>
+              <div>
+                <span class="font-headline text-xs font-semibold text-on-surface block group-hover:text-primary">Recruiter Session</span>
+                <span class="font-label text-[11px] text-on-surface-variant block">Elena Vance (Lead Recruiter)</span>
+              </div>
+            </div>
+            <span class="material-symbols-outlined text-sm text-on-surface-variant group-hover:text-primary">arrow_forward</span>
+          </button>
+
+          <!-- Compliance Reviewer Workspace -->
+          <button type="button" data-role="reviewer" class="role-login-btn p-3 bg-surface-container-low border border-outline-variant hover:border-primary rounded text-left transition-colors flex items-center justify-between group">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded bg-surface-container-high text-warning flex items-center justify-center font-mono text-sm font-bold">C</div>
+              <div>
+                <span class="font-headline text-xs font-semibold text-on-surface block group-hover:text-primary">Reviewer Session</span>
+                <span class="font-label text-[11px] text-on-surface-variant block">Sarah Jenkins (Compliance Reviewer)</span>
+              </div>
+            </div>
+            <span class="material-symbols-outlined text-sm text-on-surface-variant group-hover:text-primary">arrow_forward</span>
+          </button>
+        </div>
+      </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="w-full max-w-4xl mx-auto flex items-center justify-between gap-4 font-label text-xs uppercase text-on-surface-variant">
+      <span>Candidate Verification System · 2026</span>
+      <span>Enterprise Verification Platform</span>
+    </footer>
+  </div>
+
+  <div id="toast-container"></div>
+  <script src="js/background-scene.js"></script>
+  <script type="module">
+    import { API } from './js/api.js';
+    import { showToast } from './js/app.js';
+
+    // 1. Check if redirected due to expired session
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('expired') === 'true') {
+      const banner = document.getElementById('session-expired-banner');
+      if (banner) banner.classList.remove('hidden');
+    }
+
+    // 2. Check if user is already authenticated
+    (async () => {
+      try {
+        const res = await API.auth.getMe();
+        if (res && res.data && res.data.user) {
+          const user = res.data.user;
+          const activeBanner = document.getElementById('already-logged-in-banner');
+          const nameSpan = document.getElementById('logged-user-name');
+          if (activeBanner && nameSpan) {
+            nameSpan.textContent = `${user.name} (${user.roles.join(', ')})`;
+            activeBanner.classList.remove('hidden');
+          }
+          // If not explicitly coming from an expired session, auto-forward after 1s
+          if (urlParams.get('expired') !== 'true' && !urlParams.get('reauth')) {
+            showToast(`Active session found for ${user.name}. Entering dashboard...`, 'info');
+            setTimeout(() => {
+              window.location.href = 'dashboard.html';
+            }, 800);
+          }
+        }
+      } catch (_) {
+        // Not authenticated, stay on login page
+      }
+    })();
+
+    document.querySelectorAll('.role-login-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const role = btn.getAttribute('data-role');
+        btn.classList.add('opacity-50', 'pointer-events-none');
+        try {
+          showToast(`Authenticating as ${role.toUpperCase()}...`, 'info');
+          const res = await API.auth.devLogin(role);
+          if (res && res.data && res.data.user) {
+            localStorage.setItem('cvs_session_token', res.data.sessionToken);
+            localStorage.setItem('cvs_user', JSON.stringify(res.data.user));
+            showToast(`Welcome, ${res.data.user.name}! Redirecting...`, 'success');
+            setTimeout(() => {
+              if (role === 'reviewer') {
+                window.location.href = 'reviewer.html';
+              } else if (role === 'recruiter') {
+                window.location.href = 'candidates.html';
+              } else {
+                window.location.href = 'dashboard.html';
+              }
+            }, 500);
+          }
+        } catch (err) {
+          showToast(err.message || 'Login failed', 'error');
+          btn.classList.remove('opacity-50', 'pointer-events-none');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

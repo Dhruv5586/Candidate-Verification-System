@@ -1,0 +1,659 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Candidate Detail — Candidate Verification System</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">/** @type {import('tailwindcss').Config} */
+globalThis.tailwind = globalThis.tailwind || {};
+globalThis.tailwind.config = {
+  darkMode: 'class',
+  theme: {
+    extend: {
+      colors: {
+        'primary': '#FF4D1C',
+        'on-primary': '#0E0E0C',
+        'primary-container': '#3C0800',
+        'on-primary-container': '#FFDBD2',
+        'surface': '#0E0E0C',
+        'surface-container-low': '#141411',
+        'surface-container': '#1A1A16',
+        'surface-container-high': '#23231E',
+        'on-surface': '#E8E3D6',
+        'on-surface-variant': '#9E9B90',
+        'outline': '#5F5E5B',
+        'outline-variant': '#2B2A26',
+        'success': '#58D68D',
+        'on-success': '#0E0E0C',
+        'warning': '#F59E0B',
+        'on-warning': '#0E0E0C',
+        'error': '#FF5449',
+        'on-error': '#0E0E0C',
+        'info': '#63A4FF',
+        'on-info': '#0E0E0C',
+      },
+      borderRadius: {
+        'none': '0px',
+        'sm': '2px',
+        'DEFAULT': '4px',
+        'md': '6px',
+        'lg': '8px',
+        'full': '9999px',
+      },
+      spacing: {
+        'xs': '4px',
+        'sm': '8px',
+        'md': '16px',
+        'lg': '24px',
+        'xl': '32px',
+        '2xl': '48px',
+      },
+      fontFamily: {
+        'display': ['"Red Hat Display"', 'sans-serif'],
+        'headline': ['"Red Hat Display"', 'sans-serif'],
+        'title': ['"Carrois Gothic"', 'sans-serif'],
+        'body': ['"Carrois Gothic"', 'sans-serif'],
+        'label': ['"Geist Mono"', 'sans-serif'],
+      },
+      fontSize: {
+        'display-lg': ['44px', { lineHeight: '48px', letterSpacing: '-1.6px', fontWeight: '500' }],
+        'display-lg-mobile': ['32px', { lineHeight: '36px', letterSpacing: '-1.0px', fontWeight: '500' }],
+        'headline-lg': ['30px', { lineHeight: '34px', letterSpacing: '-0.9px', fontWeight: '500' }],
+        'headline-md': ['22px', { lineHeight: '28px', letterSpacing: '-0.5px', fontWeight: '500' }],
+        'title-lg': ['18px', { lineHeight: '24px', letterSpacing: '-0.3px', fontWeight: '500' }],
+        'title-md': ['15px', { lineHeight: '22px', letterSpacing: '-0.1px', fontWeight: '500' }],
+        'body-md': ['14px', { lineHeight: '22px', letterSpacing: '0px', fontWeight: '400' }],
+        'body-sm': ['13px', { lineHeight: '20px', letterSpacing: '0px', fontWeight: '400' }],
+        'label-lg': ['12px', { lineHeight: '16px', letterSpacing: '0.72px', fontWeight: '500' }],
+        'label-sm': ['11px', { lineHeight: '14px', letterSpacing: '0.66px', fontWeight: '400' }],
+      },
+      transitionDuration: {
+        'state-change': '150ms',
+        'row-shift': '280ms',
+        'surface-enter': '240ms',
+      },
+      transitionDelay: {
+        'state-change': '0ms',
+        'row-shift': '0ms',
+        'surface-enter': '0ms',
+      },
+      transitionTimingFunction: {
+        'state-change': 'cubic-bezier(0.2, 0, 0, 1)',
+        'row-shift': 'cubic-bezier(0.6, 0, 0.2, 1)',
+        'surface-enter': 'cubic-bezier(0.2, 0, 0, 1)',
+      },
+    },
+  },
+};
+if (typeof module !== 'undefined') module.exports = globalThis.tailwind.config;
+</script>
+  <link href="https://fonts.googleapis.com/css2?family=Carrois+Gothic&amp;family=Geist+Mono:wght@400;500&amp;family=Red+Hat+Display:wght@400;500;600&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block" rel="stylesheet">
+  <style>
+    .material-symbols-outlined, .material-symbols-rounded, .material-symbols-sharp, .material-icons {
+      display: inline-block; width: 1em; height: 1em; line-height: 1 !important;
+      box-sizing: content-box; overflow: hidden; white-space: nowrap; direction: ltr; vertical-align: middle;
+    }
+  </style>
+</head>
+<body class="bg-surface text-on-surface font-body text-body-md antialiased selection:bg-primary selection:text-on-primary">
+  <canvas id="bg-grain" class="fixed inset-0 z-0 pointer-events-none opacity-5" aria-hidden="true"></canvas>
+  <canvas id="bg-scene" class="fixed inset-0 z-0 pointer-events-none opacity-25" aria-hidden="true"></canvas>
+
+  <div class="relative z-10 min-h-[1024px] flex flex-col lg:flex-row" data-stitch-vh="min-h-[1024px]===min-h-screen">
+    <!-- Mobile Sidebar Backdrop -->
+    <div id="sidebarBackdrop" class="fixed inset-0 bg-surface/80 z-30 hidden lg:hidden" aria-hidden="true"></div>
+
+    <!-- Persistent Left Sidebar -->
+    <aside id="sidebar" class="fixed inset-y-0 left-0 z-40 w-64 bg-surface-container-low border-r border-outline-variant flex flex-col justify-between min-h-[1024px] transform -translate-x-full transition-transform duration-surface-enter ease-surface-enter lg:static lg:translate-x-0 lg:shrink-0" data-stitch-vh="min-h-[1024px]===min-h-screen">
+      <div class="flex flex-col">
+        <!-- Brand Header -->
+        <div class="h-16 px-lg border-b border-outline-variant flex items-center justify-between">
+          <a href="#top" class="flex items-center gap-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary rounded-sm">
+            <svg class="w-6 h-6 text-primary shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <polygon points="12 2 21 6.5 21 13.5 12 22 3 13.5 3 6.5 12 2"></polygon>
+              <polyline points="8.5 12.5 11 15 15.5 9.5"></polyline>
+            </svg>
+            <span class="font-headline text-title-lg text-on-surface tracking-tight">CVS <span class="text-primary">.01</span></span>
+          </a>
+          <button id="closeSidebarBtn" type="button" aria-label="Close navigation menu" class="lg:hidden inline-flex items-center justify-center w-8 h-8 text-on-surface-variant hover:text-on-surface rounded border border-outline-variant">
+            <span class="material-symbols-outlined text-title-md" aria-hidden="true">close</span>
+          </button>
+        </div>
+
+        <!-- Navigation Groups -->
+        <nav aria-label="Primary navigation" class="p-md flex flex-col gap-lg">
+          <div class="flex flex-col gap-xs">
+            <span class="px-sm font-label text-label-sm uppercase text-on-surface-variant">01 / Overview</span>
+            <a href="#dashboard" class="flex items-center gap-sm px-sm py-sm rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors duration-state-change font-body text-body-sm">
+              <span class="material-symbols-outlined text-title-md" aria-hidden="true">dashboard</span>
+              <span>Admin Dashboard</span>
+            </a>
+          </div>
+
+          <div class="flex flex-col gap-xs">
+            <span class="px-sm font-label text-label-sm uppercase text-on-surface-variant">02 / Operations</span>
+            <a href="#candidates" aria-current="page" class="flex items-center justify-between px-sm py-sm rounded bg-surface-container-high border border-outline-variant text-on-surface font-body text-body-sm transition-colors duration-state-change">
+              <span class="flex items-center gap-sm">
+                <span class="material-symbols-outlined text-title-md text-primary" aria-hidden="true">group</span>
+                <span>Candidates</span>
+              </span>
+              <span class="w-1.5 h-1.5 rounded-full bg-primary" aria-hidden="true"></span>
+            </a>
+            <a href="#bulk-import" class="flex items-center gap-sm px-sm py-sm rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors duration-state-change font-body text-body-sm">
+              <span class="material-symbols-outlined text-title-md" aria-hidden="true">upload_file</span>
+              <span>Bulk Import</span>
+            </a>
+          </div>
+
+          <div class="flex flex-col gap-xs">
+            <span class="px-sm font-label text-label-sm uppercase text-on-surface-variant">03 / Verification</span>
+            <a href="#verifications" class="flex items-center justify-between px-sm py-sm rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors duration-state-change font-body text-body-sm">
+              <span class="flex items-center gap-sm">
+                <span class="material-symbols-outlined text-title-md" aria-hidden="true">verified_user</span>
+                <span>Verifications</span>
+              </span>
+              <!-- COMPONENT: badge-numeric -->
+              <span data-component-id="badge-numeric" data-component-type="badge" data-component-variant="numeric" role="status" class="inline-flex items-center justify-center px-sm py-xs bg-surface-container-high border border-outline-variant rounded-sm font-label text-label-sm text-on-surface tabular-nums">
+                <span data-design-text-token="label-sm">18</span>
+              </span>
+            </a>
+            <a href="#reviewer-queue" class="flex items-center gap-sm px-sm py-sm rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors duration-state-change font-body text-body-sm">
+              <span class="material-symbols-outlined text-title-md" aria-hidden="true">assignment_ind</span>
+              <span>Reviewer Queue</span>
+            </a>
+          </div>
+
+          <div class="flex flex-col gap-xs">
+            <span class="px-sm font-label text-label-sm uppercase text-on-surface-variant">04 / Administration</span>
+            <a href="#users-roles" class="flex items-center gap-sm px-sm py-sm rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors duration-state-change font-body text-body-sm">
+              <span class="material-symbols-outlined text-title-md" aria-hidden="true">admin_panel_settings</span>
+              <span>Users &amp; Roles</span>
+            </a>
+            <a href="#audit-logs" class="flex items-center gap-sm px-sm py-sm rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors duration-state-change font-body text-body-sm">
+              <span class="material-symbols-outlined text-title-md" aria-hidden="true">receipt_long</span>
+              <span>Audit Logs</span>
+            </a>
+            <a href="#reports" class="flex items-center gap-sm px-sm py-sm rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors duration-state-change font-body text-body-sm">
+              <span class="material-symbols-outlined text-title-md" aria-hidden="true">bar_chart</span>
+              <span>Reports</span>
+            </a>
+          </div>
+        </nav>
+      </div>
+
+      <!-- Authenticated User Identity Footer -->
+      <div class="p-md border-t border-outline-variant flex flex-col gap-sm">
+        <div class="flex items-center gap-sm px-xs">
+          <div class="w-8 h-8 rounded bg-surface-container-high border border-outline-variant flex items-center justify-center font-label text-label-sm text-primary shrink-0">
+            VR
+          </div>
+          <div class="min-w-0 flex-1">
+            <p class="font-body text-body-sm text-on-surface truncate">Vikramaditya Rao</p>
+            <p class="font-label text-label-sm uppercase text-on-surface-variant truncate">Admin · OIDC</p>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-xs pt-xs">
+          <a href="#settings" class="flex items-center justify-center gap-xs px-sm py-xs rounded border border-outline-variant text-on-surface-variant hover:text-on-surface hover:bg-surface-container font-label text-label-sm uppercase transition-colors duration-state-change">
+            <span class="material-symbols-outlined text-body-md" aria-hidden="true">settings</span>
+            <span>Settings</span>
+          </a>
+          <a href="#logout" class="flex items-center justify-center gap-xs px-sm py-xs rounded border border-outline-variant text-on-surface-variant hover:text-error hover:border-error/40 font-label text-label-sm uppercase transition-colors duration-state-change">
+            <span class="material-symbols-outlined text-body-md" aria-hidden="true">logout</span>
+            <span>Logout</span>
+          </a>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Workspace Column -->
+    <div class="flex-1 flex flex-col min-w-0">
+      <!-- Contextual Detail Header -->
+      <header class="sticky top-0 z-20 h-16 bg-surface/95 border-b border-outline-variant px-md sm:px-xl flex items-center justify-between gap-md">
+        <div class="flex items-center gap-md min-w-0">
+          <button id="openSidebarBtn" type="button" aria-label="Open navigation menu" class="lg:hidden inline-flex items-center justify-center w-9 h-9 bg-surface-container text-on-surface rounded border border-outline-variant">
+            <span class="material-symbols-outlined text-title-lg" aria-hidden="true">menu</span>
+          </button>
+          <a href="#candidates" class="inline-flex items-center gap-xs font-label text-label-sm uppercase text-on-surface-variant hover:text-primary transition-colors duration-state-change whitespace-nowrap">
+            <span class="material-symbols-outlined text-body-md" aria-hidden="true">arrow_back</span>
+            <span>Back to Candidates</span>
+          </a>
+          <span class="hidden sm:inline text-outline-variant" aria-hidden="true">/</span>
+          <span class="hidden sm:inline font-label text-label-sm uppercase text-on-surface tabular-nums whitespace-nowrap">CAND-0891</span>
+        </div>
+
+        <div class="flex items-center gap-sm shrink-0">
+          <!-- COMPONENT: button-primary -->
+          <button data-component-id="button-primary" data-component-type="button" data-component-variant="primary" type="button" class="inline-flex items-center justify-center gap-sm px-md py-sm bg-primary text-on-primary rounded border border-primary font-label text-label-lg uppercase tracking-wider whitespace-nowrap transition-colors duration-state-change ease-state-change hover:bg-on-primary-container hover:border-on-primary-container focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+            <span data-design-text-token="label-lg">Re-run verification</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Main Content -->
+      <main id="top" class="flex-1 w-full max-w-[1440px] mx-auto p-md sm:p-xl flex flex-col gap-xl">
+        <!-- Candidate Identity Header -->
+        <section class="flex flex-col sm:flex-row sm:items-end justify-between gap-md pb-lg border-b border-outline-variant">
+          <div class="flex flex-col gap-xs">
+            <div class="flex items-center gap-sm">
+              <span class="font-label text-label-sm uppercase text-primary">(01) Candidate Record</span>
+              <!-- COMPONENT: badge-warning -->
+              <span data-component-id="badge-warning" data-component-type="badge" data-component-variant="warning" role="status" class="inline-flex items-center gap-xs px-sm py-xs bg-surface-container-high border border-warning/40 rounded-sm font-label text-label-sm uppercase text-warning whitespace-nowrap">
+                <span class="w-1.5 h-1.5 rounded-full bg-warning" aria-hidden="true"></span>
+                <span data-design-text-token="label-sm">Needs review</span>
+              </span>
+            </div>
+            <!-- COMPONENT: typography-display -->
+            <h1 data-component-id="typography-display" data-component-type="typography" data-component-variant="display" data-design-text-token="display-lg" class="font-display text-display-lg-mobile sm:text-display-lg text-on-surface">Rohan Kulkarni</h1>
+            <p class="font-body text-body-md text-on-surface-variant">Platform SRE · Bengaluru, IN · Imported via Batch #IMP-094</p>
+          </div>
+          <div class="flex items-center gap-md shrink-0">
+            <span class="font-label text-label-sm uppercase text-on-surface-variant tabular-nums">Case: VER-2047</span>
+            <span class="font-label text-label-sm uppercase text-on-surface tabular-nums">Created 22 Nov 2026</span>
+          </div>
+        </section>
+
+        <!-- Two-Column Detail Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-lg items-start">
+          <!-- Left Main Column (8 cols) -->
+          <div class="lg:col-span-8 flex flex-col gap-lg min-w-0">
+            <!-- Profile & Contact Information -->
+            <article class="bg-surface-container border border-outline-variant rounded-md p-lg flex flex-col gap-lg">
+              <header class="flex items-center justify-between pb-sm border-b border-outline-variant">
+                <div>
+                  <span class="font-label text-label-sm uppercase text-on-surface-variant">(02) Profile</span>
+                  <h2 class="font-headline text-title-lg text-on-surface">Contact &amp; Role Metadata</h2>
+                </div>
+                <button type="button" class="font-label text-label-sm uppercase text-on-surface-variant hover:text-primary transition-colors duration-state-change">Edit record</button>
+              </header>
+
+              <dl class="grid grid-cols-1 sm:grid-cols-2 gap-md">
+                <div class="flex flex-col gap-xs p-md bg-surface-container-low border border-outline-variant rounded-sm">
+                  <dt class="font-label text-label-sm uppercase text-on-surface-variant">Email address</dt>
+                  <dd class="font-body text-body-md text-on-surface">rohan@kulkarnidev.in</dd>
+                </div>
+                <div class="flex flex-col gap-xs p-md bg-surface-container-low border border-outline-variant rounded-sm">
+                  <dt class="font-label text-label-sm uppercase text-on-surface-variant">Phone number</dt>
+                  <dd class="font-label text-label-sm text-on-surface tabular-nums">+91 98204 51290</dd>
+                </div>
+                <div class="flex flex-col gap-xs p-md bg-surface-container-low border border-outline-variant rounded-sm">
+                  <dt class="font-label text-label-sm uppercase text-on-surface-variant">Current title</dt>
+                  <dd class="font-body text-body-md text-on-surface">Platform SRE</dd>
+                </div>
+                <div class="flex flex-col gap-xs p-md bg-surface-container-low border border-outline-variant rounded-sm">
+                  <dt class="font-label text-label-sm uppercase text-on-surface-variant">Location</dt>
+                  <dd class="font-body text-body-md text-on-surface">Bengaluru, Karnataka, IN</dd>
+                </div>
+              </dl>
+            </article>
+
+            <!-- Resume Preview & Extraction Summary -->
+            <article class="bg-surface-container border border-outline-variant rounded-md p-lg flex flex-col gap-lg">
+              <header class="flex flex-wrap items-center justify-between gap-md pb-sm border-b border-outline-variant">
+                <div>
+                  <span class="font-label text-label-sm uppercase text-on-surface-variant">(03) Document</span>
+                  <h2 class="font-headline text-title-lg text-on-surface">Resume &amp; Extraction Summary</h2>
+                </div>
+                <!-- COMPONENT: button-with-icon -->
+                <button data-component-id="button-with-icon" data-component-type="button" data-component-variant="with-icon" type="button" class="inline-flex items-center justify-center gap-sm px-md py-sm bg-surface-container-high text-on-surface rounded border border-outline-variant font-label text-label-lg uppercase tracking-wider whitespace-nowrap transition-colors duration-state-change ease-state-change hover:border-primary hover:text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                  <span class="material-symbols-outlined text-body-md" aria-hidden="true">download</span>
+                  <span data-design-text-token="label-lg">Download PDF</span>
+                </button>
+              </header>
+
+              <!-- Document Metadata Strip -->
+              <div class="flex flex-wrap items-center justify-between gap-sm p-md bg-surface-container-low border border-outline-variant rounded-sm">
+                <div class="flex items-center gap-sm">
+                  <span class="material-symbols-outlined text-title-lg text-primary" aria-hidden="true">description</span>
+                  <div>
+                    <p class="font-body text-body-sm text-on-surface">rohan_kulkarni_sre_2026.pdf</p>
+                    <p class="font-label text-label-sm text-on-surface-variant tabular-nums">528 KB · Uploaded 22 Nov 2026 · Authenticated stream</p>
+                  </div>
+                </div>
+                <span class="font-label text-label-sm uppercase text-success">Text extracted</span>
+              </div>
+
+              <!-- Extracted Experience & Education -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
+                <div class="flex flex-col gap-sm">
+                  <h3 class="font-label text-label-sm uppercase text-on-surface-variant">Extracted Experience</h3>
+                  <ul class="flex flex-col gap-sm">
+                    <li class="p-md bg-surface-container-low border border-outline-variant rounded-sm">
+                      <p class="font-body text-body-md text-on-surface">Platform SRE · CloudScale Systems</p>
+                      <p class="font-label text-label-sm text-on-surface-variant tabular-nums">Mar 2021 — Present</p>
+                    </li>
+                    <li class="p-md bg-surface-container-low border border-outline-variant rounded-sm">
+                      <p class="font-body text-body-md text-on-surface">DevOps Engineer · FinGrid Technologies</p>
+                      <p class="font-label text-label-sm text-on-surface-variant tabular-nums">Jul 2018 — Jun 2021</p>
+                    </li>
+                  </ul>
+                </div>
+
+                <div class="flex flex-col gap-sm">
+                  <h3 class="font-label text-label-sm uppercase text-on-surface-variant">Extracted Education</h3>
+                  <ul class="flex flex-col gap-sm">
+                    <li class="p-md bg-surface-container-low border border-outline-variant rounded-sm">
+                      <p class="font-body text-body-md text-on-surface">B.E. Computer Engineering</p>
+                      <p class="font-label text-label-sm text-on-surface-variant tabular-nums">Savitribai Phule Pune University · 2018</p>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </article>
+
+            <!-- Automated Validation Findings -->
+            <article class="bg-surface-container border border-outline-variant rounded-md p-lg flex flex-col gap-lg">
+              <header class="flex items-center justify-between pb-sm border-b border-outline-variant">
+                <div>
+                  <span class="font-label text-label-sm uppercase text-on-surface-variant">(04) Automated Checks</span>
+                  <h2 class="font-headline text-title-lg text-on-surface">Validation Indicators</h2>
+                </div>
+                <span class="font-label text-label-sm uppercase text-warning tabular-nums">2 findings for review</span>
+              </header>
+
+              <p class="font-body text-body-sm text-on-surface-variant">
+                Automated checks surface potential inconsistencies in extracted text and metadata for human review. They are indicators only and never standalone proof of misconduct.
+              </p>
+
+              <div class="flex flex-col divide-y divide-outline-variant border border-outline-variant rounded-sm bg-surface-container-low">
+                <div class="p-md flex flex-col sm:flex-row sm:items-start justify-between gap-sm">
+                  <div class="flex flex-col gap-xs">
+                    <span class="font-label text-label-sm uppercase text-warning">INVALID_DATE_RANGE</span>
+                    <p class="font-body text-body-sm text-on-surface">Potential inconsistency: overlapping dates between FinGrid (ends Jun 2021) and CloudScale Systems (starts Mar 2021).</p>
+                  </div>
+                  <span class="font-label text-label-sm uppercase text-warning whitespace-nowrap shrink-0">Needs review</span>
+                </div>
+
+                <div class="p-md flex flex-col sm:flex-row sm:items-start justify-between gap-sm">
+                  <div class="flex flex-col gap-xs">
+                    <span class="font-label text-label-sm uppercase text-info">PHONE_NOT_DETECTED</span>
+                    <p class="font-body text-body-sm text-on-surface">Phone number on candidate record was not detected in the extracted PDF header block.</p>
+                  </div>
+                  <span class="font-label text-label-sm uppercase text-info whitespace-nowrap shrink-0">Not detected</span>
+                </div>
+
+                <div class="p-md flex flex-col sm:flex-row sm:items-start justify-between gap-sm">
+                  <div class="flex flex-col gap-xs">
+                    <span class="font-label text-label-sm uppercase text-success">NAME_AND_EDUCATION_MATCH</span>
+                    <p class="font-body text-body-sm text-on-surface">Candidate name and education section were parsed cleanly from the uploaded document.</p>
+                  </div>
+                  <span class="font-label text-label-sm uppercase text-success whitespace-nowrap shrink-0">Clear</span>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <!-- Right Sidebar Column (4 cols) -->
+          <div class="lg:col-span-4 flex flex-col gap-lg min-w-0">
+            <!-- Reviewer Assignment Card -->
+            <!-- COMPONENT: card-action -->
+            <article data-component-id="card-action" data-component-type="card" data-component-variant="action" class="bg-surface-container border border-outline-variant rounded-md p-lg flex flex-col justify-between gap-md">
+              <header class="flex flex-col gap-xs pb-sm border-b border-outline-variant">
+                <span class="font-label text-label-sm uppercase text-on-surface-variant">(05) Assignment</span>
+                <h2 data-design-text-token="title-lg" class="font-headline text-title-lg text-on-surface">Assigned Reviewer</h2>
+              </header>
+              <div class="flex items-center gap-sm">
+                <div class="w-10 h-10 rounded bg-surface-container-high border border-outline-variant flex items-center justify-center font-label text-label-sm text-primary shrink-0">
+                  AM
+                </div>
+                <div class="min-w-0">
+                  <p class="font-body text-body-md text-on-surface">Arjun Menon</p>
+                  <p class="font-label text-label-sm uppercase text-on-surface-variant">Reviewer · 16 active cases</p>
+                </div>
+              </div>
+              <footer class="pt-md border-t border-outline-variant flex items-center justify-end gap-sm">
+                <button type="button" class="px-md py-sm bg-surface-container-high text-on-surface border border-outline-variant rounded font-label text-label-lg uppercase tracking-wider hover:border-primary hover:text-primary transition-colors duration-state-change">
+                  <span data-design-text-token="label-lg">Reassign reviewer</span>
+                </button>
+              </footer>
+            </article>
+
+            <!-- Verification & Audit Timeline -->
+            <article class="bg-surface-container border border-outline-variant rounded-md p-lg flex flex-col gap-md">
+              <header class="pb-sm border-b border-outline-variant">
+                <span class="font-label text-label-sm uppercase text-on-surface-variant">(06) Audit History</span>
+                <h2 class="font-headline text-title-lg text-on-surface">Verification Timeline</h2>
+              </header>
+
+              <ol class="flex flex-col gap-md">
+                <li class="flex gap-sm">
+                  <span class="w-2 h-2 rounded-full bg-warning mt-sm shrink-0" aria-hidden="true"></span>
+                  <div class="flex flex-col gap-xs">
+                    <p class="font-body text-body-sm text-on-surface">Arjun Menon opened verification case VER-2047</p>
+                    <span class="font-label text-label-sm text-on-surface-variant tabular-nums">24 Nov 2026 · 11:15 IST</span>
+                  </div>
+                </li>
+                <li class="flex gap-sm">
+                  <span class="w-2 h-2 rounded-full bg-info mt-sm shrink-0" aria-hidden="true"></span>
+                  <div class="flex flex-col gap-xs">
+                    <p class="font-body text-body-sm text-on-surface">System completed automated checks (2 findings)</p>
+                    <span class="font-label text-label-sm text-on-surface-variant tabular-nums">23 Nov 2026 · 18:42 IST</span>
+                  </div>
+                </li>
+                <li class="flex gap-sm">
+                  <span class="w-2 h-2 rounded-full bg-on-surface-variant mt-sm shrink-0" aria-hidden="true"></span>
+                  <div class="flex flex-col gap-xs">
+                    <p class="font-body text-body-sm text-on-surface">Priya Sharma uploaded resume PDF</p>
+                    <span class="font-label text-label-sm text-on-surface-variant tabular-nums">22 Nov 2026 · 14:10 IST</span>
+                  </div>
+                </li>
+                <li class="flex gap-sm">
+                  <span class="w-2 h-2 rounded-full bg-outline mt-sm shrink-0" aria-hidden="true"></span>
+                  <div class="flex flex-col gap-xs">
+                    <p class="font-body text-body-sm text-on-surface">Record imported via CSV Batch #IMP-094</p>
+                    <span class="font-label text-label-sm text-on-surface-variant tabular-nums">22 Nov 2026 · 14:08 IST</span>
+                  </div>
+                </li>
+              </ol>
+            </article>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var sidebar = document.getElementById('sidebar');
+      var backdrop = document.getElementById('sidebarBackdrop');
+      var openBtn = document.getElementById('openSidebarBtn');
+      var closeBtn = document.getElementById('closeSidebarBtn');
+
+      function openSidebar() {
+        sidebar.classList.remove('-translate-x-full');
+        backdrop.classList.remove('hidden');
+      }
+      function closeSidebar() {
+        sidebar.classList.add('-translate-x-full');
+        backdrop.classList.add('hidden');
+      }
+
+      if (openBtn) openBtn.addEventListener('click', openSidebar);
+      if (closeBtn) closeBtn.addEventListener('click', closeSidebar);
+      if (backdrop) backdrop.addEventListener('click', closeSidebar);
+    })();
+
+    (function () {
+      var grainCanvas = document.getElementById('bg-grain');
+      if (grainCanvas) {
+        var gCtx = grainCanvas.getContext('2d');
+        if (gCtx) {
+          var gw = 160, gh = 160;
+          grainCanvas.width = gw;
+          grainCanvas.height = gh;
+          grainCanvas.style.width = '100%';
+          grainCanvas.style.height = '100%';
+          var img = gCtx.createImageData(gw, gh);
+          for (var gi = 0; gi < img.data.length; gi += 4) {
+            var v = (Math.random() * 200) | 0;
+            img.data[gi] = v;
+            img.data[gi + 1] = v;
+            img.data[gi + 2] = v;
+            img.data[gi + 3] = 90;
+          }
+          gCtx.putImageData(img, 0, 0);
+        }
+      }
+
+      var canvas = document.getElementById('bg-scene');
+      if (!canvas) return;
+      var ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      var reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var w = 0, h = 0, dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+      function resize() {
+        w = window.innerWidth;
+        h = window.innerHeight;
+        canvas.width = w * dpr;
+        canvas.height = h * dpr;
+        canvas.style.width = w + 'px';
+        canvas.style.height = h + 'px';
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      var phi = (1 + Math.sqrt(5)) / 2;
+      var rawVerts = [
+        [-1, phi, 0], [1, phi, 0], [-1, -phi, 0], [1, -phi, 0],
+        [0, -1, phi], [0, 1, phi], [0, -1, -phi], [0, 1, -phi],
+        [phi, 0, -1], [phi, 0, 1], [-phi, 0, -1], [-phi, 0, 1]
+      ];
+      var verts = rawVerts.map(function (v) {
+        var len = Math.hypot(v[0], v[1], v[2]);
+        return [v[0] / len, v[1] / len, v[2] / len];
+      });
+      var faces = [
+        [0,11,5],[0,5,1],[0,1,7],[0,7,10],[0,10,11],
+        [1,5,9],[5,11,4],[11,10,2],[10,7,6],[7,1,8],
+        [3,9,4],[3,4,2],[3,2,6],[3,6,8],[3,8,9],
+        [4,9,5],[2,4,11],[6,2,10],[8,6,7],[9,8,1]
+      ];
+
+      var ringPts = [];
+      var ringSteps = 80;
+      for (var i = 0; i < ringSteps; i++) {
+        var a = (i / ringSteps) * Math.PI * 2;
+        ringPts.push([Math.cos(a) * 1.52, Math.sin(a) * 1.52 * 0.36, Math.sin(a) * 1.52 * 0.93]);
+      }
+
+      var mx = 0, my = 0, sp = 0;
+      var tx = 0, ty = 0, tr = 0;
+      window.addEventListener('mousemove', function (e) {
+        mx = e.clientX / Math.max(1, w) - 0.5;
+        my = e.clientY / Math.max(1, h) - 0.5;
+      });
+      window.addEventListener('scroll', function () {
+        var maxScroll = Math.max(1, document.body.scrollHeight - window.innerHeight);
+        sp = window.scrollY / maxScroll;
+      });
+
+      function rot(p, rx, ry, rz) {
+        var x = p[0], y = p[1], z = p[2];
+        var cy = Math.cos(ry), sy = Math.sin(ry);
+        var x1 = x * cy - z * sy, z1 = x * sy + z * cy;
+        var cx = Math.cos(rx), sx = Math.sin(rx);
+        var y2 = y * cx - z1 * sx, z2 = y * sx + z1 * cx;
+        var cz = Math.cos(rz), sz = Math.sin(rz);
+        return [x1 * cz - y2 * sz, x1 * sz + y2 * cz, z2];
+      }
+
+      function norm(v) {
+        var l = Math.hypot(v[0], v[1], v[2]) || 1;
+        return [v[0] / l, v[1] / l, v[2] / l];
+      }
+      var keyDir = norm([0.55, -0.65, 0.72]);
+      var rimDir = norm([-0.75, 0.35, 0.45]);
+
+      var start = performance.now();
+      function draw(now) {
+        var t = (now - start) * 0.001;
+        ctx.clearRect(0, 0, w, h);
+
+        var targetX = w > 1024 ? (w * 0.78 - sp * w * 0.22) : w * 0.5;
+        var targetY = h * (0.34 + sp * 0.18);
+        tx += (targetX - tx || targetX) * (tx === 0 ? 1 : 0.06);
+        ty += (targetY - ty || targetY) * (ty === 0 ? 1 : 0.06);
+        tr += (sp * Math.PI * 1.5 - tr) * 0.06;
+
+        var scale = Math.min(w, h) * 0.22;
+        var rx = 0.24 + Math.sin(t * 0.22) * 0.12 + my * 0.4;
+        var ry = t * 0.12 + tr + mx * 0.6;
+
+        var glow = ctx.createRadialGradient(tx, ty, scale * 0.15, tx, ty, scale * 2.4);
+        glow.addColorStop(0, 'rgba(255, 77, 28, 0.26)');
+        glow.addColorStop(0.45, 'rgba(60, 8, 0, 0.22)');
+        glow.addColorStop(1, 'rgba(14, 14, 12, 0)');
+        ctx.fillStyle = glow;
+        ctx.beginPath();
+        ctx.arc(tx, ty, scale * 2.4, 0, Math.PI * 2);
+        ctx.fill();
+
+        var rotated = verts.map(function (v) { return rot(v, rx, ry, 0.15); });
+        var proj = rotated.map(function (r) {
+          var persp = 4 / (4 - r[2]);
+          return [tx + r[0] * scale * persp, ty + r[1] * scale * persp, r[2]];
+        });
+
+        var sorted = faces.map(function (f) {
+          var a = rotated[f[0]], b = rotated[f[1]], c = rotated[f[2]];
+          var u = [b[0] - a[0], b[1] - a[1], b[2] - a[2]];
+          var v = [c[0] - a[0], c[1] - a[1], c[2] - a[2]];
+          var n = norm([
+            u[1] * v[2] - u[2] * v[1],
+            u[2] * v[0] - u[0] * v[2],
+            u[0] * v[1] - u[1] * v[0]
+          ]);
+          var zAvg = (a[2] + b[2] + c[2]) / 3;
+          return { f: f, n: n, z: zAvg };
+        }).sort(function (p, q) { return p.z - q.z; });
+
+        for (var fi = 0; fi < sorted.length; fi++) {
+          var item = sorted[fi];
+          if (item.n[2] < -0.15) continue;
+          var p0 = proj[item.f[0]], p1 = proj[item.f[1]], p2 = proj[item.f[2]];
+          var keyDot = Math.max(0, item.n[0] * keyDir[0] + item.n[1] * keyDir[1] + item.n[2] * keyDir[2]);
+          var rimDot = Math.max(0, item.n[0] * rimDir[0] + item.n[1] * rimDir[1] + item.n[2] * rimDir[2]);
+
+          var rCol = Math.min(255, (38 + keyDot * 155 + rimDot * 120) | 0);
+          var gCol = Math.min(255, (36 + keyDot * 146 + rimDot * 32) | 0);
+          var bCol = Math.min(255, (32 + keyDot * 130 + rimDot * 12) | 0);
+
+          ctx.fillStyle = 'rgba(' + rCol + ',' + gCol + ',' + bCol + ', 0.34)';
+          ctx.strokeStyle = 'rgba(232, 227, 214, 0.22)';
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(p0[0], p0[1]);
+          ctx.lineTo(p1[0], p1[1]);
+          ctx.lineTo(p2[0], p2[1]);
+          ctx.closePath();
+          ctx.fill();
+          ctx.stroke();
+        }
+
+        ctx.strokeStyle = 'rgba(255, 77, 28, 0.55)';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        for (var k = 0; k <= ringSteps; k++) {
+          var rp = ringPts[k % ringSteps];
+          var rr = rot(rp, rx + 0.32, ry * 0.8 + t * 0.1, -0.25);
+          var rPersp = 4 / (4 - rr[2]);
+          var px = tx + rr[0] * scale * rPersp;
+          var py = ty + rr[1] * scale * rPersp;
+          if (k === 0) ctx.moveTo(px, py);
+          else ctx.lineTo(px, py);
+        }
+        ctx.stroke();
+
+        if (!reducedMotion) {
+          requestAnimationFrame(draw);
+        }
+      }
+
+      requestAnimationFrame(draw);
+    })();
+  </script>
+
+
+</body></html>

@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Compliance Review Queue — CVS</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">
+    globalThis.tailwind = globalThis.tailwind || {};
+    globalThis.tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            'primary': '#FF4D1C',
+            'on-primary': '#0E0E0C',
+            'primary-container': '#3C0800',
+            'on-primary-container': '#FFDBD2',
+            'surface': '#0E0E0C',
+            'surface-container-low': '#141411',
+            'surface-container': '#1A1A16',
+            'surface-container-high': '#23231E',
+            'on-surface': '#E8E3D6',
+            'on-surface-variant': '#9E9B90',
+            'outline': '#5F5E5B',
+            'outline-variant': '#2B2A26',
+            'success': '#58D68D',
+            'warning': '#F59E0B',
+            'error': '#FF5449',
+            'info': '#63A4FF',
+          },
+          fontFamily: {
+            'display': ['"Red Hat Display"', 'sans-serif'],
+            'headline': ['"Red Hat Display"', 'sans-serif'],
+            'title': ['"Carrois Gothic"', 'sans-serif'],
+            'body': ['"Carrois Gothic"', 'sans-serif'],
+            'label': ['"Geist Mono"', 'monospace'],
+          },
+        },
+      },
+    };
+  </script>
+  <link rel="stylesheet" href="css/design-system.css">
+</head>
+<body class="bg-surface text-on-surface font-body antialiased selection:bg-primary selection:text-on-primary">
+  <canvas id="bg-grain" class="fixed inset-0 z-0 pointer-events-none opacity-5" aria-hidden="true"></canvas>
+
+  <div class="relative z-10 min-h-screen flex flex-col lg:flex-row">
+    <!-- Mobile Sidebar Backdrop -->
+    <div id="sidebarBackdrop" class="fixed inset-0 bg-surface/80 z-30 hidden lg:hidden" aria-hidden="true"></div>
+
+    <!-- Persistent Left Sidebar -->
+    <aside id="sidebar" class="fixed inset-y-0 left-0 z-40 w-64 bg-surface-container-low border-r border-outline-variant flex flex-col justify-between transform -translate-x-full transition-transform duration-200 lg:static lg:translate-x-0 lg:shrink-0">
+      <div class="flex flex-col">
+        <!-- Brand Header -->
+        <div class="h-16 px-6 border-b border-outline-variant flex items-center justify-between">
+          <a href="index.html" class="flex items-center gap-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary rounded-sm">
+            <svg class="w-6 h-6 text-primary shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <polygon points="12 2 21 6.5 21 13.5 12 22 3 13.5 3 6.5 12 2"></polygon>
+              <polyline points="8.5 12.5 11 15 15.5 9.5"></polyline>
+            </svg>
+            <span class="font-headline text-lg text-on-surface tracking-tight font-semibold">CVS <span class="text-primary font-mono text-sm">.01</span></span>
+          </a>
+          <button id="closeSidebarBtn" type="button" class="lg:hidden text-on-surface-variant hover:text-on-surface">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+
+        <!-- Navigation Groups -->
+        <nav aria-label="Primary navigation" class="p-4 flex flex-col gap-6">
+          <div class="flex flex-col gap-1">
+            <span class="px-2 font-label text-[11px] uppercase text-on-surface-variant">01 / Overview</span>
+            <a href="dashboard.html" class="flex items-center gap-2 px-3 py-2 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container text-xs transition-colors">
+              <span class="material-symbols-outlined text-sm">dashboard</span>
+              <span>Admin Dashboard</span>
+            </a>
+          </div>
+
+          <div class="flex flex-col gap-1">
+            <span class="px-2 font-label text-[11px] uppercase text-on-surface-variant">02 / Operations</span>
+            <a href="candidates.html" class="flex items-center gap-2 px-3 py-2 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container text-xs transition-colors">
+              <span class="material-symbols-outlined text-sm">group</span>
+              <span>Candidates Directory</span>
+            </a>
+          </div>
+
+          <div class="flex flex-col gap-1">
+            <span class="px-2 font-label text-[11px] uppercase text-on-surface-variant">03 / Verification</span>
+            <a href="reviewer.html" aria-current="page" class="flex items-center justify-between px-3 py-2 rounded bg-surface-container-high border border-outline-variant text-on-surface font-body text-xs font-medium">
+              <span class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-sm text-primary">assignment</span>
+                <span>Reviewer Queue</span>
+              </span>
+              <span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+            </a>
+          </div>
+
+          <div class="flex flex-col gap-1">
+            <span class="px-2 font-label text-[11px] uppercase text-on-surface-variant">04 / Compliance & Docs</span>
+            <a href="docs.html" class="flex items-center gap-2 px-3 py-2 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container text-xs transition-colors">
+              <span class="material-symbols-outlined text-sm">menu_book</span>
+              <span>Platform Documentation</span>
+            </a>
+          </div>
+        </nav>
+      </div>
+
+      <!-- User Profile / Session Footer -->
+      <div class="p-4 border-t border-outline-variant bg-surface-container flex flex-col gap-2">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2 overflow-hidden">
+            <div class="w-7 h-7 rounded-full bg-warning/20 text-warning flex items-center justify-center font-mono text-xs font-bold shrink-0">
+              <span class="material-symbols-outlined text-sm">verified_user</span>
+            </div>
+            <div class="truncate">
+              <span class="user-name-display font-headline text-xs font-medium text-on-surface block truncate">Sarah Jenkins</span>
+              <span class="user-roles-display font-label text-[10px] text-warning block truncate">REVIEWER</span>
+            </div>
+          </div>
+          <button class="logout-trigger text-on-surface-variant hover:text-error p-1" title="Sign out">
+            <span class="material-symbols-outlined text-base">logout</span>
+          </button>
+        </div>
+        <div class="flex items-center gap-1 pt-1 border-t border-outline-variant/60 font-label text-[10px]">
+          <span class="text-on-surface-variant text-[9px]">Session:</span>
+          <button type="button" class="switch-role-admin px-1.5 py-0.5 rounded bg-surface-container-high border border-outline-variant hover:border-primary text-on-surface" title="Admin Session (Dhruv Dobariya)">Admin</button>
+          <button type="button" class="switch-role-recruiter px-1.5 py-0.5 rounded bg-surface-container-high border border-outline-variant hover:border-primary text-on-surface" title="Recruiter Session (Elena Vance)">Recruiter</button>
+          <button type="button" class="switch-role-reviewer px-1.5 py-0.5 rounded bg-surface-container-high border border-outline-variant hover:border-warning text-warning" title="Reviewer Session (Sarah Jenkins)">Reviewer</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="flex-1 flex flex-col min-w-0">
+      <!-- Top Sticky App Bar -->
+      <header class="sticky top-0 z-20 h-16 bg-surface/90 backdrop-blur-md border-b border-outline-variant px-4 sm:px-8 flex items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <button id="openSidebarBtn" class="lg:hidden text-on-surface-variant hover:text-on-surface p-1">
+            <span class="material-symbols-outlined">menu</span>
+          </button>
+          <div class="flex items-center gap-2 font-label text-xs">
+            <span class="text-on-surface-variant uppercase">Compliance</span>
+            <span class="text-outline">/</span>
+            <span class="text-on-surface font-medium uppercase">Assigned Verification Queue</span>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <div class="flex items-center gap-2">
+            <button type="button" class="switch-role-admin inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-surface-container border border-outline-variant text-on-surface rounded font-label text-xs uppercase hover:border-primary transition-colors">
+              <span class="material-symbols-outlined text-sm">admin_panel_settings</span>
+              <span>Admin (Dhruv)</span>
+            </button>
+            <button type="button" class="switch-role-recruiter inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-surface-container border border-outline-variant text-on-surface rounded font-label text-xs uppercase hover:border-primary transition-colors">
+              <span class="material-symbols-outlined text-sm">badge</span>
+              <span>Recruiter (Elena)</span>
+            </button>
+            <button type="button" class="switch-role-reviewer inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-warning/20 border border-warning/40 text-warning rounded font-label text-xs uppercase hover:bg-warning hover:text-on-primary transition-colors">
+              <span class="material-symbols-outlined text-sm">verified_user</span>
+              <span>Reviewer (Sarah)</span>
+            </button>
+          </div>
+          <button id="refresh-queue-btn" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-container text-on-surface border border-outline-variant rounded font-label text-xs uppercase hover:border-primary transition-colors">
+            <span class="material-symbols-outlined text-sm">refresh</span>
+            <span>Refresh Queue</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Main Queue Workspace -->
+      <main class="flex-1 p-4 sm:p-8 flex flex-col gap-6 max-w-[1440px] mx-auto w-full">
+        <div class="flex flex-col sm:flex-row sm:items-baseline justify-between gap-4 pb-2">
+          <div>
+            <span class="font-label text-xs uppercase text-primary font-semibold tracking-wider block mb-1">(03) COMPLIANCE SIGN-OFF</span>
+            <h1 class="font-headline text-2xl sm:text-3xl text-on-surface font-semibold tracking-tight">Assigned Verifications</h1>
+          </div>
+          <div class="flex items-center gap-2 font-label text-xs text-on-surface-variant">
+            <span id="queue-count-label">Total Assignments:</span>
+            <span id="queue-count-badge" class="px-2 py-0.5 rounded border border-primary/40 bg-primary/20 text-primary font-mono text-[11px] font-semibold tabular-nums">0</span>
+          </div>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="flex items-center gap-2 border-b border-outline-variant pb-2 font-label text-xs">
+          <button type="button" data-status="" class="queue-status-tab px-3 py-1.5 rounded bg-primary text-on-primary border border-primary uppercase font-medium">All Assignments</button>
+          <button type="button" data-status="requires_review" class="queue-status-tab px-3 py-1.5 rounded bg-surface-container text-on-surface-variant border border-outline-variant hover:border-primary uppercase">In Review</button>
+          <button type="button" data-status="pending" class="queue-status-tab px-3 py-1.5 rounded bg-surface-container text-on-surface-variant border border-outline-variant hover:border-primary uppercase">Pending</button>
+          <button type="button" data-status="passed" class="queue-status-tab px-3 py-1.5 rounded bg-surface-container text-on-surface-variant border border-outline-variant hover:border-primary uppercase">Approved</button>
+          <button type="button" data-status="failed" class="queue-status-tab px-3 py-1.5 rounded bg-surface-container text-on-surface-variant border border-outline-variant hover:border-primary uppercase">Rejected</button>
+        </div>
+
+        <!-- Queue Table Card -->
+        <div class="bg-surface-container border border-outline-variant rounded flex flex-col overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-surface-container-low text-on-surface-variant font-label text-[11px] uppercase border-b border-outline-variant">
+                <tr>
+                  <th class="px-4 py-3">Case ID</th>
+                  <th class="px-4 py-3">Applicant Name</th>
+                  <th class="px-4 py-3">Assigned Timestamp</th>
+                  <th class="px-4 py-3">Current Status</th>
+                  <th class="px-4 py-3 text-right">Review Action</th>
+                </tr>
+              </thead>
+              <tbody id="queue-tbody" class="divide-y divide-outline-variant font-body">
+                <tr>
+                  <td colspan="5" class="px-4 py-12 text-center text-on-surface-variant font-label">
+                    <span class="material-symbols-outlined animate-spin text-xl text-primary block mb-2">sync</span>
+                    Loading assigned review queue...
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <div id="toast-container"></div>
+  <script src="js/background-scene.js"></script>
+  <script type="module">
+    import { API } from './js/api.js';
+    import { checkSession, showToast, switchRole } from './js/app.js';
+
+    let selectedStatus = '';
+
+    const STATUS_MAP = {
+      '': { label: 'Total Assignments:', color: 'border-primary/40 bg-primary/20 text-primary' },
+      'requires_review': { label: 'In Review:', color: 'border-warning/40 bg-warning/20 text-warning' },
+      'pending': { label: 'Pending Review:', color: 'border-info/40 bg-info/20 text-info' },
+      'passed': { label: 'Approved:', color: 'border-success/40 bg-success/20 text-success' },
+      'failed': { label: 'Rejected:', color: 'border-error/40 bg-error/20 text-error' }
+    };
+
+    function updateQueueHeader(count) {
+      const cfg = STATUS_MAP[selectedStatus] || STATUS_MAP[''];
+      const labelEl = document.getElementById('queue-count-label');
+      const badgeEl = document.getElementById('queue-count-badge');
+      if (labelEl) labelEl.textContent = cfg.label;
+      if (badgeEl) {
+        badgeEl.textContent = count;
+        badgeEl.className = `px-2 py-0.5 rounded font-mono font-semibold text-[11px] tabular-nums border ${cfg.color}`;
+      }
+    }
+
+    function getStatusBadge(status) {
+      const s = String(status || '').toLowerCase();
+      if (s === 'passed' || s === 'approved') {
+        return `<span class="px-2 py-0.5 rounded border border-success/30 bg-success/10 text-success font-mono text-[10px] uppercase font-semibold">Approved</span>`;
+      }
+      if (s === 'failed' || s === 'rejected') {
+        return `<span class="px-2 py-0.5 rounded border border-error/30 bg-error/10 text-error font-mono text-[10px] uppercase font-semibold">Rejected</span>`;
+      }
+      if (s === 'requires_review') {
+        return `<span class="px-2 py-0.5 rounded border border-warning/30 bg-warning/10 text-warning font-mono text-[10px] uppercase font-semibold">In Review</span>`;
+      }
+      return `<span class="px-2 py-0.5 rounded border border-info/30 bg-info/10 text-info font-mono text-[10px] uppercase font-semibold">${escapeHtml(status || 'Pending')}</span>`;
+    }
+
+    async function loadQueue() {
+      const user = await checkSession();
+      const tbody = document.getElementById('queue-tbody');
+
+      try {
+        const res = await API.reviewer.getAssignments({ status: selectedStatus || undefined });
+        const list = res.data ? (Array.isArray(res.data) ? res.data : res.data.verifications || res.data.assignments || []) : [];
+
+        updateQueueHeader(list.length);
+
+        if (list.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="5" class="px-4 py-12 text-center text-on-surface-variant font-label">No verifications currently assigned to your account.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = list.map(v => `
+          <tr class="hover:bg-surface-container-high/60 transition-colors">
+            <td class="px-4 py-3 font-mono text-[11px] text-primary">VER-${v.id.substring(0, 8).toUpperCase()}</td>
+            <td class="px-4 py-3 font-medium text-on-surface">${escapeHtml(v.candidate_name || v.full_name || 'Candidate')}</td>
+            <td class="px-4 py-3 font-mono text-on-surface-variant text-[11px]">${new Date(v.assigned_at || v.created_at).toLocaleString()}</td>
+            <td class="px-4 py-3">
+              ${getStatusBadge(v.status)}
+            </td>
+            <td class="px-4 py-3 text-right">
+              <a href="candidate-detail.html?id=${v.candidate_id}" class="inline-flex items-center gap-1 px-3 py-1 bg-primary text-on-primary rounded text-[11px] font-label uppercase font-medium hover:bg-on-primary-container hover:text-primary transition-colors">
+                <span>Evaluate</span>
+                <span class="material-symbols-outlined text-xs">arrow_forward</span>
+              </a>
+            </td>
+          </tr>
+        `).join('');
+      } catch (err) {
+        console.error('Queue load failed:', err);
+        updateQueueHeader(0);
+        const isAuthForbidden = (err.status === 403 || err.status === 401) && !(user && Array.isArray(user.roles) && (user.roles.includes('reviewer') || user.roles.includes('admin')));
+        if (isAuthForbidden) {
+          showToast('Requires Reviewer role: ' + (err.message || 'Access denied'), 'warning');
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="5" class="px-4 py-12 text-center">
+                <div class="max-w-md mx-auto p-6 bg-surface-container-low border border-warning/40 rounded flex flex-col items-center gap-3">
+                  <span class="material-symbols-outlined text-warning text-3xl">lock</span>
+                  <span class="font-headline text-sm font-semibold text-on-surface">Reviewer Authentication Required</span>
+                  <p class="font-body text-xs text-on-surface-variant text-center">
+                    Only users with the active <strong class="text-warning">reviewer</strong> role can access this queue. Click below to instantly activate a Reviewer session:
+                  </p>
+                  <div class="flex items-center gap-3 mt-2">
+                    <button type="button" id="auto-login-reviewer-btn" class="px-4 py-2 bg-primary text-on-primary rounded font-label text-xs uppercase font-medium hover:bg-on-primary-container hover:text-primary transition-colors flex items-center gap-2">
+                      <span class="material-symbols-outlined text-sm">verified_user</span>
+                      <span>Switch to Sarah Jenkins (Reviewer)</span>
+                    </button>
+                    <a href="login.html" class="px-3 py-2 bg-surface-container border border-outline-variant hover:border-on-surface rounded font-label text-xs uppercase text-on-surface">
+                      Go to Login
+                    </a>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          `;
+          const autoBtn = document.getElementById('auto-login-reviewer-btn');
+          if (autoBtn) {
+            autoBtn.addEventListener('click', () => switchRole('reviewer'));
+          }
+        } else {
+          showToast('Error loading queue: ' + (err.message || 'Server error'), 'error');
+          tbody.innerHTML = `<tr><td colspan="5" class="px-4 py-12 text-center text-error font-label">Failed to load assignments: ${escapeHtml(err.message || 'Server error')}</td></tr>`;
+        }
+      }
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/[&<>"']/g, m => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      })[m]);
+    }
+
+    document.querySelectorAll('.queue-status-tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.queue-status-tab').forEach(b => {
+          b.classList.remove('bg-primary', 'text-on-primary', 'border-primary');
+          b.classList.add('bg-surface-container', 'text-on-surface-variant');
+        });
+        btn.classList.remove('bg-surface-container', 'text-on-surface-variant');
+        btn.classList.add('bg-primary', 'text-on-primary', 'border-primary');
+        selectedStatus = btn.getAttribute('data-status');
+        updateQueueHeader('...');
+        loadQueue();
+      });
+    });
+
+    document.getElementById('refresh-queue-btn').addEventListener('click', () => {
+      loadQueue();
+      showToast('Queue refreshed', 'success');
+    });
+
+    loadQueue();
+  </script>
+</body>
+</html>

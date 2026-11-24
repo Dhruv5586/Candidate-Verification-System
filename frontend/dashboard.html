@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard — Candidate Verification System</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">
+    globalThis.tailwind = globalThis.tailwind || {};
+    globalThis.tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            'primary': '#FF4D1C',
+            'on-primary': '#0E0E0C',
+            'primary-container': '#3C0800',
+            'on-primary-container': '#FFDBD2',
+            'surface': '#0E0E0C',
+            'surface-container-low': '#141411',
+            'surface-container': '#1A1A16',
+            'surface-container-high': '#23231E',
+            'on-surface': '#E8E3D6',
+            'on-surface-variant': '#9E9B90',
+            'outline': '#5F5E5B',
+            'outline-variant': '#2B2A26',
+            'success': '#58D68D',
+            'warning': '#F59E0B',
+            'error': '#FF5449',
+            'info': '#63A4FF',
+          },
+          fontFamily: {
+            'display': ['"Red Hat Display"', 'sans-serif'],
+            'headline': ['"Red Hat Display"', 'sans-serif'],
+            'title': ['"Carrois Gothic"', 'sans-serif'],
+            'body': ['"Carrois Gothic"', 'sans-serif'],
+            'label': ['"Geist Mono"', 'monospace'],
+          },
+        },
+      },
+    };
+  </script>
+  <link rel="stylesheet" href="css/design-system.css">
+</head>
+<body class="bg-surface text-on-surface font-body antialiased selection:bg-primary selection:text-on-primary">
+  <canvas id="bg-grain" class="fixed inset-0 z-0 pointer-events-none opacity-5" aria-hidden="true"></canvas>
+  <canvas id="bg-scene" class="fixed inset-0 z-0 pointer-events-none opacity-20" aria-hidden="true"></canvas>
+
+  <div class="relative z-10 min-h-screen flex flex-col lg:flex-row">
+    <!-- Mobile Sidebar Backdrop -->
+    <div id="sidebarBackdrop" class="fixed inset-0 bg-surface/80 z-30 hidden lg:hidden" aria-hidden="true"></div>
+
+    <!-- Persistent Left Sidebar -->
+    <aside id="sidebar" class="fixed inset-y-0 left-0 z-40 w-64 bg-surface-container-low border-r border-outline-variant flex flex-col justify-between transform -translate-x-full transition-transform duration-200 lg:static lg:translate-x-0 lg:shrink-0">
+      <div class="flex flex-col">
+        <!-- Brand Header -->
+        <div class="h-16 px-6 border-b border-outline-variant flex items-center justify-between">
+          <a href="index.html" class="flex items-center gap-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary rounded-sm">
+            <svg class="w-6 h-6 text-primary shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <polygon points="12 2 21 6.5 21 13.5 12 22 3 13.5 3 6.5 12 2"></polygon>
+              <polyline points="8.5 12.5 11 15 15.5 9.5"></polyline>
+            </svg>
+            <span class="font-headline text-lg text-on-surface tracking-tight font-semibold">CVS <span class="text-primary font-mono text-sm">.01</span></span>
+          </a>
+          <button id="closeSidebarBtn" type="button" class="lg:hidden text-on-surface-variant hover:text-on-surface">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+
+        <!-- Navigation Groups -->
+        <nav aria-label="Primary navigation" class="p-4 flex flex-col gap-6">
+          <div class="flex flex-col gap-1">
+            <span class="px-2 font-label text-[11px] uppercase text-on-surface-variant">01 / Overview</span>
+            <a href="dashboard.html" aria-current="page" class="flex items-center justify-between px-3 py-2 rounded bg-surface-container-high border border-outline-variant text-on-surface font-body text-xs font-medium">
+              <span class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-sm text-primary">dashboard</span>
+                <span>Admin Dashboard</span>
+              </span>
+              <span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+            </a>
+          </div>
+
+          <div class="flex flex-col gap-1">
+            <span class="px-2 font-label text-[11px] uppercase text-on-surface-variant">02 / Operations</span>
+            <a href="candidates.html" class="flex items-center gap-2 px-3 py-2 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container text-xs transition-colors">
+              <span class="material-symbols-outlined text-sm">group</span>
+              <span>Candidates Directory</span>
+            </a>
+            <a href="candidates.html?openImport=true" class="flex items-center gap-2 px-3 py-2 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container text-xs transition-colors">
+              <span class="material-symbols-outlined text-sm">upload_file</span>
+              <span>Bulk CSV Import</span>
+            </a>
+          </div>
+
+          <div class="flex flex-col gap-1">
+            <span class="px-2 font-label text-[11px] uppercase text-on-surface-variant">03 / Verification</span>
+            <a href="reviewer.html" class="flex items-center justify-between px-3 py-2 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container text-xs transition-colors">
+              <span class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-sm">assignment</span>
+                <span>Reviewer Queue</span>
+              </span>
+              <span id="sidebar-queue-count" class="px-1.5 py-0.5 rounded bg-surface-container-high border border-outline-variant font-mono text-[10px] text-on-surface-variant">0</span>
+            </a>
+          </div>
+
+          <div class="flex flex-col gap-1">
+            <span class="px-2 font-label text-[11px] uppercase text-on-surface-variant">04 / Compliance & Docs</span>
+            <a href="docs.html" class="flex items-center gap-2 px-3 py-2 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container text-xs transition-colors">
+              <span class="material-symbols-outlined text-sm">menu_book</span>
+              <span>Platform Documentation</span>
+            </a>
+          </div>
+        </nav>
+      </div>
+
+      <!-- User Profile / Session Footer in Sidebar -->
+      <div class="p-4 border-t border-outline-variant bg-surface-container flex flex-col gap-2">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2 overflow-hidden">
+            <div class="w-7 h-7 rounded-full bg-primary/20 text-primary flex items-center justify-center font-mono text-xs font-bold shrink-0">
+              <span class="material-symbols-outlined text-sm">person</span>
+            </div>
+            <div class="truncate">
+              <span class="user-name-display font-headline text-xs font-medium text-on-surface block truncate">Admin User</span>
+              <span class="user-roles-display font-label text-[10px] text-primary block truncate">ADMIN, RECRUITER</span>
+            </div>
+          </div>
+          <button class="logout-trigger text-on-surface-variant hover:text-error p-1" title="Sign out">
+            <span class="material-symbols-outlined text-base">logout</span>
+          </button>
+        </div>
+        <div class="flex items-center gap-1 pt-1 border-t border-outline-variant/60 font-label text-[10px]">
+          <span class="text-on-surface-variant text-[9px]">Session:</span>
+          <button type="button" class="switch-role-admin px-1.5 py-0.5 rounded bg-surface-container-high border border-outline-variant hover:border-primary text-on-surface" title="Admin Session (Dhruv Dobariya)">Admin</button>
+          <button type="button" class="switch-role-recruiter px-1.5 py-0.5 rounded bg-surface-container-high border border-outline-variant hover:border-primary text-on-surface" title="Recruiter Session (Elena Vance)">Recruiter</button>
+          <button type="button" class="switch-role-reviewer px-1.5 py-0.5 rounded bg-surface-container-high border border-outline-variant hover:border-warning text-warning" title="Reviewer Session (Sarah Jenkins)">Reviewer</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="flex-1 flex flex-col min-w-0">
+      <!-- Top Sticky App Bar -->
+      <header class="sticky top-0 z-20 h-16 bg-surface/90 backdrop-blur-md border-b border-outline-variant px-4 sm:px-8 flex items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <button id="openSidebarBtn" class="lg:hidden text-on-surface-variant hover:text-on-surface p-1">
+            <span class="material-symbols-outlined">menu</span>
+          </button>
+          <div class="flex items-center gap-2 font-label text-xs">
+            <span class="text-on-surface-variant uppercase">CVS</span>
+            <span class="text-outline">/</span>
+            <span class="text-on-surface font-medium uppercase">Admin Dashboard</span>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <!-- Backend Status Indicator -->
+          <div class="flex items-center gap-2 px-3 py-1 bg-surface-container border border-outline-variant rounded text-xs font-label">
+            <span class="w-2 h-2 rounded-full bg-success animate-pulse"></span>
+            <span class="text-on-surface uppercase">System Online</span>
+          </div>
+
+          <a href="candidates.html" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary text-on-primary rounded font-label text-xs uppercase font-medium hover:bg-on-primary-container hover:text-primary transition-colors">
+            <span class="material-symbols-outlined text-sm">add</span>
+            <span>New Verification</span>
+          </a>
+        </div>
+      </header>
+
+      <!-- Main Workspace -->
+      <main class="flex-1 p-4 sm:p-8 flex flex-col gap-8 max-w-[1440px] mx-auto w-full">
+        <!-- Dashboard Header -->
+        <div class="flex flex-col sm:flex-row sm:items-baseline justify-between gap-4 pb-4 border-b border-outline-variant">
+          <div>
+            <span class="font-label text-xs uppercase text-primary font-semibold tracking-wider block mb-1">(01) OVERVIEW / SYSTEM METRICS</span>
+            <h1 class="font-headline text-2xl sm:text-3xl text-on-surface font-semibold tracking-tight">Enterprise Verification Operations</h1>
+          </div>
+          <div class="flex items-center gap-2">
+            <button id="refresh-dashboard-btn" class="inline-flex items-center gap-1 px-3 py-1.5 bg-surface-container text-on-surface border border-outline-variant rounded font-label text-xs uppercase hover:border-primary transition-colors">
+              <span class="material-symbols-outlined text-sm">refresh</span>
+              <span>Refresh Telemetry</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 4 KPI Metrics Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <!-- Total Candidates -->
+          <a href="candidates.html" class="p-5 bg-surface-container border border-outline-variant rounded hover:border-primary transition-colors flex flex-col justify-between gap-4 group">
+            <div class="flex items-center justify-between">
+              <span class="font-label text-xs uppercase text-on-surface-variant group-hover:text-primary">Total Candidates</span>
+              <span class="material-symbols-outlined text-primary text-lg">group</span>
+            </div>
+            <div>
+              <span id="kpi-candidates-count" class="font-headline text-3xl font-semibold text-on-surface tabular-nums">10,000</span>
+              <span class="font-label text-[11px] text-success block mt-1">● Synced with Enterprise Database (10,000+ records)</span>
+            </div>
+          </a>
+
+          <!-- Active Resumes -->
+          <div class="p-5 bg-surface-container border border-outline-variant rounded flex flex-col justify-between gap-4">
+            <div class="flex items-center justify-between">
+              <span class="font-label text-xs uppercase text-on-surface-variant">Resumes Parsed</span>
+              <span class="material-symbols-outlined text-info text-lg">description</span>
+            </div>
+            <div>
+              <span id="kpi-resumes-count" class="font-headline text-3xl font-semibold text-on-surface tabular-nums">...</span>
+              <span id="kpi-resumes-subtitle" class="font-label text-[11px] text-on-surface-variant block mt-1">Extraction Rate</span>
+            </div>
+          </div>
+
+          <!-- Pending Verifications -->
+          <div class="p-5 bg-surface-container border border-outline-variant rounded flex flex-col justify-between gap-4">
+            <div class="flex items-center justify-between">
+              <span class="font-label text-xs uppercase text-on-surface-variant">Pending Verifications</span>
+              <span class="material-symbols-outlined text-warning text-lg">pending_actions</span>
+            </div>
+            <div>
+              <span id="kpi-pending-count" class="font-headline text-3xl font-semibold text-warning tabular-nums">...</span>
+              <span id="kpi-pending-subtitle" class="font-label text-[11px] text-warning block mt-1">Awaiting verification checks</span>
+            </div>
+          </div>
+
+          <!-- Active Reviewers -->
+          <div class="p-5 bg-surface-container border border-outline-variant rounded flex flex-col justify-between gap-4">
+            <div class="flex items-center justify-between">
+              <span class="font-label text-xs uppercase text-on-surface-variant">Reviewer Pool</span>
+              <span class="material-symbols-outlined text-success text-lg">verified_user</span>
+            </div>
+            <div>
+              <span id="kpi-reviewers-count" class="font-headline text-3xl font-semibold text-on-surface tabular-nums">1</span>
+              <span class="font-label text-[11px] text-success block mt-1">Sarah Jenkins (Active)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Main Grid: Recent Activity & Reviewer Distribution -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <!-- Recent Candidates & Verifications Table (8 Cols) -->
+          <div class="lg:col-span-8 bg-surface-container border border-outline-variant rounded flex flex-col">
+            <div class="p-4 border-b border-outline-variant flex flex-wrap items-center justify-between gap-3">
+              <div class="flex items-center gap-2">
+                <span class="font-headline text-sm font-semibold text-on-surface">Candidate Directory Stream</span>
+                <span class="px-2 py-0.5 rounded bg-surface-container-high border border-outline-variant font-mono text-[10px] text-primary">LIVE DATA</span>
+                <span class="text-xs text-on-surface-variant font-mono hidden sm:inline">(Showing latest <span id="stream-showing-count" class="text-on-surface font-semibold">10</span> of <span id="stream-total-count" class="text-primary font-bold">10,000</span>)</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <div class="flex items-center gap-1.5 font-label text-xs">
+                  <span class="text-on-surface-variant">Stream:</span>
+                  <select id="stream-limit-select" class="bg-surface-container-low border border-outline-variant text-on-surface rounded text-xs px-2 py-1 font-label focus:border-primary outline-none">
+                    <option value="10" selected>10 rows</option>
+                    <option value="25">25 rows</option>
+                    <option value="50">50 rows</option>
+                  </select>
+                </div>
+                <a href="candidates.html" class="font-label text-xs uppercase text-primary hover:underline flex items-center gap-1">
+                  <span>Full Directory (<span id="stream-view-all-count">10,000</span>)</span>
+                  <span class="material-symbols-outlined text-xs">arrow_forward</span>
+                </a>
+              </div>
+            </div>
+
+            <!-- Table Container -->
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-surface-container-low text-on-surface-variant font-label text-[11px] uppercase border-b border-outline-variant">
+                  <tr>
+                    <th class="px-4 py-3">Candidate</th>
+                    <th class="px-4 py-3">Job Role</th>
+                    <th class="px-4 py-3">Location</th>
+                    <th class="px-4 py-3">Status</th>
+                    <th class="px-4 py-3 text-right">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="dashboard-candidates-tbody" class="divide-y divide-outline-variant font-body">
+                  <tr>
+                    <td colspan="5" class="px-4 py-8 text-center text-on-surface-variant font-label">
+                      <span class="material-symbols-outlined animate-spin text-lg text-primary block mb-1">sync</span>
+                      Loading verified candidate records...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Side Panel: Reviewer Workload & Quick Operations (4 Cols) -->
+          <div class="lg:col-span-4 flex flex-col gap-6">
+            <!-- Reviewer Assignment Capacity -->
+            <div class="p-5 bg-surface-container border border-outline-variant rounded flex flex-col gap-4">
+              <div class="flex items-center justify-between pb-3 border-b border-outline-variant">
+                <span class="font-headline text-sm font-semibold text-on-surface">Compliance Reviewers</span>
+                <span class="material-symbols-outlined text-primary text-base">how_to_reg</span>
+              </div>
+
+              <div id="reviewer-list-container" class="flex flex-col gap-3">
+                <div class="p-3 bg-surface-container-low border border-outline-variant rounded flex items-center justify-between">
+                  <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-primary/20 text-primary flex items-center justify-center font-mono text-xs font-bold">SJ</div>
+                    <div>
+                      <span class="font-headline text-xs font-medium text-on-surface block">Sarah Jenkins</span>
+                      <span class="font-label text-[10px] text-on-surface-variant block">Compliance Specialist</span>
+                    </div>
+                  </div>
+                  <span class="px-2 py-0.5 rounded bg-success/10 text-success border border-success/30 font-mono text-[10px]">Active</span>
+                </div>
+              </div>
+
+              <a href="reviewer.html" class="inline-flex items-center justify-center gap-1.5 w-full py-2 bg-surface-container-high border border-outline-variant rounded text-on-surface font-label text-xs uppercase hover:border-primary transition-colors">
+                <span>Open Reviewer Portal</span>
+                <span class="material-symbols-outlined text-xs">launch</span>
+              </a>
+            </div>
+
+            <!-- Quick Filter Shortcuts -->
+            <div class="p-5 bg-surface-container border border-outline-variant rounded flex flex-col gap-3">
+              <span class="font-headline text-sm font-semibold text-on-surface pb-2 border-b border-outline-variant">Operational Shortcuts</span>
+              
+              <a href="candidates.html?location=United+Kingdom" class="p-3 bg-surface-container-low border border-outline-variant rounded hover:border-primary transition-colors flex items-center justify-between text-xs">
+                <div class="flex items-center gap-2">
+                  <span class="material-symbols-outlined text-primary text-sm">flag</span>
+                  <span>Filter UK Candidates (494 Records)</span>
+                </div>
+                <span class="material-symbols-outlined text-xs text-on-surface-variant">arrow_forward</span>
+              </a>
+
+              <a href="candidates.html?openImport=true" class="p-3 bg-surface-container-low border border-outline-variant rounded hover:border-primary transition-colors flex items-center justify-between text-xs">
+                <div class="flex items-center gap-2">
+                  <span class="material-symbols-outlined text-info text-sm">file_upload</span>
+                  <span>Import Applicant CSV</span>
+                </div>
+                <span class="material-symbols-outlined text-xs text-on-surface-variant">arrow_forward</span>
+              </a>
+
+              <a href="docs.html" class="p-3 bg-surface-container-low border border-outline-variant rounded hover:border-primary transition-colors flex items-center justify-between text-xs">
+                <div class="flex items-center gap-2">
+                  <span class="material-symbols-outlined text-primary text-sm">menu_book</span>
+                  <span>System & Workflow Documentation</span>
+                </div>
+                <span class="material-symbols-outlined text-xs text-on-surface-variant">arrow_forward</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <div id="toast-container"></div>
+  <script src="js/background-scene.js"></script>
+  <script type="module">
+    import { API } from './js/api.js';
+    import { checkSession, showToast } from './js/app.js';
+
+    let currentStreamLimit = 10;
+
+    async function loadDashboard() {
+      await checkSession();
+
+      try {
+        // 1. Fetch live system telemetry stats from database
+        try {
+          const statsRes = await API.candidates.getStats();
+          if (statsRes && statsRes.data) {
+            const stats = statsRes.data;
+            document.getElementById('kpi-candidates-count').textContent = stats.totalCandidates.toLocaleString();
+            document.getElementById('kpi-resumes-count').textContent = stats.resumesParsed.toLocaleString();
+            document.getElementById('kpi-pending-count').textContent = stats.pendingVerifications.toLocaleString();
+            if (document.getElementById('kpi-reviewers-count')) {
+              document.getElementById('kpi-reviewers-count').textContent = stats.reviewerPool.toLocaleString();
+            }
+
+            const extractionRate = stats.totalCandidates > 0
+              ? ((stats.resumesParsed / stats.totalCandidates) * 100).toFixed(1)
+              : '100';
+            const resumeSub = document.getElementById('kpi-resumes-subtitle');
+            if (resumeSub) {
+              resumeSub.textContent = `${extractionRate}% Extraction Rate (${stats.resumesParsed.toLocaleString()} parsed)`;
+            }
+
+            const pendingSub = document.getElementById('kpi-pending-subtitle');
+            if (pendingSub) {
+              pendingSub.textContent = `${stats.pendingVerifications.toLocaleString()} awaiting verification`;
+            }
+          }
+        } catch (statErr) {
+          console.warn('Live stats fetch warning:', statErr);
+        }
+
+        // 2. Load candidates stream and pagination metadata
+        const res = await API.candidates.list({ limit: currentStreamLimit });
+        const candidates = res.data ? (Array.isArray(res.data) ? res.data : res.data.candidates || []) : [];
+        const pagination = res.pagination || res.meta || {};
+        const total = pagination.total !== undefined ? pagination.total : (Array.isArray(res.data) ? res.data.length : 0);
+        const formattedTotal = total.toLocaleString();
+
+        const showingSpan = document.getElementById('stream-showing-count');
+        const totalSpan = document.getElementById('stream-total-count');
+        const viewAllSpan = document.getElementById('stream-view-all-count');
+        if (showingSpan) showingSpan.textContent = candidates.length;
+        if (totalSpan) totalSpan.textContent = formattedTotal;
+        if (viewAllSpan) viewAllSpan.textContent = formattedTotal;
+
+        const tbody = document.getElementById('dashboard-candidates-tbody');
+        if (!candidates || candidates.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="5" class="px-4 py-8 text-center text-on-surface-variant">No candidates found in database.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = candidates.map(c => {
+          const locBadge = c.location ? `<span class="px-2 py-0.5 rounded bg-surface-container-high border border-outline-variant font-mono text-[10px] text-on-surface">${escapeHtml(c.location)}</span>` : '<span class="text-on-surface-variant text-[11px]">—</span>';
+          return `
+            <tr class="hover:bg-surface-container-high/60 transition-colors">
+              <td class="px-4 py-3">
+                <div class="font-medium text-on-surface">${escapeHtml(c.full_name)}</div>
+                <div class="font-mono text-[11px] text-on-surface-variant">${escapeHtml(c.email)}</div>
+              </td>
+              <td class="px-4 py-3 text-on-surface-variant">${escapeHtml(c.current_job_title || 'Applicant')}</td>
+              <td class="px-4 py-3">${locBadge}</td>
+              <td class="px-4 py-3">
+                <span class="px-2 py-0.5 rounded border border-warning/30 bg-warning/10 text-warning font-mono text-[10px] uppercase">${escapeHtml(c.status || 'pending')}</span>
+              </td>
+              <td class="px-4 py-3 text-right">
+                <a href="candidate-detail.html?id=${c.id}" class="inline-flex items-center gap-1 px-2.5 py-1 bg-surface-container border border-outline-variant hover:border-primary hover:text-primary rounded text-[11px] font-label uppercase transition-colors">
+                  <span>Dossier</span>
+                  <span class="material-symbols-outlined text-xs">arrow_forward</span>
+                </a>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      } catch (err) {
+        showToast('Failed to load dashboard data: ' + err.message, 'error');
+      }
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/[&<>"']/g, m => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      })[m]);
+    }
+
+    // Stream limit dropdown
+    const limitSelect = document.getElementById('stream-limit-select');
+    if (limitSelect) {
+      limitSelect.addEventListener('change', (e) => {
+        currentStreamLimit = parseInt(e.target.value, 10) || 10;
+        loadDashboard();
+      });
+    }
+
+    document.getElementById('refresh-dashboard-btn').addEventListener('click', () => {
+      loadDashboard();
+      showToast('Dashboard metrics refreshed', 'success');
+    });
+
+    loadDashboard();
+  </script>
+</body>
+</html>

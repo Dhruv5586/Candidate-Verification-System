@@ -89,3 +89,10 @@ pnpm-debug.log*
 ehthumbs.db
 Thumbs.db
 Desktop.ini
+
+# Private storage
+private-storage/
+
+# Sample raw PDF collection
+datasets/data/
+

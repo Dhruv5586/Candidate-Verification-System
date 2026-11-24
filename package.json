@@ -1,0 +1,13 @@
+{
+  "name": "candidate-verification-system",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Candidate Verification System - Root Workspace Scripts",
+  "scripts": {
+    "dev": "npm --prefix node-api run dev",
+    "build": "npm --prefix node-api run build",
+    "start": "npm --prefix node-api start",
+    "test": "npm --prefix node-api test",
+    "typecheck": "npm --prefix node-api run typecheck"
+  }
+}

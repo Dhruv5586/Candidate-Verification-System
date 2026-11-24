@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Candidate Verification Dossier — CVS</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">
+    globalThis.tailwind = globalThis.tailwind || {};
+    globalThis.tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            'primary': '#FF4D1C',
+            'on-primary': '#0E0E0C',
+            'primary-container': '#3C0800',
+            'on-primary-container': '#FFDBD2',
+            'surface': '#0E0E0C',
+            'surface-container-low': '#141411',
+            'surface-container': '#1A1A16',
+            'surface-container-high': '#23231E',
+            'on-surface': '#E8E3D6',
+            'on-surface-variant': '#9E9B90',
+            'outline': '#5F5E5B',
+            'outline-variant': '#2B2A26',
+            'success': '#58D68D',
+            'warning': '#F59E0B',
+            'error': '#FF5449',
+            'info': '#63A4FF',
+          },
+          fontFamily: {
+            'display': ['"Red Hat Display"', 'sans-serif'],
+            'headline': ['"Red Hat Display"', 'sans-serif'],
+            'title': ['"Carrois Gothic"', 'sans-serif'],
+            'body': ['"Carrois Gothic"', 'sans-serif'],
+            'label': ['"Geist Mono"', 'monospace'],
+          },
+        },
+      },
+    };
+  </script>
+  <link rel="stylesheet" href="css/design-system.css">
+</head>
+<body class="bg-surface text-on-surface font-body antialiased selection:bg-primary selection:text-on-primary">
+  <canvas id="bg-grain" class="fixed inset-0 z-0 pointer-events-none opacity-5" aria-hidden="true"></canvas>
+
+  <div class="relative z-10 min-h-screen flex flex-col lg:flex-row">
+    <!-- Mobile Sidebar Backdrop -->
+    <div id="sidebarBackdrop" class="fixed inset-0 bg-surface/80 z-30 hidden lg:hidden" aria-hidden="true"></div>
+
+    <!-- Persistent Left Sidebar -->
+    <aside id="sidebar" class="fixed inset-y-0 left-0 z-40 w-64 bg-surface-container-low border-r border-outline-variant flex flex-col justify-between transform -translate-x-full transition-transform duration-200 lg:static lg:translate-x-0 lg:shrink-0">
+      <div class="flex flex-col">
+        <!-- Brand Header -->
+        <div class="h-16 px-6 border-b border-outline-variant flex items-center justify-between">
+          <a href="index.html" class="flex items-center gap-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary rounded-sm">
+            <svg class="w-6 h-6 text-primary shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <polygon points="12 2 21 6.5 21 13.5 12 22 3 13.5 3 6.5 12 2"></polygon>
+              <polyline points="8.5 12.5 11 15 15.5 9.5"></polyline>
+            </svg>
+            <span class="font-headline text-lg text-on-surface tracking-tight font-semibold">CVS <span class="text-primary font-mono text-sm">.01</span></span>
+          </a>
+          <button id="closeSidebarBtn" type="button" class="lg:hidden text-on-surface-variant hover:text-on-surface">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+
+        <!-- Navigation Groups -->
+        <nav aria-label="Primary navigation" class="p-4 flex flex-col gap-6">
+          <div class="flex flex-col gap-1">
+            <span class="px-2 font-label text-[11px] uppercase text-on-surface-variant">01 / Overview</span>
+            <a href="dashboard.html" class="flex items-center gap-2 px-3 py-2 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container text-xs transition-colors">
+              <span class="material-symbols-outlined text-sm">dashboard</span>
+              <span>Admin Dashboard</span>
+            </a>
+          </div>
+
+          <div class="flex flex-col gap-1">
+            <span class="px-2 font-label text-[11px] uppercase text-on-surface-variant">02 / Operations</span>
+            <a href="candidates.html" class="flex items-center gap-2 px-3 py-2 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container text-xs transition-colors">
+              <span class="material-symbols-outlined text-sm">group</span>
+              <span>Candidates Directory</span>
+            </a>
+          </div>
+
+          <div class="flex flex-col gap-1">
+            <span class="px-2 font-label text-[11px] uppercase text-on-surface-variant">03 / Verification</span>
+            <a href="reviewer.html" class="flex items-center justify-between px-3 py-2 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container text-xs transition-colors">
+              <span class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-sm">assignment</span>
+                <span>Reviewer Queue</span>
+              </span>
+              <span class="px-1.5 py-0.5 rounded bg-surface-container-high border border-outline-variant font-mono text-[10px] text-on-surface-variant">Queue</span>
+            </a>
+          </div>
+
+          <div class="flex flex-col gap-1">
+            <span class="px-2 font-label text-[11px] uppercase text-on-surface-variant">04 / Compliance & Docs</span>
+            <a href="docs.html" class="flex items-center gap-2 px-3 py-2 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container text-xs transition-colors">
+              <span class="material-symbols-outlined text-sm">menu_book</span>
+              <span>Platform Documentation</span>
+            </a>
+          </div>
+        </nav>
+      </div>
+
+      <!-- User Profile / Session Footer -->
+      <div class="p-4 border-t border-outline-variant bg-surface-container flex flex-col gap-2">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2 overflow-hidden">
+            <div class="w-7 h-7 rounded-full bg-primary/20 text-primary flex items-center justify-center font-mono text-xs font-bold shrink-0">
+              <span class="material-symbols-outlined text-sm">person</span>
+            </div>
+            <div class="truncate">
+              <span class="user-name-display font-headline text-xs font-medium text-on-surface block truncate">User</span>
+              <span class="user-roles-display font-label text-[10px] text-primary block truncate">ROLES</span>
+            </div>
+          </div>
+          <button class="logout-trigger text-on-surface-variant hover:text-error p-1" title="Sign out">
+            <span class="material-symbols-outlined text-base">logout</span>
+          </button>
+        </div>
+        <div class="flex items-center gap-1 pt-1 border-t border-outline-variant/60 font-label text-[10px]">
+          <span class="text-on-surface-variant text-[9px]">Session:</span>
+          <button type="button" class="switch-role-admin px-1.5 py-0.5 rounded bg-surface-container-high border border-outline-variant hover:border-primary text-on-surface" title="Admin Session (Dhruv Dobariya)">Admin</button>
+          <button type="button" class="switch-role-recruiter px-1.5 py-0.5 rounded bg-surface-container-high border border-outline-variant hover:border-primary text-on-surface" title="Recruiter Session (Elena Vance)">Recruiter</button>
+          <button type="button" class="switch-role-reviewer px-1.5 py-0.5 rounded bg-surface-container-high border border-outline-variant hover:border-warning text-warning" title="Reviewer Session (Sarah Jenkins)">Reviewer</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="flex-1 flex flex-col min-w-0">
+      <!-- Top Sticky App Bar -->
+      <header class="sticky top-0 z-20 h-16 bg-surface/90 backdrop-blur-md border-b border-outline-variant px-4 sm:px-8 flex items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <button id="openSidebarBtn" class="lg:hidden text-on-surface-variant hover:text-on-surface p-1">
+            <span class="material-symbols-outlined">menu</span>
+          </button>
+          <div class="flex items-center gap-2 font-label text-xs">
+            <a href="candidates.html" class="text-on-surface-variant hover:text-primary uppercase">Candidates</a>
+            <span class="text-outline">/</span>
+            <span id="breadcrumb-candidate-name" class="text-on-surface font-medium uppercase truncate max-w-xs">Loading Dossier...</span>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <a href="candidates.html" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-container text-on-surface border border-outline-variant rounded font-label text-xs uppercase hover:border-primary transition-colors">
+            <span class="material-symbols-outlined text-sm">arrow_back</span>
+            <span>Back</span>
+          </a>
+
+          <button id="run-verification-btn" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary text-on-primary rounded font-label text-xs uppercase font-medium hover:bg-on-primary-container hover:text-primary transition-colors">
+            <span class="material-symbols-outlined text-sm">play_arrow</span>
+            <span>Run Automated Checks</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Main Dossier Workspace -->
+      <main class="flex-1 p-4 sm:p-8 flex flex-col gap-6 max-w-[1440px] mx-auto w-full">
+        <!-- Candidate Profile Header Card -->
+        <div class="bg-surface-container border border-outline-variant rounded-md p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          <div class="flex items-center gap-4">
+            <div id="candidate-avatar" class="w-16 h-16 rounded bg-primary/10 border border-primary/30 text-primary flex items-center justify-center font-display text-2xl font-semibold">
+              --
+            </div>
+            <div>
+              <div class="flex items-center gap-3 mb-1">
+                <h1 id="candidate-name" class="font-headline text-2xl text-on-surface font-semibold tracking-tight">Loading candidate...</h1>
+                <span id="candidate-status-pill" class="px-2.5 py-0.5 rounded border border-warning/40 bg-warning/10 text-warning font-mono text-[11px] uppercase">Pending</span>
+              </div>
+              <div class="flex flex-wrap items-center gap-4 text-xs font-body text-on-surface-variant">
+                <span id="candidate-job" class="text-on-surface font-medium">--</span>
+                <span>·</span>
+                <span id="candidate-email" class="font-mono text-on-surface-variant">--</span>
+                <span>·</span>
+                <span id="candidate-location" class="px-2 py-0.5 rounded bg-surface-container-high border border-outline-variant font-mono text-[11px] text-on-surface">--</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full md:w-auto">
+            <input type="file" id="dossier-resume-file" accept=".pdf,.docx,.doc,.txt,.rtf" class="hidden">
+            <button type="button" id="upload-resume-dossier-btn" class="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 bg-surface-container border border-outline-variant hover:border-primary text-on-surface rounded font-label text-xs uppercase transition-colors">
+              <span class="material-symbols-outlined text-sm text-primary">upload_file</span>
+              <span>Upload Resume PDF</span>
+            </button>
+            <button id="download-resume-btn" class="inline-flex items-center justify-center gap-2 px-4 py-2 bg-surface-container-high border border-outline-variant hover:border-primary text-on-surface rounded font-label text-xs uppercase transition-colors">
+              <span class="material-symbols-outlined text-sm text-info">download</span>
+              <span>Download Resume PDF</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 2-Column Layout: Left (Automated Checks & Resume Text) | Right (Reviewer Actions) -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <!-- Left Column (8 Cols): Automated Verification Checks & Resume -->
+          <div class="lg:col-span-8 flex flex-col gap-6">
+            <!-- Automated Verification Results Card -->
+            <div class="bg-surface-container border border-outline-variant rounded-md p-6 flex flex-col gap-4">
+              <div class="flex items-center justify-between pb-3 border-b border-outline-variant">
+                <div class="flex items-center gap-2">
+                  <span class="material-symbols-outlined text-primary text-lg">fact_check</span>
+                  <h2 class="font-headline text-base font-semibold text-on-surface">Automated Verification Findings</h2>
+                </div>
+                <span id="verification-status-badge" class="px-2.5 py-0.5 rounded border border-outline-variant bg-surface-container-low font-mono text-[10px] text-on-surface uppercase">Awaiting run</span>
+              </div>
+
+              <!-- Automated Checks Matrix -->
+              <div id="automated-checks-list" class="flex flex-col gap-2.5">
+                <!-- Check 1: Name Check -->
+                <div class="p-3 bg-surface-container-low border border-outline-variant rounded flex items-center justify-between text-xs">
+                  <div class="flex items-center gap-3">
+                    <span id="check-icon-name" class="material-symbols-outlined text-success text-base">check_circle</span>
+                    <div>
+                      <span class="font-medium text-on-surface block">Candidate Name Identification</span>
+                      <span class="text-on-surface-variant text-[11px] block">Matches candidate profile with extracted document name</span>
+                    </div>
+                  </div>
+                  <span id="check-badge-name" class="font-mono text-[10px] text-success uppercase">PASS</span>
+                </div>
+
+                <!-- Check 2: Email Consistency -->
+                <div class="p-3 bg-surface-container-low border border-outline-variant rounded flex items-center justify-between text-xs">
+                  <div class="flex items-center gap-3">
+                    <span id="check-icon-email" class="material-symbols-outlined text-success text-base">check_circle</span>
+                    <div>
+                      <span class="font-medium text-on-surface block">Email Address Consistency</span>
+                      <span class="text-on-surface-variant text-[11px] block">Verification against profile record and domain format</span>
+                    </div>
+                  </div>
+                  <span id="check-badge-email" class="font-mono text-[10px] text-success uppercase">PASS</span>
+                </div>
+
+                <!-- Check 3: Contact Phone Detection -->
+                <div class="p-3 bg-surface-container-low border border-outline-variant rounded flex items-center justify-between text-xs">
+                  <div class="flex items-center gap-3">
+                    <span id="check-icon-phone" class="material-symbols-outlined text-info text-base">info</span>
+                    <div>
+                      <span class="font-medium text-on-surface block">Phone / Contact Detection</span>
+                      <span class="text-on-surface-variant text-[11px] block">Detects international telephone formatting</span>
+                    </div>
+                  </div>
+                  <span id="check-badge-phone" class="font-mono text-[10px] text-on-surface-variant uppercase">EVALUATING</span>
+                </div>
+
+                <!-- Check 4: Education & Credentials -->
+                <div class="p-3 bg-surface-container-low border border-outline-variant rounded flex items-center justify-between text-xs">
+                  <div class="flex items-center gap-3">
+                    <span id="check-icon-edu" class="material-symbols-outlined text-success text-base">check_circle</span>
+                    <div>
+                      <span class="font-medium text-on-surface block">Education & Degree Section</span>
+                      <span class="text-on-surface-variant text-[11px] block">Identifies accredited university or degree markers</span>
+                    </div>
+                  </div>
+                  <span id="check-badge-edu" class="font-mono text-[10px] text-success uppercase">PASS</span>
+                </div>
+
+                <!-- Check 5: Experience Timeline & Date Range -->
+                <div class="p-3 bg-surface-container-low border border-outline-variant rounded flex items-center justify-between text-xs">
+                  <div class="flex items-center gap-3">
+                    <span id="check-icon-exp" class="material-symbols-outlined text-success text-base">check_circle</span>
+                    <div>
+                      <span class="font-medium text-on-surface block">Experience & Chronological History</span>
+                      <span class="text-on-surface-variant text-[11px] block">Checks for timeline anomalies and future-date records</span>
+                    </div>
+                  </div>
+                  <span id="check-badge-exp" class="font-mono text-[10px] text-success uppercase">PASS</span>
+                </div>
+              </div>
+
+              <!-- Flagged Issues Callout (if any) -->
+              <div id="flagged-issues-container" class="hidden p-4 bg-warning/10 border border-warning/30 rounded flex flex-col gap-2">
+                <div class="flex items-center gap-2 text-warning font-label text-xs uppercase font-semibold">
+                  <span class="material-symbols-outlined text-sm">warning</span>
+                  <span>Automated Screening Observations (Requires Human Sign-off)</span>
+                </div>
+                <div id="flagged-issues-list" class="flex flex-col gap-1 text-xs text-on-surface"></div>
+              </div>
+            </div>
+
+            <!-- Resume Extracted Text Viewer -->
+            <div class="bg-surface-container border border-outline-variant rounded-md p-6 flex flex-col gap-4">
+              <div class="flex items-center justify-between pb-3 border-b border-outline-variant">
+                <div class="flex items-center gap-2">
+                  <span class="material-symbols-outlined text-primary text-lg">description</span>
+                  <h2 class="font-headline text-base font-semibold text-on-surface">Extracted Resume Content</h2>
+                </div>
+                <span class="font-label text-xs text-on-surface-variant uppercase">Parser: dataset-importer v1.0</span>
+              </div>
+
+              <div id="extracted-text-box" class="p-4 bg-surface-container-low border border-outline-variant rounded font-body text-xs text-on-surface leading-relaxed whitespace-pre-wrap max-h-64 overflow-y-auto">
+                Loading extracted resume text...
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column (4 Cols): Reviewer Assignment & Decision Panel -->
+          <div class="lg:col-span-4 flex flex-col gap-6">
+            <!-- Reviewer Assignment Card (Admin/Recruiter) -->
+            <div class="bg-surface-container border border-outline-variant rounded-md p-6 flex flex-col gap-4">
+              <div class="flex items-center justify-between pb-3 border-b border-outline-variant">
+                <span class="font-headline text-sm font-semibold text-on-surface">Reviewer Assignment</span>
+                <span class="material-symbols-outlined text-primary text-base">person_check</span>
+              </div>
+
+              <div class="flex flex-col gap-3">
+                <label class="block text-on-surface-variant font-label text-[11px] uppercase">Assign Compliance Specialist</label>
+                <select id="reviewer-select" class="w-full bg-surface-container-low border border-outline-variant rounded p-2 text-xs text-on-surface focus:border-primary focus:outline-none">
+                  <option value="">-- Choose Reviewer --</option>
+                  <option value="c1111111-2222-3333-4444-555555555555">Sarah Jenkins (Compliance Reviewer)</option>
+                  <option value="083fa816-c0f5-4b16-a892-04ad3b4e6047">Dhruv Dobariya (Admin &amp; Reviewer)</option>
+                </select>
+
+                <button type="button" id="assign-reviewer-btn" class="w-full inline-flex items-center justify-center gap-1.5 py-2 bg-surface-container-high border border-outline-variant hover:border-primary text-on-surface rounded font-label text-xs uppercase transition-colors">
+                  <span class="material-symbols-outlined text-sm">assignment_ind</span>
+                  <span>Assign Case</span>
+                </button>
+              </div>
+
+              <div id="current-assignment-info" class="p-3 bg-surface-container-low border border-outline-variant rounded text-xs text-on-surface-variant flex flex-col gap-1">
+                <span class="font-label text-[10px] uppercase text-on-surface-variant">Current Assignment:</span>
+                <span id="assigned-reviewer-name" class="font-medium text-on-surface">Unassigned</span>
+              </div>
+            </div>
+
+            <!-- Reviewer Decision Form (Reviewer/Admin) -->
+            <div class="bg-surface-container border border-outline-variant rounded-md p-6 flex flex-col gap-4">
+              <div class="flex items-center justify-between pb-3 border-b border-outline-variant">
+                <span class="font-headline text-sm font-semibold text-on-surface">Submit Audit Decision</span>
+                <span class="material-symbols-outlined text-success text-base">gavel</span>
+              </div>
+
+              <form id="decision-form" class="flex flex-col gap-4 text-xs font-body">
+                <div>
+                  <label class="block text-on-surface-variant font-label text-[11px] uppercase mb-2">Outcome *</label>
+                  <div class="grid grid-cols-3 gap-2">
+                    <label class="p-2 border border-outline-variant rounded flex flex-col items-center gap-1 cursor-pointer hover:border-success bg-surface-container-low text-center has-[:checked]:border-success has-[:checked]:bg-success/10 has-[:checked]:text-success">
+                      <input type="radio" name="decision" value="APPROVED" required class="hidden">
+                      <span class="material-symbols-outlined text-base">check_circle</span>
+                      <span class="font-mono text-[10px] uppercase">Approve</span>
+                    </label>
+
+                    <label class="p-2 border border-outline-variant rounded flex flex-col items-center gap-1 cursor-pointer hover:border-error bg-surface-container-low text-center has-[:checked]:border-error has-[:checked]:bg-error/10 has-[:checked]:text-error">
+                      <input type="radio" name="decision" value="REJECTED" class="hidden">
+                      <span class="material-symbols-outlined text-base">cancel</span>
+                      <span class="font-mono text-[10px] uppercase">Reject</span>
+                    </label>
+
+                    <label class="p-2 border border-outline-variant rounded flex flex-col items-center gap-1 cursor-pointer hover:border-warning bg-surface-container-low text-center has-[:checked]:border-warning has-[:checked]:bg-warning/10 has-[:checked]:text-warning">
+                      <input type="radio" name="decision" value="NEEDS_INFORMATION" class="hidden">
+                      <span class="material-symbols-outlined text-base">help</span>
+                      <span class="font-mono text-[10px] uppercase">Needs Info</span>
+                    </label>
+                  </div>
+                </div>
+
+                <div>
+                  <label class="block text-on-surface-variant font-label text-[11px] uppercase mb-1">Audit Rationale / Comments *</label>
+                  <textarea id="decision-comments" name="comments" rows="3" required placeholder="State regulatory or credential findings justifying this decision..." class="w-full bg-surface-container-low border border-outline-variant rounded p-2 text-on-surface focus:border-primary focus:outline-none"></textarea>
+                </div>
+
+                <button type="submit" id="submit-decision-btn" class="w-full inline-flex items-center justify-center gap-2 py-2.5 bg-primary text-on-primary rounded font-label text-xs uppercase font-medium hover:bg-on-primary-container hover:text-primary transition-colors">
+                  <span class="material-symbols-outlined text-sm">task_alt</span>
+                  <span>Commit Audit Decision</span>
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <div id="toast-container"></div>
+  <script src="js/background-scene.js"></script>
+  <script type="module">
+    import { API } from './js/api.js';
+    import { checkSession, showToast } from './js/app.js';
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const candidateId = urlParams.get('id');
+    let currentVerificationId = null;
+
+    if (!candidateId) {
+      alert('Candidate ID is required');
+      window.location.href = 'candidates.html';
+    }
+
+    async function loadDossier() {
+      await checkSession();
+      try {
+        const res = await API.candidates.get(candidateId);
+        if (!res || !res.data) throw new Error('Candidate not found');
+        const c = res.data;
+
+        document.getElementById('breadcrumb-candidate-name').textContent = c.full_name;
+        document.getElementById('candidate-name').textContent = c.full_name;
+        document.getElementById('candidate-job').textContent = c.current_job_title || 'Applicant';
+        document.getElementById('candidate-email').textContent = c.email;
+        document.getElementById('candidate-location').textContent = c.location || 'Unknown';
+        document.getElementById('candidate-status-pill').textContent = c.status || 'pending';
+
+        const initials = c.full_name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+        document.getElementById('candidate-avatar').textContent = initials;
+
+        // Fetch Resumes
+        try {
+          const resRes = await API.candidates.getResumes(candidateId);
+          const docs = resRes.data || [];
+          if (docs.length > 0) {
+            const doc = docs[0];
+            const dlUrl = `/api/v1/resumes/${doc.id}/download`;
+            document.getElementById('download-resume-btn').onclick = () => {
+              window.open(dlUrl, '_blank');
+            };
+            const extractedText = doc.extractedText || doc.extracted_text;
+            if (extractedText) {
+              document.getElementById('extracted-text-box').textContent = extractedText;
+            } else {
+              document.getElementById('extracted-text-box').textContent = 'Extracted content is empty or unreadable.';
+            }
+          } else {
+            document.getElementById('extracted-text-box').textContent = 'No resume uploaded for this candidate yet. Use "Upload Resume PDF" button above to attach a resume.';
+          }
+        } catch (_) {}
+
+        // Check active verification
+        await loadVerificationStatus();
+
+      } catch (err) {
+        showToast('Error loading dossier: ' + err.message, 'error');
+      }
+    }
+
+    async function loadVerificationStatus() {
+      try {
+        const verListRes = await API.verifications.listForCandidate(candidateId);
+        const verList = verListRes.data ? (Array.isArray(verListRes.data) ? verListRes.data : verListRes.data.verifications || []) : [];
+
+        if (verList.length > 0) {
+          const ver = verList[0];
+          currentVerificationId = ver.id;
+          document.getElementById('verification-status-badge').textContent = ver.status.toUpperCase();
+
+          const reviewerName = ver.assigned_to || ver.reviewer_name || (ver.reviewer_id === 'c1111111-2222-3333-4444-555555555555' ? 'Sarah Jenkins (Compliance Reviewer)' : ver.reviewer_id === '083fa816-c0f5-4b16-a892-04ad3b4e6047' ? 'Dhruv Dobariya (Admin & Reviewer)' : ver.reviewer_id ? 'Assigned Reviewer' : null);
+          if (reviewerName) {
+            document.getElementById('assigned-reviewer-name').textContent = reviewerName;
+          } else {
+            document.getElementById('assigned-reviewer-name').textContent = 'Unassigned';
+          }
+
+          // Fetch issues
+          try {
+            const issuesRes = await API.verifications.getIssues(ver.id);
+            const issues = issuesRes.data ? (Array.isArray(issuesRes.data) ? issuesRes.data : issuesRes.data.issues || []) : [];
+            if (issues.length > 0) {
+              document.getElementById('flagged-issues-container').classList.remove('hidden');
+              document.getElementById('flagged-issues-list').innerHTML = issues.map(iss => `
+                <div class="font-mono text-[11px] text-warning flex items-center gap-1.5">
+                  <span>●</span>
+                  <span class="font-bold">[${iss.code || iss.issue_code}]</span>
+                  <span>${iss.message || iss.description}</span>
+                </div>
+              `).join('');
+            }
+          } catch (_) {}
+        }
+      } catch (_) {}
+    }
+
+    // Run Automated Checks Button
+    document.getElementById('run-verification-btn').addEventListener('click', async () => {
+      const btn = document.getElementById('run-verification-btn');
+      btn.classList.add('opacity-50', 'pointer-events-none');
+      try {
+        showToast('Triggering automated resume checks...', 'info');
+        const verRes = await API.verifications.initiate(candidateId);
+        showToast('Automated verification checks completed!', 'success');
+        await loadVerificationStatus();
+      } catch (err) {
+        showToast(err.message || 'Verification initiation failed', 'error');
+      } finally {
+        btn.classList.remove('opacity-50', 'pointer-events-none');
+      }
+    });
+
+    // Wire Resume Upload in Dossier
+    const uploadDossierBtn = document.getElementById('upload-resume-dossier-btn');
+    const dossierResumeInput = document.getElementById('dossier-resume-file');
+
+    if (uploadDossierBtn && dossierResumeInput) {
+      uploadDossierBtn.addEventListener('click', () => dossierResumeInput.click());
+      dossierResumeInput.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        try {
+          showToast(`Uploading resume (${file.name})...`, 'info');
+          await API.candidates.uploadResume(candidateId, file);
+          showToast('Resume uploaded, parsed & automated checks executed!', 'success');
+          setTimeout(() => window.location.reload(), 500);
+        } catch (err) {
+          showToast('Resume upload failed: ' + err.message, 'error');
+        }
+      });
+    }
+
+    // Assign Reviewer Button
+    document.getElementById('assign-reviewer-btn').addEventListener('click', async () => {
+      const select = document.getElementById('reviewer-select');
+      const reviewerId = select.value;
+      if (!reviewerId) {
+        showToast('Please select a reviewer to assign', 'warning');
+        return;
+      }
+      if (!currentVerificationId) {
+        showToast('No active verification record. Please click "Run Automated Checks" first.', 'warning');
+        return;
+      }
+      try {
+        const reviewerName = select.options[select.selectedIndex]?.text || 'Reviewer';
+        showToast(`Assigning case to ${reviewerName}...`, 'info');
+        await API.verifications.assignReviewer(currentVerificationId, reviewerId);
+        showToast(`Verification assigned to ${reviewerName}!`, 'success');
+        document.getElementById('assigned-reviewer-name').textContent = reviewerName;
+        setTimeout(() => loadVerificationStatus(), 300);
+      } catch (err) {
+        showToast(err.message || 'Assignment failed', 'error');
+      }
+    });
+
+    // Submit Decision Form
+    document.getElementById('decision-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!currentVerificationId) {
+        showToast('Please run automated checks and assign verification first.', 'warning');
+        return;
+      }
+      const formData = new FormData(e.target);
+      const decision = formData.get('decision');
+      const comments = formData.get('comments');
+
+      try {
+        showToast(`Submitting audit decision: ${decision}...`, 'info');
+        await API.reviewer.submitDecision(currentVerificationId, {
+          decision,
+          comment: comments,
+          comments: comments,
+          reason: comments,
+        });
+        showToast(`Audit decision recorded: ${decision}!`, 'success');
+        document.getElementById('candidate-status-pill').textContent = decision.toLowerCase();
+        document.getElementById('verification-status-badge').textContent = decision;
+        setTimeout(() => loadVerificationStatus(), 400);
+      } catch (err) {
+        showToast(err.message || 'Decision submission failed', 'error');
+      }
+    });
+
+    loadDossier();
+  </script>
+</body>
+</html>
