@@ -81,7 +81,7 @@ export class CandidateService {
       recruiterId: candidate.created_by,
     });
 
-    if (!canAccess) {
+    if (!canAccess && !user.roles.includes('reviewer')) {
       throw new ForbiddenError('Unauthorized: you do not have permission to view this candidate');
     }
 

@@ -385,34 +385,69 @@
     import { checkSession, showToast } from './js/app.js';
 
     const urlParams = new URLSearchParams(window.location.search);
-    const candidateId = urlParams.get('id');
-    let currentVerificationId = null;
+    let candidateId = urlParams.get('id');
+    const verificationIdParam = urlParams.get('verificationId');
+    let currentVerificationId = verificationIdParam || null;
 
-    if (!candidateId) {
-      alert('Candidate ID is required');
+    if (!candidateId && !verificationIdParam) {
+      alert('Candidate or Verification ID is required');
       window.location.href = '/candidates';
     }
 
     async function loadDossier() {
       await checkSession();
       try {
-        const res = await API.candidates.get(candidateId);
-        if (!res || !res.data) throw new Error('Candidate not found');
-        const c = res.data;
+        let c = null;
 
-        document.getElementById('breadcrumb-candidate-name').textContent = c.full_name;
-        document.getElementById('candidate-name').textContent = c.full_name;
-        document.getElementById('candidate-job').textContent = c.current_job_title || 'Applicant';
-        document.getElementById('candidate-email').textContent = c.email;
-        document.getElementById('candidate-location').textContent = c.location || 'Unknown';
+        // 1. Try fetching directly by candidate ID
+        if (candidateId) {
+          try {
+            const res = await API.candidates.get(candidateId);
+            if (res && res.data) {
+              c = res.data;
+            }
+          } catch (cErr) {
+            console.warn('Direct candidate lookup:', cErr.message);
+          }
+        }
+
+        // 2. If reviewer endpoint assignment exists, fetch complete reviewer assignment dossier
+        if (verificationIdParam && API.reviewer) {
+          try {
+            const vRes = await API.reviewer.getAssignment(verificationIdParam);
+            if (vRes && vRes.data) {
+              const vData = vRes.data;
+              if (vData.candidate) {
+                c = { ...vData.candidate, ...c };
+                if (!candidateId) candidateId = c.id;
+              }
+              if (vData.verification) {
+                currentVerificationId = vData.verification.id;
+              }
+            }
+          } catch (vErr) {
+            console.warn('Reviewer assignment lookup:', vErr.message);
+          }
+        }
+
+        if (!c) {
+          throw new Error('Unable to load candidate details. Please verify your permissions.');
+        }
+
+        const fullName = c.full_name || c.fullName || 'Candidate';
+        document.getElementById('breadcrumb-candidate-name').textContent = fullName;
+        document.getElementById('candidate-name').textContent = fullName;
+        document.getElementById('candidate-job').textContent = c.current_job_title || c.currentJobTitle || 'Applicant';
+        document.getElementById('candidate-email').textContent = c.email || '—';
+        document.getElementById('candidate-location').textContent = c.location || '—';
         document.getElementById('candidate-status-pill').textContent = c.status || 'pending';
 
-        const initials = c.full_name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+        const initials = fullName.split(' ').filter(Boolean).map(n => n[0]).join('').substring(0, 2).toUpperCase() || 'C';
         document.getElementById('candidate-avatar').textContent = initials;
 
         // Fetch Resumes
         try {
-          const resRes = await API.candidates.getResumes(candidateId);
+          const resRes = await API.candidates.getResumes(candidateId || c.id);
           const docs = resRes.data || [];
           if (docs.length > 0) {
             const doc = docs[0];
@@ -436,6 +471,7 @@
 
       } catch (err) {
         showToast('Error loading dossier: ' + err.message, 'error');
+        document.getElementById('candidate-name').textContent = 'Candidate Record';
       }
     }
 
