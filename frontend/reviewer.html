@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -42,6 +43,7 @@
   </script>
   <link rel="stylesheet" href="css/design-system.css">
 </head>
+
 <body class="bg-surface text-on-surface font-body antialiased selection:bg-primary selection:text-on-primary">
   <canvas id="bg-grain" class="fixed inset-0 z-0 pointer-events-none opacity-5" aria-hidden="true"></canvas>
 
@@ -50,16 +52,20 @@
     <div id="sidebarBackdrop" class="fixed inset-0 bg-surface/80 z-30 hidden lg:hidden" aria-hidden="true"></div>
 
     <!-- Persistent Left Sidebar -->
-    <aside id="sidebar" class="fixed inset-y-0 left-0 z-40 w-64 bg-surface-container-low border-r border-outline-variant flex flex-col justify-between transform -translate-x-full transition-transform duration-200 lg:static lg:translate-x-0 lg:shrink-0">
+    <aside id="sidebar"
+      class="fixed inset-y-0 left-0 z-40 w-64 bg-surface-container-low border-r border-outline-variant flex flex-col justify-between transform -translate-x-full transition-transform duration-200 lg:static lg:translate-x-0 lg:shrink-0">
       <div class="flex flex-col">
         <!-- Brand Header -->
         <div class="h-16 px-6 border-b border-outline-variant flex items-center justify-between">
-          <a href="/" class="flex items-center gap-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary rounded-sm">
-            <svg class="w-6 h-6 text-primary shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <a href="/"
+            class="flex items-center gap-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary rounded-sm">
+            <svg class="w-6 h-6 text-primary shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="1.5">
               <polygon points="12 2 21 6.5 21 13.5 12 22 3 13.5 3 6.5 12 2"></polygon>
               <polyline points="8.5 12.5 11 15 15.5 9.5"></polyline>
             </svg>
-            <span class="font-headline text-lg text-on-surface tracking-tight font-semibold">CVS <span class="text-primary font-mono text-sm">.01</span></span>
+            <span class="font-headline text-lg text-on-surface tracking-tight font-semibold">CVS <span
+                class="text-primary font-mono text-sm">.01</span></span>
           </a>
           <button id="closeSidebarBtn" type="button" class="lg:hidden text-on-surface-variant hover:text-on-surface">
             <span class="material-symbols-outlined">close</span>
@@ -70,7 +76,8 @@
         <nav aria-label="Primary navigation" class="p-4 flex flex-col gap-6">
           <div class="flex flex-col gap-1">
             <span class="px-2 font-label text-[11px] uppercase text-on-surface-variant">01 / Overview</span>
-            <a href="/dashboard" class="flex items-center gap-2 px-3 py-2 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container text-xs transition-colors">
+            <a href="/dashboard"
+              class="flex items-center gap-2 px-3 py-2 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container text-xs transition-colors">
               <span class="material-symbols-outlined text-sm">dashboard</span>
               <span>Admin Dashboard</span>
             </a>
@@ -78,7 +85,8 @@
 
           <div class="flex flex-col gap-1">
             <span class="px-2 font-label text-[11px] uppercase text-on-surface-variant">02 / Operations</span>
-            <a href="/candidates" class="flex items-center gap-2 px-3 py-2 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container text-xs transition-colors">
+            <a href="/candidates"
+              class="flex items-center gap-2 px-3 py-2 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container text-xs transition-colors">
               <span class="material-symbols-outlined text-sm">group</span>
               <span>Candidates Directory</span>
             </a>
@@ -86,7 +94,8 @@
 
           <div class="flex flex-col gap-1">
             <span class="px-2 font-label text-[11px] uppercase text-on-surface-variant">03 / Verification</span>
-            <a href="/reviewer" aria-current="page" class="flex items-center justify-between px-3 py-2 rounded bg-surface-container-high border border-outline-variant text-on-surface font-body text-xs font-medium">
+            <a href="/reviewer" aria-current="page"
+              class="flex items-center justify-between px-3 py-2 rounded bg-surface-container-high border border-outline-variant text-on-surface font-body text-xs font-medium">
               <span class="flex items-center gap-2">
                 <span class="material-symbols-outlined text-sm text-primary">assignment</span>
                 <span>Reviewer Queue</span>
@@ -97,7 +106,8 @@
 
           <div class="flex flex-col gap-1">
             <span class="px-2 font-label text-[11px] uppercase text-on-surface-variant">04 / Compliance & Docs</span>
-            <a href="/docs" class="flex items-center gap-2 px-3 py-2 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container text-xs transition-colors">
+            <a href="/docs"
+              class="flex items-center gap-2 px-3 py-2 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container text-xs transition-colors">
               <span class="material-symbols-outlined text-sm">menu_book</span>
               <span>Platform Documentation</span>
             </a>
@@ -109,11 +119,13 @@
       <div class="p-4 border-t border-outline-variant bg-surface-container flex flex-col gap-2">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2 overflow-hidden">
-            <div class="w-7 h-7 rounded-full bg-warning/20 text-warning flex items-center justify-center font-mono text-xs font-bold shrink-0">
+            <div
+              class="w-7 h-7 rounded-full bg-warning/20 text-warning flex items-center justify-center font-mono text-xs font-bold shrink-0">
               <span class="material-symbols-outlined text-sm">verified_user</span>
             </div>
             <div class="truncate">
-              <span class="user-name-display font-headline text-xs font-medium text-on-surface block truncate">Sarah Jenkins</span>
+              <span class="user-name-display font-headline text-xs font-medium text-on-surface block truncate">Sarah
+                Jenkins</span>
               <span class="user-roles-display font-label text-[10px] text-warning block truncate">REVIEWER</span>
             </div>
           </div>
@@ -137,7 +149,8 @@
     <!-- Main Content Area -->
     <div class="flex-1 flex flex-col min-w-0">
       <!-- Top Sticky App Bar -->
-      <header class="sticky top-0 z-20 h-16 bg-surface/90 backdrop-blur-md border-b border-outline-variant px-4 sm:px-8 flex items-center justify-between gap-4">
+      <header
+        class="sticky top-0 z-20 h-16 bg-surface/90 backdrop-blur-md border-b border-outline-variant px-4 sm:px-8 flex items-center justify-between gap-4">
         <div class="flex items-center gap-3">
           <button id="openSidebarBtn" class="lg:hidden text-on-surface-variant hover:text-on-surface p-1">
             <span class="material-symbols-outlined">menu</span>
@@ -150,7 +163,8 @@
         </div>
 
         <div class="flex items-center gap-3">
-          <button id="refresh-queue-btn" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-container text-on-surface border border-outline-variant rounded font-label text-xs uppercase hover:border-primary transition-colors">
+          <button id="refresh-queue-btn"
+            class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-container text-on-surface border border-outline-variant rounded font-label text-xs uppercase hover:border-primary transition-colors">
             <span class="material-symbols-outlined text-sm">refresh</span>
             <span>Refresh Queue</span>
           </button>
@@ -161,29 +175,39 @@
       <main class="flex-1 p-4 sm:p-8 flex flex-col gap-6 max-w-[1440px] mx-auto w-full">
         <div class="flex flex-col sm:flex-row sm:items-baseline justify-between gap-4 pb-2">
           <div>
-            <span class="font-label text-xs uppercase text-primary font-semibold tracking-wider block mb-1">(03) COMPLIANCE SIGN-OFF</span>
+            <span class="font-label text-xs uppercase text-primary font-semibold tracking-wider block mb-1">(03)
+              COMPLIANCE SIGN-OFF</span>
             <h1 class="font-headline text-2xl sm:text-3xl text-on-surface font-semibold tracking-tight">Assigned Verifications</h1>
           </div>
           <div class="flex items-center gap-2 font-label text-xs text-on-surface-variant">
             <span id="queue-count-label">Total Assignments:</span>
-            <span id="queue-count-badge" class="px-2 py-0.5 rounded border border-primary/40 bg-primary/20 text-primary font-mono text-[11px] font-semibold tabular-nums">0</span>
+            <span id="queue-count-badge"
+              class="px-2 py-0.5 rounded border border-primary/40 bg-primary/20 text-primary font-mono text-[11px] font-semibold tabular-nums">0</span>
           </div>
         </div>
 
         <!-- Filter Tabs -->
         <div class="flex items-center gap-2 border-b border-outline-variant pb-2 font-label text-xs">
-          <button type="button" data-status="" class="queue-status-tab px-3 py-1.5 rounded bg-primary text-on-primary border border-primary uppercase font-medium">All Assignments</button>
-          <button type="button" data-status="requires_review" class="queue-status-tab px-3 py-1.5 rounded bg-surface-container text-on-surface-variant border border-outline-variant hover:border-primary uppercase">In Review</button>
-          <button type="button" data-status="pending" class="queue-status-tab px-3 py-1.5 rounded bg-surface-container text-on-surface-variant border border-outline-variant hover:border-primary uppercase">Pending</button>
-          <button type="button" data-status="passed" class="queue-status-tab px-3 py-1.5 rounded bg-surface-container text-on-surface-variant border border-outline-variant hover:border-primary uppercase">Approved</button>
-          <button type="button" data-status="failed" class="queue-status-tab px-3 py-1.5 rounded bg-surface-container text-on-surface-variant border border-outline-variant hover:border-primary uppercase">Rejected</button>
+          <button type="button" data-status=""
+            class="queue-status-tab px-3 py-1.5 rounded bg-primary text-on-primary border border-primary uppercase font-medium">All
+            Assignments</button>
+          <button type="button" data-status="requires_review"
+            class="queue-status-tab px-3 py-1.5 rounded bg-surface-container text-on-surface-variant border border-outline-variant hover:border-primary uppercase">In
+            Review</button>
+          <button type="button" data-status="pending"
+            class="queue-status-tab px-3 py-1.5 rounded bg-surface-container text-on-surface-variant border border-outline-variant hover:border-primary uppercase">Pending</button>
+          <button type="button" data-status="passed"
+            class="queue-status-tab px-3 py-1.5 rounded bg-surface-container text-on-surface-variant border border-outline-variant hover:border-primary uppercase">Approved</button>
+          <button type="button" data-status="failed"
+            class="queue-status-tab px-3 py-1.5 rounded bg-surface-container text-on-surface-variant border border-outline-variant hover:border-primary uppercase">Rejected</button>
         </div>
 
         <!-- Queue Table Card -->
         <div class="bg-surface-container border border-outline-variant rounded flex flex-col overflow-hidden">
           <div class="overflow-x-auto">
             <table class="w-full text-left text-xs">
-              <thead class="bg-surface-container-low text-on-surface-variant font-label text-[11px] uppercase border-b border-outline-variant">
+              <thead
+                class="bg-surface-container-low text-on-surface-variant font-label text-[11px] uppercase border-b border-outline-variant">
                 <tr>
                   <th class="px-4 py-3">Case ID</th>
                   <th class="px-4 py-3">Applicant Name</th>
@@ -340,4 +364,5 @@
     loadQueue();
   </script>
 </body>
+
 </html>

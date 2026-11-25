@@ -198,10 +198,10 @@
               <button type="button" data-location="United Kingdom" class="location-filter-btn px-2.5 py-1.5 rounded bg-surface-container-low text-on-surface-variant border border-outline-variant hover:border-primary hover:text-on-surface uppercase whitespace-nowrap flex items-center gap-1">
                 <span>UK (494)</span>
               </button>
+              <button type="button" data-location="India" class="location-filter-btn px-2.5 py-1.5 rounded bg-surface-container-low text-on-surface-variant border border-outline-variant hover:border-primary hover:text-on-surface uppercase whitespace-nowrap">India</button>
               <button type="button" data-location="Vietnam" class="location-filter-btn px-2.5 py-1.5 rounded bg-surface-container-low text-on-surface-variant border border-outline-variant hover:border-primary hover:text-on-surface uppercase whitespace-nowrap">Vietnam</button>
               <button type="button" data-location="Philippines" class="location-filter-btn px-2.5 py-1.5 rounded bg-surface-container-low text-on-surface-variant border border-outline-variant hover:border-primary hover:text-on-surface uppercase whitespace-nowrap">Philippines</button>
-              <button type="button" data-location="Netherlands" class="location-filter-btn px-2.5 py-1.5 rounded bg-surface-container-low text-on-surface-variant border border-outline-variant hover:border-primary hover:text-on-surface uppercase whitespace-nowrap">Netherlands</button>
-              <button type="button" data-location="South Africa" class="location-filter-btn px-2.5 py-1.5 rounded bg-surface-container-low text-on-surface-variant border border-outline-variant hover:border-primary hover:text-on-surface uppercase whitespace-nowrap">South Africa</button>
+              <button type="button" data-location="China" class="location-filter-btn px-2.5 py-1.5 rounded bg-surface-container-low text-on-surface-variant border border-outline-variant hover:border-primary hover:text-on-surface uppercase whitespace-nowrap">China (503)</button>
             </div>
           </div>
         </div>
@@ -786,6 +786,22 @@
           addResumeFilename.textContent = 'Attach candidate resume (PDF, DOCX, DOC, TXT)';
           addResumeFilename.classList.remove('text-primary', 'font-medium');
         }
+
+        // Reset filters to ALL so the newly registered candidate is immediately visible on top
+        currentLocation = '';
+        currentSearch = '';
+        const searchInput = document.getElementById('candidate-search-input');
+        if (searchInput) searchInput.value = '';
+        document.querySelectorAll('.location-filter-btn').forEach(b => {
+          b.classList.remove('bg-primary', 'text-on-primary', 'border-primary');
+          b.classList.add('bg-surface-container-low', 'text-on-surface-variant');
+        });
+        const allBtn = document.querySelector('.location-filter-btn[data-location=""]');
+        if (allBtn) {
+          allBtn.classList.remove('bg-surface-container-low', 'text-on-surface-variant');
+          allBtn.classList.add('bg-primary', 'text-on-primary', 'border-primary');
+        }
+
         currentPage = 1;
         loadCandidates();
       } catch (err) {
