@@ -37,29 +37,50 @@ export function showToast(message, type = 'info') {
 export let currentUser = null;
 export let currentSession = null;
 let sessionCountdownInterval = null;
+let checkSessionPromise = null;
+let lastSessionCheckTime = 0;
+const SESSION_CACHE_TTL = 30000; // 30 seconds in-memory cache
 
-export async function checkSession() {
-  try {
-    const res = await API.auth.getMe();
-    if (res && res.data && res.data.user) {
-      currentUser = res.data.user;
-      currentSession = res.data.session;
-      localStorage.setItem('cvs_user', JSON.stringify(currentUser));
-      updateUserUI(currentUser);
-      mountSessionBadge(currentSession);
-      startSessionExpiryWatcher(currentSession);
-      return currentUser;
-    }
-  } catch (err) {
-    // If auth failed, try fallback to cached user or prompt login
-    const cached = localStorage.getItem('cvs_user');
-    if (cached) {
-      currentUser = JSON.parse(cached);
-      updateUserUI(currentUser);
-      return currentUser;
-    }
+export async function checkSession(forceRefresh = false) {
+  const now = Date.now();
+  // Return cached session if still fresh and not forced
+  if (!forceRefresh && currentUser && (now - lastSessionCheckTime < SESSION_CACHE_TTL)) {
+    return currentUser;
   }
-  return null;
+
+  // Deduplicate in-flight requests (prevents simultaneous parallel /me calls)
+  if (checkSessionPromise) {
+    return checkSessionPromise;
+  }
+
+  checkSessionPromise = (async () => {
+    try {
+      const res = await API.auth.getMe();
+      if (res && res.data && res.data.user) {
+        currentUser = res.data.user;
+        currentSession = res.data.session;
+        lastSessionCheckTime = Date.now();
+        localStorage.setItem('cvs_user', JSON.stringify(currentUser));
+        updateUserUI(currentUser);
+        mountSessionBadge(currentSession);
+        startSessionExpiryWatcher(currentSession);
+        return currentUser;
+      }
+    } catch (err) {
+      // If auth failed, try fallback to cached user or prompt login
+      const cached = localStorage.getItem('cvs_user');
+      if (cached) {
+        currentUser = JSON.parse(cached);
+        updateUserUI(currentUser);
+        return currentUser;
+      }
+    } finally {
+      checkSessionPromise = null;
+    }
+    return null;
+  })();
+
+  return checkSessionPromise;
 }
 
 function formatRemainingTime(expiresAt) {
@@ -321,6 +342,10 @@ export async function logout() {
     await API.auth.logout();
   } catch (_) {
   } finally {
+    currentUser = null;
+    currentSession = null;
+    lastSessionCheckTime = 0;
+    checkSessionPromise = null;
     localStorage.removeItem('cvs_session_token');
     localStorage.removeItem('cvs_user');
     window.location.href = '/login';
