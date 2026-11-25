@@ -39,16 +39,16 @@ export let currentSession = null;
 let sessionCountdownInterval = null;
 let checkSessionPromise = null;
 let lastSessionCheckTime = 0;
-const SESSION_CACHE_TTL = 30000; // 30 seconds in-memory cache
+const SESSION_CACHE_TTL = 30000; // 30 seconds cache for active session
 
 export async function checkSession(forceRefresh = false) {
   const now = Date.now();
-  // Return cached session if still fresh and not forced
+  // Return cached session if valid and not expired, avoiding redundant network requests
   if (!forceRefresh && currentUser && (now - lastSessionCheckTime < SESSION_CACHE_TTL)) {
     return currentUser;
   }
 
-  // Deduplicate in-flight requests (prevents simultaneous parallel /me calls)
+  // Deduplicate in-flight network requests
   if (checkSessionPromise) {
     return checkSessionPromise;
   }
