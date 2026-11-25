@@ -101,7 +101,7 @@
               <span class="text-on-surface-variant block mt-0.5">Signed in as <span id="logged-user-name" class="text-on-surface font-semibold"></span></span>
             </div>
           </div>
-          <a href="dashboard.html" class="px-3 py-1.5 bg-success text-on-primary font-label text-xs font-semibold uppercase rounded hover:bg-success/80 transition-colors">
+          <a href="/dashboard" class="px-3 py-1.5 bg-success text-on-primary font-label text-xs font-semibold uppercase rounded hover:bg-success/80 transition-colors">
             Enter Dashboard →
           </a>
         </div>
@@ -199,7 +199,7 @@
           if (urlParams.get('expired') !== 'true' && !urlParams.get('reauth')) {
             showToast(`Active session found for ${user.name}. Entering dashboard...`, 'info');
             setTimeout(() => {
-              window.location.href = 'dashboard.html';
+              window.location.href = '/dashboard';
             }, 800);
           }
         }
@@ -221,11 +221,11 @@
             showToast(`Welcome, ${res.data.user.name}! Redirecting...`, 'success');
             setTimeout(() => {
               if (role === 'reviewer') {
-                window.location.href = 'reviewer.html';
+                window.location.href = '/reviewer';
               } else if (role === 'recruiter') {
-                window.location.href = 'candidates.html';
+                window.location.href = '/candidates';
               } else {
-                window.location.href = 'dashboard.html';
+                window.location.href = '/dashboard';
               }
             }, 500);
           }

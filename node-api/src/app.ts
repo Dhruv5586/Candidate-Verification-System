@@ -47,14 +47,19 @@ export function createApp(): Application {
     app.use(requestLogger);
   }
 
-  // 5. Redirect /index.html to / so the URL stays clean (http://localhost:3000/) without "index.html"
-  app.get('/index.html', (_req, res) => {
-    res.redirect(301, '/');
+  // 5. Clean URL Middleware: Redirect any request ending in .html to its extensionless clean URL
+  app.use((req, res, next) => {
+    if (req.method === 'GET' && req.path.endsWith('.html')) {
+      const cleanPath = req.path === '/index.html' ? '/' : req.path.slice(0, -5);
+      const query = req.url.includes('?') ? req.url.slice(req.url.indexOf('?')) : '';
+      return res.redirect(301, cleanPath + query);
+    }
+    next();
   });
 
-  // 6. Static Frontend Files
+  // 6. Static Frontend Files with automatic .html extension resolution
   const frontendPath = path.resolve(__dirname, '../../frontend');
-  app.use(express.static(frontendPath, { index: false }));
+  app.use(express.static(frontendPath, { extensions: ['html'], index: false }));
 
   // 7. API Routes
   app.use('/api/v1', apiRouter);

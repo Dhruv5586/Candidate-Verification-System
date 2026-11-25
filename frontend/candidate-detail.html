@@ -70,7 +70,7 @@
         <nav aria-label="Primary navigation" class="p-4 flex flex-col gap-6">
           <div class="flex flex-col gap-1">
             <span class="px-2 font-label text-[11px] uppercase text-on-surface-variant">01 / Overview</span>
-            <a href="dashboard.html" class="flex items-center gap-2 px-3 py-2 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container text-xs transition-colors">
+            <a href="/dashboard" class="flex items-center gap-2 px-3 py-2 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container text-xs transition-colors">
               <span class="material-symbols-outlined text-sm">dashboard</span>
               <span>Admin Dashboard</span>
             </a>
@@ -78,7 +78,7 @@
 
           <div class="flex flex-col gap-1">
             <span class="px-2 font-label text-[11px] uppercase text-on-surface-variant">02 / Operations</span>
-            <a href="candidates.html" class="flex items-center gap-2 px-3 py-2 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container text-xs transition-colors">
+            <a href="/candidates" class="flex items-center gap-2 px-3 py-2 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container text-xs transition-colors">
               <span class="material-symbols-outlined text-sm">group</span>
               <span>Candidates Directory</span>
             </a>
@@ -86,7 +86,7 @@
 
           <div class="flex flex-col gap-1">
             <span class="px-2 font-label text-[11px] uppercase text-on-surface-variant">03 / Verification</span>
-            <a href="reviewer.html" class="flex items-center justify-between px-3 py-2 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container text-xs transition-colors">
+            <a href="/reviewer" class="flex items-center justify-between px-3 py-2 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container text-xs transition-colors">
               <span class="flex items-center gap-2">
                 <span class="material-symbols-outlined text-sm">assignment</span>
                 <span>Reviewer Queue</span>
@@ -97,7 +97,7 @@
 
           <div class="flex flex-col gap-1">
             <span class="px-2 font-label text-[11px] uppercase text-on-surface-variant">04 / Compliance & Docs</span>
-            <a href="docs.html" class="flex items-center gap-2 px-3 py-2 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container text-xs transition-colors">
+            <a href="/docs" class="flex items-center gap-2 px-3 py-2 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container text-xs transition-colors">
               <span class="material-symbols-outlined text-sm">menu_book</span>
               <span>Platform Documentation</span>
             </a>
@@ -139,14 +139,14 @@
             <span class="material-symbols-outlined">menu</span>
           </button>
           <div class="flex items-center gap-2 font-label text-xs">
-            <a href="candidates.html" class="text-on-surface-variant hover:text-primary uppercase">Candidates</a>
+            <a href="/candidates" class="text-on-surface-variant hover:text-primary uppercase">Candidates</a>
             <span class="text-outline">/</span>
             <span id="breadcrumb-candidate-name" class="text-on-surface font-medium uppercase truncate max-w-xs">Loading Dossier...</span>
           </div>
         </div>
 
         <div class="flex items-center gap-3">
-          <a href="candidates.html" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-container text-on-surface border border-outline-variant rounded font-label text-xs uppercase hover:border-primary transition-colors">
+          <a href="/candidates" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-container text-on-surface border border-outline-variant rounded font-label text-xs uppercase hover:border-primary transition-colors">
             <span class="material-symbols-outlined text-sm">arrow_back</span>
             <span>Back</span>
           </a>
@@ -386,7 +386,7 @@
 
     if (!candidateId) {
       alert('Candidate ID is required');
-      window.location.href = 'candidates.html';
+      window.location.href = '/candidates';
     }
 
     async function loadDossier() {

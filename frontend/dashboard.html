@@ -71,7 +71,7 @@
         <nav aria-label="Primary navigation" class="p-4 flex flex-col gap-6">
           <div class="flex flex-col gap-1">
             <span class="px-2 font-label text-[11px] uppercase text-on-surface-variant">01 / Overview</span>
-            <a href="dashboard.html" aria-current="page" class="flex items-center justify-between px-3 py-2 rounded bg-surface-container-high border border-outline-variant text-on-surface font-body text-xs font-medium">
+            <a href="/dashboard" aria-current="page" class="flex items-center justify-between px-3 py-2 rounded bg-surface-container-high border border-outline-variant text-on-surface font-body text-xs font-medium">
               <span class="flex items-center gap-2">
                 <span class="material-symbols-outlined text-sm text-primary">dashboard</span>
                 <span>Admin Dashboard</span>
@@ -82,11 +82,11 @@
 
           <div class="flex flex-col gap-1">
             <span class="px-2 font-label text-[11px] uppercase text-on-surface-variant">02 / Operations</span>
-            <a href="candidates.html" class="flex items-center gap-2 px-3 py-2 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container text-xs transition-colors">
+            <a href="/candidates" class="flex items-center gap-2 px-3 py-2 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container text-xs transition-colors">
               <span class="material-symbols-outlined text-sm">group</span>
               <span>Candidates Directory</span>
             </a>
-            <a href="candidates.html?openImport=true" class="flex items-center gap-2 px-3 py-2 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container text-xs transition-colors">
+            <a href="/candidates?openImport=true" class="flex items-center gap-2 px-3 py-2 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container text-xs transition-colors">
               <span class="material-symbols-outlined text-sm">upload_file</span>
               <span>Bulk CSV Import</span>
             </a>
@@ -94,7 +94,7 @@
 
           <div class="flex flex-col gap-1">
             <span class="px-2 font-label text-[11px] uppercase text-on-surface-variant">03 / Verification</span>
-            <a href="reviewer.html" class="flex items-center justify-between px-3 py-2 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container text-xs transition-colors">
+            <a href="/reviewer" class="flex items-center justify-between px-3 py-2 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container text-xs transition-colors">
               <span class="flex items-center gap-2">
                 <span class="material-symbols-outlined text-sm">assignment</span>
                 <span>Reviewer Queue</span>
@@ -105,7 +105,7 @@
 
           <div class="flex flex-col gap-1">
             <span class="px-2 font-label text-[11px] uppercase text-on-surface-variant">04 / Compliance & Docs</span>
-            <a href="docs.html" class="flex items-center gap-2 px-3 py-2 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container text-xs transition-colors">
+            <a href="/docs" class="flex items-center gap-2 px-3 py-2 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container text-xs transition-colors">
               <span class="material-symbols-outlined text-sm">menu_book</span>
               <span>Platform Documentation</span>
             </a>
@@ -160,7 +160,7 @@
             <span class="text-on-surface uppercase">System Online</span>
           </div>
 
-          <a href="candidates.html" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary text-on-primary rounded font-label text-xs uppercase font-medium hover:bg-on-primary-container hover:text-primary transition-colors">
+          <a href="/candidates" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary text-on-primary rounded font-label text-xs uppercase font-medium hover:bg-on-primary-container hover:text-primary transition-colors">
             <span class="material-symbols-outlined text-sm">add</span>
             <span>New Verification</span>
           </a>
@@ -186,7 +186,7 @@
         <!-- 4 KPI Metrics Cards -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <!-- Total Candidates -->
-          <a href="candidates.html" class="p-5 bg-surface-container border border-outline-variant rounded hover:border-primary transition-colors flex flex-col justify-between gap-4 group">
+          <a href="/candidates" class="p-5 bg-surface-container border border-outline-variant rounded hover:border-primary transition-colors flex flex-col justify-between gap-4 group">
             <div class="flex items-center justify-between">
               <span class="font-label text-xs uppercase text-on-surface-variant group-hover:text-primary">Total Candidates</span>
               <span class="material-symbols-outlined text-primary text-lg">group</span>
@@ -253,7 +253,7 @@
                     <option value="50">50 rows</option>
                   </select>
                 </div>
-                <a href="candidates.html" class="font-label text-xs uppercase text-primary hover:underline flex items-center gap-1">
+                <a href="/candidates" class="font-label text-xs uppercase text-primary hover:underline flex items-center gap-1">
                   <span>Full Directory (<span id="stream-view-all-count">10,000</span>)</span>
                   <span class="material-symbols-outlined text-xs">arrow_forward</span>
                 </a>
@@ -306,7 +306,7 @@
                 </div>
               </div>
 
-              <a href="reviewer.html" class="inline-flex items-center justify-center gap-1.5 w-full py-2 bg-surface-container-high border border-outline-variant rounded text-on-surface font-label text-xs uppercase hover:border-primary transition-colors">
+              <a href="/reviewer" class="inline-flex items-center justify-center gap-1.5 w-full py-2 bg-surface-container-high border border-outline-variant rounded text-on-surface font-label text-xs uppercase hover:border-primary transition-colors">
                 <span>Open Reviewer Portal</span>
                 <span class="material-symbols-outlined text-xs">launch</span>
               </a>
@@ -316,7 +316,7 @@
             <div class="p-5 bg-surface-container border border-outline-variant rounded flex flex-col gap-3">
               <span class="font-headline text-sm font-semibold text-on-surface pb-2 border-b border-outline-variant">Operational Shortcuts</span>
               
-              <a href="candidates.html?location=United+Kingdom" class="p-3 bg-surface-container-low border border-outline-variant rounded hover:border-primary transition-colors flex items-center justify-between text-xs">
+              <a href="/candidates?location=United+Kingdom" class="p-3 bg-surface-container-low border border-outline-variant rounded hover:border-primary transition-colors flex items-center justify-between text-xs">
                 <div class="flex items-center gap-2">
                   <span class="material-symbols-outlined text-primary text-sm">flag</span>
                   <span>Filter UK Candidates (494 Records)</span>
@@ -324,7 +324,7 @@
                 <span class="material-symbols-outlined text-xs text-on-surface-variant">arrow_forward</span>
               </a>
 
-              <a href="candidates.html?openImport=true" class="p-3 bg-surface-container-low border border-outline-variant rounded hover:border-primary transition-colors flex items-center justify-between text-xs">
+              <a href="/candidates?openImport=true" class="p-3 bg-surface-container-low border border-outline-variant rounded hover:border-primary transition-colors flex items-center justify-between text-xs">
                 <div class="flex items-center gap-2">
                   <span class="material-symbols-outlined text-info text-sm">file_upload</span>
                   <span>Import Applicant CSV</span>
@@ -332,7 +332,7 @@
                 <span class="material-symbols-outlined text-xs text-on-surface-variant">arrow_forward</span>
               </a>
 
-              <a href="docs.html" class="p-3 bg-surface-container-low border border-outline-variant rounded hover:border-primary transition-colors flex items-center justify-between text-xs">
+              <a href="/docs" class="p-3 bg-surface-container-low border border-outline-variant rounded hover:border-primary transition-colors flex items-center justify-between text-xs">
                 <div class="flex items-center gap-2">
                   <span class="material-symbols-outlined text-primary text-sm">menu_book</span>
                   <span>System & Workflow Documentation</span>
@@ -421,7 +421,7 @@
                 <span class="px-2 py-0.5 rounded border border-warning/30 bg-warning/10 text-warning font-mono text-[10px] uppercase">${escapeHtml(c.status || 'pending')}</span>
               </td>
               <td class="px-4 py-3 text-right">
-                <a href="candidate-detail.html?id=${c.id}" class="inline-flex items-center gap-1 px-2.5 py-1 bg-surface-container border border-outline-variant hover:border-primary hover:text-primary rounded text-[11px] font-label uppercase transition-colors">
+                <a href="/candidate-detail?id=${c.id}" class="inline-flex items-center gap-1 px-2.5 py-1 bg-surface-container border border-outline-variant hover:border-primary hover:text-primary rounded text-[11px] font-label uppercase transition-colors">
                   <span>Dossier</span>
                   <span class="material-symbols-outlined text-xs">arrow_forward</span>
                 </a>

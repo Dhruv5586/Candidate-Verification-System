@@ -17,39 +17,45 @@ describe('Frontend Static Serving & Web Console Routes', () => {
     assert.equal(res.header.location, '/');
   });
 
-  it('GET /login.html should return 200 and serve Sign In interface', async () => {
-    const res = await request(app).get('/login.html');
+  it('GET /login should return 200 and serve Sign In interface', async () => {
+    const res = await request(app).get('/login');
     assert.equal(res.status, 200);
     assert.ok(res.text.includes('Sign in to console'));
     assert.ok(res.text.includes('Continue with Google'));
   });
 
-  it('GET /dashboard.html should return 200 and serve Admin Dashboard', async () => {
-    const res = await request(app).get('/dashboard.html');
+  it('GET /dashboard should return 200 and serve Admin Dashboard', async () => {
+    const res = await request(app).get('/dashboard');
     assert.equal(res.status, 200);
     assert.ok(res.text.includes('Admin Dashboard'));
     assert.ok(res.text.includes('Total Candidates'));
   });
 
-  it('GET /candidates.html should return 200 and serve Candidates Directory', async () => {
-    const res = await request(app).get('/candidates.html');
+  it('GET /candidates should return 200 and serve Candidates Directory', async () => {
+    const res = await request(app).get('/candidates');
     assert.equal(res.status, 200);
     assert.ok(res.text.includes('Candidates Directory'));
     assert.ok(res.text.includes('Bulk Candidate CSV Import'));
   });
 
-  it('GET /candidate-detail.html should return 200 and serve Dossier', async () => {
-    const res = await request(app).get('/candidate-detail.html');
+  it('GET /candidate-detail should return 200 and serve Dossier', async () => {
+    const res = await request(app).get('/candidate-detail');
     assert.equal(res.status, 200);
     assert.ok(res.text.includes('Candidate Verification Dossier'));
     assert.ok(res.text.includes('Automated Verification Findings'));
   });
 
-  it('GET /reviewer.html should return 200 and serve Reviewer Queue', async () => {
-    const res = await request(app).get('/reviewer.html');
+  it('GET /reviewer should return 200 and serve Reviewer Queue', async () => {
+    const res = await request(app).get('/reviewer');
     assert.equal(res.status, 200);
     assert.ok(res.text.includes('Compliance Review Queue'));
     assert.ok(res.text.includes('Assigned Verifications'));
+  });
+
+  it('GET /dashboard.html should redirect 301 to /dashboard for clean URLs', async () => {
+    const res = await request(app).get('/dashboard.html');
+    assert.equal(res.status, 301);
+    assert.equal(res.header.location, '/dashboard');
   });
 
   it('GET /api/v1/auth/users should return 200 with active system users', async () => {

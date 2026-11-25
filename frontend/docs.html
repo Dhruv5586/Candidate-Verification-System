@@ -72,7 +72,7 @@
         <nav aria-label="Documentation sidebar" class="p-4 flex flex-col gap-6">
           <div class="flex flex-col gap-1">
             <span class="px-2 font-label text-[11px] uppercase text-on-surface-variant">01 / Overview</span>
-            <a href="dashboard.html" class="flex items-center gap-2 px-3 py-2 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container text-xs transition-colors">
+            <a href="/dashboard" class="flex items-center gap-2 px-3 py-2 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container text-xs transition-colors">
               <span class="material-symbols-outlined text-sm">dashboard</span>
               <span>Admin Dashboard</span>
             </a>
@@ -80,7 +80,7 @@
 
           <div class="flex flex-col gap-1">
             <span class="px-2 font-label text-[11px] uppercase text-on-surface-variant">02 / Operations</span>
-            <a href="candidates.html" class="flex items-center gap-2 px-3 py-2 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container text-xs transition-colors">
+            <a href="/candidates" class="flex items-center gap-2 px-3 py-2 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container text-xs transition-colors">
               <span class="material-symbols-outlined text-sm">group</span>
               <span>Candidates Directory</span>
             </a>
@@ -88,7 +88,7 @@
 
           <div class="flex flex-col gap-1">
             <span class="px-2 font-label text-[11px] uppercase text-on-surface-variant">03 / Verification</span>
-            <a href="reviewer.html" class="flex items-center justify-between px-3 py-2 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container text-xs transition-colors">
+            <a href="/reviewer" class="flex items-center justify-between px-3 py-2 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container text-xs transition-colors">
               <span class="flex items-center gap-2">
                 <span class="material-symbols-outlined text-sm">assignment</span>
                 <span>Reviewer Queue</span>
@@ -98,7 +98,7 @@
 
           <div class="flex flex-col gap-1">
             <span class="px-2 font-label text-[11px] uppercase text-on-surface-variant">04 / Compliance & Docs</span>
-            <a href="docs.html" aria-current="page" class="flex items-center justify-between px-3 py-2 rounded bg-surface-container-high border border-outline-variant text-on-surface font-body text-xs font-medium">
+            <a href="/docs" aria-current="page" class="flex items-center justify-between px-3 py-2 rounded bg-surface-container-high border border-outline-variant text-on-surface font-body text-xs font-medium">
               <span class="flex items-center gap-2">
                 <span class="material-symbols-outlined text-sm text-primary">menu_book</span>
                 <span>System Documentation</span>
@@ -153,7 +153,7 @@
             <span class="text-on-surface-variant uppercase text-[11px]">System Online</span>
           </div>
 
-          <a href="candidates.html" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary text-on-primary rounded font-label text-xs uppercase font-medium hover:bg-on-primary-container hover:text-primary transition-colors">
+          <a href="/candidates" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary text-on-primary rounded font-label text-xs uppercase font-medium hover:bg-on-primary-container hover:text-primary transition-colors">
             <span class="material-symbols-outlined text-sm">group</span>
             <span>Candidates Directory</span>
           </a>
@@ -301,7 +301,7 @@
                 </li>
               </ul>
               <div class="mt-auto pt-3">
-                <a href="dashboard.html" class="inline-flex items-center gap-1 text-xs font-label text-primary hover:underline">
+                <a href="/dashboard" class="inline-flex items-center gap-1 text-xs font-label text-primary hover:underline">
                   <span>Open Admin Dashboard</span>
                   <span class="material-symbols-outlined text-xs">arrow_forward</span>
                 </a>
@@ -334,7 +334,7 @@
                 </li>
               </ul>
               <div class="mt-auto pt-3">
-                <a href="candidates.html" class="inline-flex items-center gap-1 text-xs font-label text-primary hover:underline">
+                <a href="/candidates" class="inline-flex items-center gap-1 text-xs font-label text-primary hover:underline">
                   <span>Open Candidate Directory</span>
                   <span class="material-symbols-outlined text-xs">arrow_forward</span>
                 </a>
@@ -367,7 +367,7 @@
                 </li>
               </ul>
               <div class="mt-auto pt-3">
-                <a href="reviewer.html" class="inline-flex items-center gap-1 text-xs font-label text-warning hover:underline">
+                <a href="/reviewer" class="inline-flex items-center gap-1 text-xs font-label text-warning hover:underline">
                   <span>Open Reviewer Queue</span>
                   <span class="material-symbols-outlined text-xs">arrow_forward</span>
                 </a>
@@ -394,7 +394,7 @@
                 How to Add a Candidate and Run Automated Verification
               </h3>
               <p class="font-body text-xs text-on-surface-variant leading-relaxed">
-                Navigate to the <a href="candidates.html" class="text-primary hover:underline">Candidates Directory</a>. Click <strong>Add Candidate</strong> in the top-right corner to open the candidate intake form. Fill in the candidate's first name, last name, email, job title, and country, then click <strong>Create Candidate</strong>. Once the candidate row appears, click the <strong>Verify</strong> button on the candidate's row or open the <strong>Dossier</strong> to run the automated screening engine.
+                Navigate to the <a href="/candidates" class="text-primary hover:underline">Candidates Directory</a>. Click <strong>Add Candidate</strong> in the top-right corner to open the candidate intake form. Fill in the candidate's first name, last name, email, job title, and country, then click <strong>Create Candidate</strong>. Once the candidate row appears, click the <strong>Verify</strong> button on the candidate's row or open the <strong>Dossier</strong> to run the automated screening engine.
               </p>
             </div>
 
@@ -416,7 +416,7 @@
                 How to Assign and Complete a Compliance Review
               </h3>
               <p class="font-body text-xs text-on-surface-variant leading-relaxed">
-                In the candidate dossier, the <strong>Reviewer Assignment</strong> card allows an Administrator to assign the verification case to a certified compliance specialist (such as Sarah Jenkins). When Sarah logs in or switches to the <strong>Reviewer</strong> session, the case appears in her <a href="reviewer.html" class="text-warning hover:underline">Assigned Reviewer Queue</a>. Clicking <strong>Evaluate</strong> opens the evaluation view where the reviewer selects <strong>Approve (Passed)</strong>, <strong>Reject (Failed)</strong>, or <strong>Needs Info</strong> with justification notes to finalize the sign-off.
+                In the candidate dossier, the <strong>Reviewer Assignment</strong> card allows an Administrator to assign the verification case to a certified compliance specialist (such as Sarah Jenkins). When Sarah logs in or switches to the <strong>Reviewer</strong> session, the case appears in her <a href="/reviewer" class="text-warning hover:underline">Assigned Reviewer Queue</a>. Clicking <strong>Evaluate</strong> opens the evaluation view where the reviewer selects <strong>Approve (Passed)</strong>, <strong>Reject (Failed)</strong>, or <strong>Needs Info</strong> with justification notes to finalize the sign-off.
               </p>
             </div>
 
@@ -441,10 +441,10 @@
             <p class="font-body text-xs text-on-surface-variant">Switch between administrative oversight, candidate directories, and compliance queues.</p>
           </div>
           <div class="flex items-center gap-3 shrink-0">
-            <a href="candidates.html" class="px-4 py-2 bg-primary text-on-primary rounded font-label text-xs uppercase font-medium hover:bg-on-primary-container hover:text-primary transition-colors">
+            <a href="/candidates" class="px-4 py-2 bg-primary text-on-primary rounded font-label text-xs uppercase font-medium hover:bg-on-primary-container hover:text-primary transition-colors">
               Candidates Directory
             </a>
-            <a href="reviewer.html" class="px-4 py-2 bg-surface-container-high border border-outline-variant hover:border-warning text-warning rounded font-label text-xs uppercase transition-colors">
+            <a href="/reviewer" class="px-4 py-2 bg-surface-container-high border border-outline-variant hover:border-warning text-warning rounded font-label text-xs uppercase transition-colors">
               Reviewer Queue
             </a>
           </div>

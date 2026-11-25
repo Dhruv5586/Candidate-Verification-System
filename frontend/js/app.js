@@ -103,7 +103,7 @@ function startSessionExpiryWatcher(session) {
       try {
         await logout();
       } catch (_) {
-        window.location.href = 'login.html?expired=true';
+        window.location.href = '/login?expired=true';
       }
     }
   }, 1000);
@@ -231,7 +231,7 @@ function ensureSessionModal() {
     try {
       await API.auth.logout();
     } catch (_) { }
-    window.location.href = 'login.html?expired=true';
+    window.location.href = '/login?expired=true';
   });
 }
 
@@ -284,7 +284,7 @@ export async function logout() {
     await API.auth.logout();
   } catch (_) {
   } finally {
-    window.location.href = 'login.html';
+    window.location.href = '/login';
   }
 }
 
@@ -298,10 +298,10 @@ export async function switchRole(role) {
       localStorage.setItem('cvs_user', JSON.stringify(res.data.user));
       showToast(`Active profile: ${res.data.user.name} (${res.data.user.roles.join(', ')})`, 'success');
       setTimeout(() => {
-        if (role === 'reviewer' && !window.location.pathname.includes('reviewer.html')) {
-          window.location.href = 'reviewer.html';
-        } else if (role === 'recruiter' && window.location.pathname.includes('reviewer.html')) {
-          window.location.href = 'candidates.html';
+        if (role === 'reviewer' && !window.location.pathname.includes('reviewer')) {
+          window.location.href = '/reviewer';
+        } else if (role === 'recruiter' && window.location.pathname.includes('reviewer')) {
+          window.location.href = '/candidates';
         } else {
           window.location.reload();
         }

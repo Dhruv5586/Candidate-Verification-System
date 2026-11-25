@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -42,6 +43,7 @@
   </script>
   <link rel="stylesheet" href="css/design-system.css">
 </head>
+
 <body class="bg-surface text-on-surface font-body antialiased selection:bg-primary selection:text-on-primary">
   <canvas id="bg-grain" class="fixed inset-0 z-0 pointer-events-none opacity-5" aria-hidden="true"></canvas>
   <canvas id="bg-scene" class="fixed inset-0 z-0 pointer-events-none opacity-30" aria-hidden="true"></canvas>
@@ -54,23 +56,31 @@
           <polygon points="12 2 21 6.5 21 13.5 12 22 3 13.5 3 6.5 12 2"></polygon>
           <polyline points="8.5 12.5 11 15 15.5 9.5"></polyline>
         </svg>
-        <span class="font-headline text-lg text-on-surface tracking-tight font-semibold">CVS <span class="text-primary font-mono text-sm">.01</span></span>
+        <span class="font-headline text-lg text-on-surface tracking-tight font-semibold">CVS <span
+            class="text-primary font-mono text-sm">.01</span></span>
       </a>
 
-      <nav aria-label="Landing navigation" class="hidden md:flex items-center gap-8 font-label text-xs uppercase tracking-wider">
-        <a href="#workflow" class="text-on-surface-variant hover:text-on-surface transition-colors"><span class="text-primary mr-1">01</span>Workflow</a>
-        <a href="#roles" class="text-on-surface-variant hover:text-on-surface transition-colors"><span class="text-primary mr-1">02</span>Roles</a>
-        <a href="#capabilities" class="text-on-surface-variant hover:text-on-surface transition-colors"><span class="text-primary mr-1">03</span>Capabilities</a>
-        <a href="login.html" class="text-on-surface-variant hover:text-on-surface transition-colors"><span class="text-primary mr-1">04</span>Compliance Sign-in</a>
+      <nav aria-label="Landing navigation"
+        class="hidden md:flex items-center gap-8 font-label text-xs uppercase tracking-wider">
+        <a href="#workflow" class="text-on-surface-variant hover:text-on-surface transition-colors"><span
+            class="text-primary mr-1">01</span>Workflow</a>
+        <a href="#roles" class="text-on-surface-variant hover:text-on-surface transition-colors"><span
+            class="text-primary mr-1">02</span>Roles</a>
+        <a href="#capabilities" class="text-on-surface-variant hover:text-on-surface transition-colors"><span
+            class="text-primary mr-1">03</span>Capabilities</a>
+        <a href="/login" class="text-on-surface-variant hover:text-on-surface transition-colors"><span
+            class="text-primary mr-1">04</span>Compliance Sign-in</a>
       </nav>
 
       <div class="flex items-center gap-3 shrink-0">
-        <div id="service-health-badge" class="hidden sm:flex items-center gap-2 px-3 py-1 bg-surface-container border border-outline-variant rounded-sm text-xs font-label">
+        <div id="service-health-badge"
+          class="hidden sm:flex items-center gap-2 px-3 py-1 bg-surface-container border border-outline-variant rounded-sm text-xs font-label">
           <span class="inline-block w-2 h-2 rounded-full bg-success animate-pulse"></span>
           <span class="text-on-surface-variant uppercase">Services Online</span>
         </div>
 
-        <a href="login.html" class="inline-flex items-center justify-center gap-2 px-4 py-2 bg-primary text-on-primary rounded border border-primary font-label text-xs uppercase font-medium tracking-wider hover:bg-on-primary-container hover:text-primary transition-colors">
+        <a href="/login"
+          class="inline-flex items-center justify-center gap-2 px-4 py-2 bg-primary text-on-primary rounded border border-primary font-label text-xs uppercase font-medium tracking-wider hover:bg-on-primary-container hover:text-primary transition-colors">
           <span>Launch Workspace</span>
           <span class="material-symbols-outlined text-sm">arrow_forward</span>
         </a>
@@ -82,25 +92,31 @@
       <!-- Hero Section -->
       <section class="min-h-[75vh] flex flex-col justify-center py-16 border-b border-outline-variant">
         <div class="max-w-3xl flex flex-col gap-6">
-          <div class="inline-flex items-center gap-2 px-3 py-1 bg-surface-container-high border border-outline-variant rounded-sm w-fit">
+          <div
+            class="inline-flex items-center gap-2 px-3 py-1 bg-surface-container-high border border-outline-variant rounded-sm w-fit">
             <span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
-            <span class="font-label text-xs uppercase tracking-wider text-primary">Candidate Verification System v1.0</span>
+            <span class="font-label text-xs uppercase tracking-wider text-primary">Candidate Verification System
+              v1.0</span>
           </div>
 
-          <h1 class="font-display text-4xl sm:text-6xl text-on-surface font-medium tracking-tight text-balance leading-tight">
+          <h1
+            class="font-display text-4xl sm:text-6xl text-on-surface font-medium tracking-tight text-balance leading-tight">
             Verification <span class="text-primary italic font-serif">with</span> operational depth.
           </h1>
 
           <p class="font-body text-base sm:text-lg text-on-surface-variant max-w-2xl text-pretty leading-relaxed">
-            High-integrity verification platform delivering automated credential screening, multi-format resume intelligence, and rigorous compliance sign-off for global recruitment teams.
+            High-integrity verification platform delivering automated credential screening, multi-format resume
+            intelligence, and rigorous compliance sign-off for global recruitment teams.
           </p>
 
           <div class="flex flex-wrap items-center gap-4 pt-4">
-            <a href="login.html" class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-primary text-on-primary rounded border border-primary font-label text-xs uppercase font-semibold tracking-wider hover:bg-on-primary-container hover:text-primary transition-all">
+            <a href="/login"
+              class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-primary text-on-primary rounded border border-primary font-label text-xs uppercase font-semibold tracking-wider hover:bg-on-primary-container hover:text-primary transition-all">
               <span class="material-symbols-outlined text-base">login</span>
               <span>Sign In with Workspace</span>
             </a>
-            <a href="candidates.html" class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-surface-container text-on-surface rounded border border-outline-variant font-label text-xs uppercase tracking-wider hover:border-primary hover:text-primary transition-colors">
+            <a href="/candidates"
+              class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-surface-container text-on-surface rounded border border-outline-variant font-label text-xs uppercase tracking-wider hover:border-primary hover:text-primary transition-colors">
               <span class="material-symbols-outlined text-base">group</span>
               <span>Browse Candidates Directory</span>
             </a>
@@ -136,35 +152,43 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <div class="p-5 bg-surface-container border border-outline-variant rounded flex flex-col gap-3 hover-row-shift">
+          <div
+            class="p-5 bg-surface-container border border-outline-variant rounded flex flex-col gap-3 hover-row-shift">
             <span class="font-label text-xs text-primary font-mono">STEP 01</span>
             <h3 class="font-headline text-lg text-on-surface font-medium">Candidate & Resume Intake</h3>
             <p class="font-body text-xs text-on-surface-variant leading-relaxed">
-              Resumes uploaded in PDF or DOCX format are securely stored in private local storage outside public roots. SHA-256 checksums prevent tampering.
+              Resumes uploaded in PDF or DOCX format are securely stored in private local storage outside public roots.
+              SHA-256 checksums prevent tampering.
             </p>
           </div>
 
-          <div class="p-5 bg-surface-container border border-outline-variant rounded flex flex-col gap-3 hover-row-shift">
+          <div
+            class="p-5 bg-surface-container border border-outline-variant rounded flex flex-col gap-3 hover-row-shift">
             <span class="font-label text-xs text-primary font-mono">STEP 02</span>
             <h3 class="font-headline text-lg text-on-surface font-medium">CSV Bulk Onboarding</h3>
             <p class="font-body text-xs text-on-surface-variant leading-relaxed">
-              Multi-row candidate spreadsheets are validated with preview generation, email deduplication, and atomic confirmation rollback.
+              Multi-row candidate spreadsheets are validated with preview generation, email deduplication, and atomic
+              confirmation rollback.
             </p>
           </div>
 
-          <div class="p-5 bg-surface-container border border-outline-variant rounded flex flex-col gap-3 hover-row-shift">
+          <div
+            class="p-5 bg-surface-container border border-outline-variant rounded flex flex-col gap-3 hover-row-shift">
             <span class="font-label text-xs text-primary font-mono">STEP 03</span>
             <h3 class="font-headline text-lg text-on-surface font-medium">Automated Screening</h3>
             <p class="font-body text-xs text-on-surface-variant leading-relaxed">
-              Pre-review checks flag anomalies: missing contact metadata, date inconsistencies, future employment anomalies, and section gaps.
+              Pre-review checks flag anomalies: missing contact metadata, date inconsistencies, future employment
+              anomalies, and section gaps.
             </p>
           </div>
 
-          <div class="p-5 bg-surface-container border border-outline-variant rounded flex flex-col gap-3 hover-row-shift">
+          <div
+            class="p-5 bg-surface-container border border-outline-variant rounded flex flex-col gap-3 hover-row-shift">
             <span class="font-label text-xs text-primary font-mono">STEP 04</span>
             <h3 class="font-headline text-lg text-on-surface font-medium">Reviewer Sign-Off</h3>
             <p class="font-body text-xs text-on-surface-variant leading-relaxed">
-              Authorized compliance reviewers examine flagged items, record structured decisions (Approved / Rejected / Needs Info), and write audit logs.
+              Authorized compliance reviewers examine flagged items, record structured decisions (Approved / Rejected /
+              Needs Info), and write audit logs.
             </p>
           </div>
         </div>
@@ -178,7 +202,8 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div class="p-6 bg-surface-container border border-outline-variant rounded flex flex-col justify-between gap-4">
+          <div
+            class="p-6 bg-surface-container border border-outline-variant rounded flex flex-col justify-between gap-4">
             <div>
               <div class="flex items-center justify-between pb-3 border-b border-outline-variant">
                 <span class="font-label text-xs uppercase text-primary font-semibold">Admin</span>
@@ -186,16 +211,19 @@
               </div>
               <h4 class="font-headline text-base text-on-surface font-medium mt-3">Full System Governance</h4>
               <p class="font-body text-xs text-on-surface-variant mt-2 leading-relaxed">
-                Assign reviewers, initiate high-volume verifications, inspect chronological audit logs, manage user roles, and export compliance reports.
+                Assign reviewers, initiate high-volume verifications, inspect chronological audit logs, manage user
+                roles, and export compliance reports.
               </p>
             </div>
-            <a href="login.html" class="inline-flex items-center gap-1 font-label text-xs uppercase text-primary hover:underline">
+            <a href="/login"
+              class="inline-flex items-center gap-1 font-label text-xs uppercase text-primary hover:underline">
               <span>Sign in as Admin</span>
               <span class="material-symbols-outlined text-sm">arrow_forward</span>
             </a>
           </div>
 
-          <div class="p-6 bg-surface-container border border-outline-variant rounded flex flex-col justify-between gap-4">
+          <div
+            class="p-6 bg-surface-container border border-outline-variant rounded flex flex-col justify-between gap-4">
             <div>
               <div class="flex items-center justify-between pb-3 border-b border-outline-variant">
                 <span class="font-label text-xs uppercase text-primary font-semibold">Recruiter</span>
@@ -203,16 +231,19 @@
               </div>
               <h4 class="font-headline text-base text-on-surface font-medium mt-3">Candidate Onboarding</h4>
               <p class="font-body text-xs text-on-surface-variant mt-2 leading-relaxed">
-                Create candidate profiles, upload resumes, execute CSV batch imports, filter by country and qualification, and request verification checks.
+                Create candidate profiles, upload resumes, execute CSV batch imports, filter by country and
+                qualification, and request verification checks.
               </p>
             </div>
-            <a href="login.html" class="inline-flex items-center gap-1 font-label text-xs uppercase text-primary hover:underline">
+            <a href="/login"
+              class="inline-flex items-center gap-1 font-label text-xs uppercase text-primary hover:underline">
               <span>Sign in as Recruiter</span>
               <span class="material-symbols-outlined text-sm">arrow_forward</span>
             </a>
           </div>
 
-          <div class="p-6 bg-surface-container border border-outline-variant rounded flex flex-col justify-between gap-4">
+          <div
+            class="p-6 bg-surface-container border border-outline-variant rounded flex flex-col justify-between gap-4">
             <div>
               <div class="flex items-center justify-between pb-3 border-b border-outline-variant">
                 <span class="font-label text-xs uppercase text-primary font-semibold">Reviewer</span>
@@ -220,10 +251,12 @@
               </div>
               <h4 class="font-headline text-base text-on-surface font-medium mt-3">Compliance Sign-off</h4>
               <p class="font-body text-xs text-on-surface-variant mt-2 leading-relaxed">
-                Access assigned verification queue only. Inspect candidate evidence, review automated anomaly flags, and issue accountable audit decisions.
+                Access assigned verification queue only. Inspect candidate evidence, review automated anomaly flags, and
+                issue accountable audit decisions.
               </p>
             </div>
-            <a href="login.html" class="inline-flex items-center gap-1 font-label text-xs uppercase text-primary hover:underline">
+            <a href="/login"
+              class="inline-flex items-center gap-1 font-label text-xs uppercase text-primary hover:underline">
               <span>Sign in as Reviewer</span>
               <span class="material-symbols-outlined text-sm">arrow_forward</span>
             </a>
@@ -239,7 +272,8 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 font-body text-xs">
-          <div class="p-6 bg-surface-container border border-outline-variant rounded flex flex-col justify-between gap-4 hover-row-shift">
+          <div
+            class="p-6 bg-surface-container border border-outline-variant rounded flex flex-col justify-between gap-4 hover-row-shift">
             <div>
               <div class="flex items-center justify-between pb-3 border-b border-outline-variant font-label">
                 <span class="text-primary font-semibold uppercase">Automated Screening</span>
@@ -247,16 +281,19 @@
               </div>
               <h4 class="font-headline text-base text-on-surface font-medium mt-3">Intelligent Resume Extraction</h4>
               <p class="text-on-surface-variant font-body text-xs mt-2 leading-relaxed">
-                Multi-format parsing across PDF, Word documents, and bulk CSV datasets with instant anomaly detection for employment dates, credentials, and qualifications.
+                Multi-format parsing across PDF, Word documents, and bulk CSV datasets with instant anomaly detection
+                for employment dates, credentials, and qualifications.
               </p>
             </div>
-            <div class="flex items-center gap-2 pt-3 border-t border-outline-variant/60 font-label text-[11px] text-success">
+            <div
+              class="flex items-center gap-2 pt-3 border-t border-outline-variant/60 font-label text-[11px] text-success">
               <span class="inline-block w-2 h-2 rounded-full bg-success"></span>
               <span>Sub-Second Rule Validation</span>
             </div>
           </div>
 
-          <div class="p-6 bg-surface-container border border-outline-variant rounded flex flex-col justify-between gap-4 hover-row-shift">
+          <div
+            class="p-6 bg-surface-container border border-outline-variant rounded flex flex-col justify-between gap-4 hover-row-shift">
             <div>
               <div class="flex items-center justify-between pb-3 border-b border-outline-variant font-label">
                 <span class="text-primary font-semibold uppercase">Compliance Governance</span>
@@ -264,16 +301,19 @@
               </div>
               <h4 class="font-headline text-base text-on-surface font-medium mt-3">Immutable Audit Trails</h4>
               <p class="text-on-surface-variant font-body text-xs mt-2 leading-relaxed">
-                Every verification event, reviewer assignment, and compliance sign-off is permanently recorded with complete actor attribution and tamper prevention.
+                Every verification event, reviewer assignment, and compliance sign-off is permanently recorded with
+                complete actor attribution and tamper prevention.
               </p>
             </div>
-            <div class="flex items-center gap-2 pt-3 border-t border-outline-variant/60 font-label text-[11px] text-success">
+            <div
+              class="flex items-center gap-2 pt-3 border-t border-outline-variant/60 font-label text-[11px] text-success">
               <span class="inline-block w-2 h-2 rounded-full bg-success"></span>
               <span>Accountable Human Sign-Off</span>
             </div>
           </div>
 
-          <div class="p-6 bg-surface-container border border-outline-variant rounded flex flex-col justify-between gap-4 hover-row-shift">
+          <div
+            class="p-6 bg-surface-container border border-outline-variant rounded flex flex-col justify-between gap-4 hover-row-shift">
             <div>
               <div class="flex items-center justify-between pb-3 border-b border-outline-variant font-label">
                 <span class="text-primary font-semibold uppercase">Enterprise Security</span>
@@ -281,10 +321,12 @@
               </div>
               <h4 class="font-headline text-base text-on-surface font-medium mt-3">Zero-Trust Session Control</h4>
               <p class="text-on-surface-variant font-body text-xs mt-2 leading-relaxed">
-                Role-based access boundaries, automatic 30-minute idle session termination, encrypted document storage, and strictly isolated candidate dossiers.
+                Role-based access boundaries, automatic 30-minute idle session termination, encrypted document storage,
+                and strictly isolated candidate dossiers.
               </p>
             </div>
-            <div class="flex items-center gap-2 pt-3 border-t border-outline-variant/60 font-label text-[11px] text-success">
+            <div
+              class="flex items-center gap-2 pt-3 border-t border-outline-variant/60 font-label text-[11px] text-success">
               <span class="inline-block w-2 h-2 rounded-full bg-success"></span>
               <span>Bank-Grade Data Protection</span>
             </div>
@@ -295,17 +337,18 @@
 
     <!-- Footer -->
     <footer class="border-t border-outline-variant py-8 px-4 sm:px-12 bg-surface-container-low">
-      <div class="max-w-[1440px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 font-label text-xs text-on-surface-variant">
+      <div
+        class="max-w-[1440px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 font-label text-xs text-on-surface-variant">
         <div class="flex items-center gap-2">
           <span class="text-primary font-bold">CVS .01</span>
           <span>Candidate Verification System · Industrial Editorial Console</span>
         </div>
         <div class="flex items-center gap-4">
-          <a href="docs.html" class="hover:text-on-surface transition-colors">Documentation</a>
+          <a href="/docs" class="hover:text-on-surface transition-colors">Documentation</a>
           <span>·</span>
-          <a href="candidates.html" class="hover:text-on-surface transition-colors">Candidates</a>
+          <a href="/candidates" class="hover:text-on-surface transition-colors">Candidates</a>
           <span>·</span>
-          <a href="dashboard.html" class="hover:text-on-surface transition-colors">Admin Dashboard</a>
+          <a href="/dashboard" class="hover:text-on-surface transition-colors">Admin Dashboard</a>
         </div>
       </div>
     </footer>
@@ -322,8 +365,8 @@
         if (res && res.data && res.data.user) {
           const user = res.data.user;
           // Update top action buttons to point directly to dashboard
-          document.querySelectorAll('a[href="login.html"]').forEach(btn => {
-            btn.href = 'dashboard.html';
+          document.querySelectorAll('a[href="/login"]').forEach(btn => {
+            btn.href = '/dashboard';
             btn.innerHTML = `
               <span class="inline-block w-2 h-2 rounded-full bg-success"></span>
               <span>Open Dashboard</span>
@@ -343,7 +386,7 @@
                 <span class="text-xs font-headline font-semibold text-on-surface">${user.name}</span>
                 <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-primary/20 text-primary uppercase">${user.roles.join(', ')}</span>
               </div>
-              <a href="dashboard.html" class="inline-flex items-center gap-2 px-4 py-1.5 bg-primary text-on-primary rounded font-label text-xs uppercase font-semibold hover:bg-on-primary-container hover:text-primary transition-colors">
+              <a href="/dashboard" class="inline-flex items-center gap-2 px-4 py-1.5 bg-primary text-on-primary rounded font-label text-xs uppercase font-semibold hover:bg-on-primary-container hover:text-primary transition-colors">
                 <span>Go to Dashboard</span>
                 <span class="material-symbols-outlined text-sm">east</span>
               </a>
@@ -357,4 +400,5 @@
     })();
   </script>
 </body>
+
 </html>

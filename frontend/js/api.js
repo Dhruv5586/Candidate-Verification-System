@@ -54,13 +54,14 @@ async function request(endpoint, options = {}) {
     if (response.status === 401) {
       localStorage.removeItem('cvs_session_token');
       localStorage.removeItem('cvs_user');
-      const isPublicPage = window.location.pathname.endsWith('login.html') || 
-                           window.location.pathname.endsWith('index.html') ||
+      const isPublicPage = window.location.pathname === '/login' ||
+                           window.location.pathname.endsWith('/login') ||
+                           window.location.pathname.endsWith('login.html') ||
                            window.location.pathname === '/' ||
                            window.location.pathname === '';
       if (!isPublicPage) {
         const currentPath = encodeURIComponent(window.location.pathname + window.location.search);
-        window.location.href = `login.html?expired=true&returnUrl=${currentPath}`;
+        window.location.href = `/login?expired=true&returnUrl=${currentPath}`;
       }
     }
 
