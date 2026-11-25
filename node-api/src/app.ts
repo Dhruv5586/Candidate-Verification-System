@@ -47,21 +47,16 @@ export function createApp(): Application {
     app.use(requestLogger);
   }
 
-  // 5. Static Frontend Files
+  // 5. Static Frontend Files (disable automatic index.html serving at root)
   const frontendPath = path.resolve(__dirname, '../../frontend');
-  app.use(express.static(frontendPath));
+  app.use(express.static(frontendPath, { index: false }));
 
   // 6. API Routes
   app.use('/api/v1', apiRouter);
 
-  // Root route: serve frontend index.html if available, or redirect to docs
+  // Root route: redirect directly to Admin Dashboard
   app.get('/', (_req, res) => {
-    const indexPath = path.join(frontendPath, 'index.html');
-    if (fs.existsSync(indexPath)) {
-      res.sendFile(indexPath);
-    } else {
-      res.redirect('/api/v1/docs');
-    }
+    res.redirect('/dashboard.html');
   });
 
   // Documentation route: serve frontend docs.html
