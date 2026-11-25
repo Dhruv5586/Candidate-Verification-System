@@ -4,17 +4,17 @@ import request from 'supertest';
 import { app } from '../app';
 
 describe('Frontend Static Serving & Web Console Routes', () => {
-  it('GET / should redirect to /dashboard.html', async () => {
+  it('GET / should return 200 and serve frontend index.html', async () => {
     const res = await request(app).get('/');
-    assert.equal(res.status, 302);
-    assert.equal(res.header.location, '/dashboard.html');
-  });
-
-  it('GET /index.html should return 200 and serve frontend index.html', async () => {
-    const res = await request(app).get('/index.html');
     assert.equal(res.status, 200);
     assert.ok(res.text.includes('Candidate Verification System'));
     assert.ok(res.text.includes('CVS'));
+  });
+
+  it('GET /index.html should redirect 301 to / for clean URLs', async () => {
+    const res = await request(app).get('/index.html');
+    assert.equal(res.status, 301);
+    assert.equal(res.header.location, '/');
   });
 
   it('GET /login.html should return 200 and serve Sign In interface', async () => {
