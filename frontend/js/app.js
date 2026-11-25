@@ -276,14 +276,53 @@ function updateUserUI(user) {
       el.textContent = user.roles.join(', ').toUpperCase();
     }
   });
+
+  // Role-Based Access Control (RBAC) UI Filtering
+  const roles = Array.isArray(user.roles) ? user.roles : [];
+  const isAdmin = roles.includes('admin');
+  const isReviewer = roles.includes('reviewer');
+  const isRecruiter = roles.includes('recruiter');
+
+  // If user is ONLY a recruiter (not admin or reviewer):
+  // They only see Recruiter functionality (Operations & Docs)
+  if (isRecruiter && !isAdmin && !isReviewer) {
+    // Hide Admin Overview nav group
+    document.querySelectorAll('a[href="/dashboard"]').forEach(a => {
+      const group = a.closest('.flex.flex-col.gap-1');
+      if (group) group.style.display = 'none';
+    });
+
+    // Hide Reviewer Queue nav group
+    document.querySelectorAll('a[href="/reviewer"]').forEach(a => {
+      const group = a.closest('.flex.flex-col.gap-1');
+      if (group) group.style.display = 'none';
+    });
+
+    // If currently on an unauthorized page, redirect to candidates directory
+    const path = window.location.pathname;
+    if (path.includes('reviewer') || path.includes('dashboard')) {
+      window.location.href = '/candidates';
+    }
+  }
+
+  // If user is ONLY a reviewer (not admin):
+  if (isReviewer && !isAdmin && !isRecruiter) {
+    // Hide Admin Overview nav group
+    document.querySelectorAll('a[href="/dashboard"]').forEach(a => {
+      const group = a.closest('.flex.flex-col.gap-1');
+      if (group) group.style.display = 'none';
+    });
+  }
 }
 
-// Logout handler
+// Logout handler: clear credentials & return to login gateway
 export async function logout() {
   try {
     await API.auth.logout();
   } catch (_) {
   } finally {
+    localStorage.removeItem('cvs_session_token');
+    localStorage.removeItem('cvs_user');
     window.location.href = '/login';
   }
 }
@@ -340,26 +379,6 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
       logout();
-    });
-  });
-
-  // Wire fast role switcher buttons across all roles
-  document.querySelectorAll('.switch-role-admin').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.preventDefault();
-      switchRole('admin');
-    });
-  });
-  document.querySelectorAll('.switch-role-recruiter').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.preventDefault();
-      switchRole('recruiter');
-    });
-  });
-  document.querySelectorAll('.switch-role-reviewer').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.preventDefault();
-      switchRole('reviewer');
     });
   });
 

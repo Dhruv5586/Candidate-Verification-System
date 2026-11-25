@@ -125,11 +125,15 @@
             <span class="material-symbols-outlined text-base">logout</span>
           </button>
         </div>
-        <div class="flex items-center gap-1 pt-1 border-t border-outline-variant/60 font-label text-[10px]">
-          <span class="text-on-surface-variant text-[9px]">Session:</span>
-          <button type="button" class="switch-role-admin px-1.5 py-0.5 rounded bg-surface-container-high border border-outline-variant hover:border-primary text-on-surface" title="Admin Session (Dhruv Dobariya)">Admin</button>
-          <button type="button" class="switch-role-recruiter px-1.5 py-0.5 rounded bg-surface-container-high border border-outline-variant hover:border-primary text-on-surface" title="Recruiter Session (Elena Vance)">Recruiter</button>
-          <button type="button" class="switch-role-reviewer px-1.5 py-0.5 rounded bg-surface-container-high border border-outline-variant hover:border-warning text-warning" title="Reviewer Session (Sarah Jenkins)">Reviewer</button>
+        <div class="flex items-center justify-between pt-1 border-t border-outline-variant/60 font-label text-[10px]">
+          <span class="flex items-center gap-1 text-success">
+            <span class="w-1.5 h-1.5 rounded-full bg-success"></span>
+            <span>Active Session</span>
+          </span>
+          <button type="button" class="logout-trigger text-on-surface-variant hover:text-error transition-colors flex items-center gap-1" title="Sign out to switch account">
+            <span>Sign Out</span>
+            <span class="material-symbols-outlined text-[12px]">logout</span>
+          </button>
         </div>
       </div>
     </aside>
@@ -424,10 +428,10 @@
             <div class="p-5 bg-surface-container border border-outline-variant rounded flex flex-col gap-2">
               <h3 class="font-headline text-sm font-semibold text-on-surface flex items-center gap-2">
                 <span class="text-primary font-mono">4.</span>
-                How to Switch Roles and Test Permissions
+                How to Authenticate & Switch Roles
               </h3>
               <p class="font-body text-xs text-on-surface-variant leading-relaxed">
-                The application supports instant session switching between test roles. In the bottom-left sidebar or top-right header, use the <strong>Admin</strong>, <strong>Recruiter</strong>, or <strong>Reviewer</strong> buttons to immediately switch your active session role and verify that role-based permissions and queue access operate as expected.
+                Role access is strictly secured via the central <a href="/login" class="text-primary hover:underline">Sign In Gateway</a>. To switch between Admin, Recruiter, and Reviewer modes, click <strong>Sign Out</strong> in the sidebar to return to the login gateway. Select your designated role (or Google account) to enter with that role's permissions.
               </p>
             </div>
           </div>
@@ -456,7 +460,7 @@
   <div id="toast-container"></div>
   <script src="js/background-scene.js"></script>
   <script type="module">
-    import { checkSession, switchRole } from './js/app.js';
+    import { checkSession } from './js/app.js';
 
     // Initialize session and UI
     checkSession();

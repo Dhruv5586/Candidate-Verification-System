@@ -128,11 +128,15 @@
             <span class="material-symbols-outlined text-base">logout</span>
           </button>
         </div>
-        <div class="flex items-center gap-1 pt-1 border-t border-outline-variant/60 font-label text-[10px]">
-          <span class="text-on-surface-variant text-[9px]">Session:</span>
-          <button type="button" class="switch-role-admin px-1.5 py-0.5 rounded bg-surface-container-high border border-outline-variant hover:border-primary text-on-surface" title="Admin Session (Dhruv Dobariya)">Admin</button>
-          <button type="button" class="switch-role-recruiter px-1.5 py-0.5 rounded bg-surface-container-high border border-outline-variant hover:border-primary text-on-surface" title="Recruiter Session (Elena Vance)">Recruiter</button>
-          <button type="button" class="switch-role-reviewer px-1.5 py-0.5 rounded bg-surface-container-high border border-outline-variant hover:border-warning text-warning" title="Reviewer Session (Sarah Jenkins)">Reviewer</button>
+        <div class="flex items-center justify-between pt-1 border-t border-outline-variant/60 font-label text-[10px]">
+          <span class="flex items-center gap-1 text-success">
+            <span class="w-1.5 h-1.5 rounded-full bg-success"></span>
+            <span>Active Session</span>
+          </span>
+          <button type="button" class="logout-trigger text-on-surface-variant hover:text-error transition-colors flex items-center gap-1" title="Sign out to switch account">
+            <span>Sign Out</span>
+            <span class="material-symbols-outlined text-[12px]">logout</span>
+          </button>
         </div>
       </div>
     </aside>

@@ -121,11 +121,15 @@
             <span class="material-symbols-outlined text-base">logout</span>
           </button>
         </div>
-        <div class="flex items-center gap-1 pt-1 border-t border-outline-variant/60 font-label text-[10px]">
-          <span class="text-on-surface-variant text-[9px]">Session:</span>
-          <button type="button" class="switch-role-admin px-1.5 py-0.5 rounded bg-surface-container-high border border-outline-variant hover:border-primary text-on-surface" title="Admin Session (Dhruv Dobariya)">Admin</button>
-          <button type="button" class="switch-role-recruiter px-1.5 py-0.5 rounded bg-surface-container-high border border-outline-variant hover:border-primary text-on-surface" title="Recruiter Session (Elena Vance)">Recruiter</button>
-          <button type="button" class="switch-role-reviewer px-1.5 py-0.5 rounded bg-surface-container-high border border-outline-variant hover:border-warning text-warning" title="Reviewer Session (Sarah Jenkins)">Reviewer</button>
+        <div class="flex items-center justify-between pt-1 border-t border-outline-variant/60 font-label text-[10px]">
+          <span class="flex items-center gap-1 text-success">
+            <span class="w-1.5 h-1.5 rounded-full bg-success"></span>
+            <span>Active Session</span>
+          </span>
+          <button type="button" class="logout-trigger text-on-surface-variant hover:text-error transition-colors flex items-center gap-1" title="Sign out to switch account">
+            <span>Sign Out</span>
+            <span class="material-symbols-outlined text-[12px]">logout</span>
+          </button>
         </div>
       </div>
     </aside>
@@ -146,20 +150,6 @@
         </div>
 
         <div class="flex items-center gap-3">
-          <div class="flex items-center gap-2">
-            <button type="button" class="switch-role-admin inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-surface-container border border-outline-variant text-on-surface rounded font-label text-xs uppercase hover:border-primary transition-colors">
-              <span class="material-symbols-outlined text-sm">admin_panel_settings</span>
-              <span>Admin (Dhruv)</span>
-            </button>
-            <button type="button" class="switch-role-recruiter inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-surface-container border border-outline-variant text-on-surface rounded font-label text-xs uppercase hover:border-primary transition-colors">
-              <span class="material-symbols-outlined text-sm">badge</span>
-              <span>Recruiter (Elena)</span>
-            </button>
-            <button type="button" class="switch-role-reviewer inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-warning/20 border border-warning/40 text-warning rounded font-label text-xs uppercase hover:bg-warning hover:text-on-primary transition-colors">
-              <span class="material-symbols-outlined text-sm">verified_user</span>
-              <span>Reviewer (Sarah)</span>
-            </button>
-          </div>
           <button id="refresh-queue-btn" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-container text-on-surface border border-outline-variant rounded font-label text-xs uppercase hover:border-primary transition-colors">
             <span class="material-symbols-outlined text-sm">refresh</span>
             <span>Refresh Queue</span>
@@ -221,7 +211,7 @@
   <script src="js/background-scene.js"></script>
   <script type="module">
     import { API } from './js/api.js';
-    import { checkSession, showToast, switchRole } from './js/app.js';
+    import { checkSession, showToast } from './js/app.js';
 
     let selectedStatus = '';
 
@@ -302,25 +292,18 @@
                   <span class="material-symbols-outlined text-warning text-3xl">lock</span>
                   <span class="font-headline text-sm font-semibold text-on-surface">Reviewer Authentication Required</span>
                   <p class="font-body text-xs text-on-surface-variant text-center">
-                    Only users with the active <strong class="text-warning">reviewer</strong> role can access this queue. Click below to instantly activate a Reviewer session:
+                    This verification queue is restricted to certified <strong class="text-warning">Reviewers</strong>. Your current account does not have authorization to evaluate or audit cases. Please sign in with an authorized Reviewer account at the login gateway.
                   </p>
                   <div class="flex items-center gap-3 mt-2">
-                    <button type="button" id="auto-login-reviewer-btn" class="px-4 py-2 bg-primary text-on-primary rounded font-label text-xs uppercase font-medium hover:bg-on-primary-container hover:text-primary transition-colors flex items-center gap-2">
-                      <span class="material-symbols-outlined text-sm">verified_user</span>
-                      <span>Switch to Sarah Jenkins (Reviewer)</span>
-                    </button>
-                    <a href="/login" class="px-3 py-2 bg-surface-container border border-outline-variant hover:border-on-surface rounded font-label text-xs uppercase text-on-surface">
-                      Go to Login
+                    <a href="/login" class="px-4 py-2 bg-primary text-on-primary rounded font-label text-xs uppercase font-medium hover:bg-on-primary-container hover:text-primary transition-colors flex items-center gap-2">
+                      <span class="material-symbols-outlined text-sm">login</span>
+                      <span>Go to Login to Sign In as Reviewer</span>
                     </a>
                   </div>
                 </div>
               </td>
             </tr>
           `;
-          const autoBtn = document.getElementById('auto-login-reviewer-btn');
-          if (autoBtn) {
-            autoBtn.addEventListener('click', () => switchRole('reviewer'));
-          }
         } else {
           showToast('Error loading queue: ' + (err.message || 'Server error'), 'error');
           tbody.innerHTML = `<tr><td colspan="5" class="px-4 py-12 text-center text-error font-label">Failed to load assignments: ${escapeHtml(err.message || 'Server error')}</td></tr>`;
