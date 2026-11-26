@@ -50,8 +50,10 @@ async function request(endpoint, options = {}) {
     err.status = response.status;
     err.data = data;
 
-    // Global Session Expiration Handler
+    // Global Session Expiration & Unauthorized Handler
     if (response.status === 401) {
+      document.cookie = 'cvs_auth_user=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax';
+      document.cookie = 'cvs_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax';
       localStorage.removeItem('cvs_session_token');
       localStorage.removeItem('cvs_user');
       const isPublicPage = window.location.pathname === '/login' ||
@@ -61,7 +63,7 @@ async function request(endpoint, options = {}) {
                            window.location.pathname === '';
       if (!isPublicPage) {
         const currentPath = encodeURIComponent(window.location.pathname + window.location.search);
-        window.location.href = `/login?expired=true&returnUrl=${currentPath}`;
+        window.location.href = `/login?unauthorized=true&returnUrl=${currentPath}`;
       }
     }
 
@@ -82,6 +84,8 @@ export const API = {
         body: JSON.stringify({ role, email }),
       }),
     logout: () => {
+      document.cookie = 'cvs_auth_user=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax';
+      document.cookie = 'cvs_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax';
       localStorage.removeItem('cvs_session_token');
       localStorage.removeItem('cvs_user');
       return request('/auth/logout', { method: 'POST' });

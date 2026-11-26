@@ -92,6 +92,15 @@
           </div>
         </div>
 
+        <!-- Unauthorized Access Notification Banner -->
+        <div id="unauthorized-banner" class="hidden p-3.5 bg-error/10 border border-error/40 rounded flex items-start gap-3 text-xs text-error">
+          <span class="material-symbols-outlined text-error text-lg shrink-0">lock</span>
+          <div class="flex-1">
+            <span class="font-bold block uppercase tracking-wide">Unauthorized Access Detected</span>
+            <span class="text-on-surface-variant block mt-0.5">You must be signed in with an authorized account to access candidate data. Please sign in below to continue.</span>
+          </div>
+        </div>
+
         <!-- Already Logged In Banner -->
         <div id="already-logged-in-banner" class="hidden p-3.5 bg-success/10 border border-success/40 rounded flex items-center justify-between gap-3 text-xs text-success">
           <div class="flex items-center gap-2">
@@ -174,39 +183,57 @@
   <script src="js/background-scene.js"></script>
   <script type="module">
     import { API } from './js/api.js';
-    import { showToast } from './js/app.js';
+    import { showToast, setCookie, getCookie, deleteCookie } from './js/app.js';
 
-    // 1. Check if redirected due to expired session
+    // 1. Check if redirected due to expired session or unauthorized access
     const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('expired') === 'true') {
+    const isExpired = urlParams.get('expired') === 'true';
+    const isUnauthorized = urlParams.get('unauthorized') === 'true';
+
+    if (isExpired) {
+      deleteCookie('cvs_auth_user');
+      deleteCookie('cvs_session');
+      localStorage.removeItem('cvs_session_token');
+      localStorage.removeItem('cvs_user');
       const banner = document.getElementById('session-expired-banner');
       if (banner) banner.classList.remove('hidden');
     }
 
-    // 2. Check if user is already authenticated
-    (async () => {
-      try {
-        const res = await API.auth.getMe();
-        if (res && res.data && res.data.user) {
-          const user = res.data.user;
-          const activeBanner = document.getElementById('already-logged-in-banner');
-          const nameSpan = document.getElementById('logged-user-name');
-          if (activeBanner && nameSpan) {
-            nameSpan.textContent = `${user.name} (${user.roles.join(', ')})`;
-            activeBanner.classList.remove('hidden');
+    if (isUnauthorized) {
+      deleteCookie('cvs_auth_user');
+      deleteCookie('cvs_session');
+      localStorage.removeItem('cvs_session_token');
+      localStorage.removeItem('cvs_user');
+      const banner = document.getElementById('unauthorized-banner');
+      if (banner) banner.classList.remove('hidden');
+    }
+
+    // 2. Check if user is already authenticated via cookie (no redundant network call)
+    if (!isExpired && !isUnauthorized) {
+      const cookieData = getCookie('cvs_auth_user');
+      if (cookieData) {
+        try {
+          const parsed = JSON.parse(cookieData);
+          if (parsed && parsed.user) {
+            const user = parsed.user;
+            const activeBanner = document.getElementById('already-logged-in-banner');
+            const nameSpan = document.getElementById('logged-user-name');
+            if (activeBanner && nameSpan) {
+              nameSpan.textContent = `${user.name} (${user.roles.join(', ')})`;
+              activeBanner.classList.remove('hidden');
+            }
+            if (!urlParams.get('reauth')) {
+              showToast(`Active session found for ${user.name}. Entering dashboard...`, 'info');
+              setTimeout(() => {
+                window.location.href = '/dashboard';
+              }, 800);
+            }
           }
-          // If not explicitly coming from an expired session, auto-forward after 1s
-          if (urlParams.get('expired') !== 'true' && !urlParams.get('reauth')) {
-            showToast(`Active session found for ${user.name}. Entering dashboard...`, 'info');
-            setTimeout(() => {
-              window.location.href = '/dashboard';
-            }, 800);
-          }
+        } catch (_) {
+          deleteCookie('cvs_auth_user');
         }
-      } catch (_) {
-        // Not authenticated, stay on login page
       }
-    })();
+    }
 
     document.querySelectorAll('.role-login-btn').forEach(btn => {
       btn.addEventListener('click', async () => {
@@ -216,6 +243,8 @@
           showToast(`Authenticating as ${role.toUpperCase()}...`, 'info');
           const res = await API.auth.devLogin(role);
           if (res && res.data && res.data.user) {
+            // Save authorized session in cookie & localStorage (only 1 login call needed)
+            setCookie('cvs_auth_user', JSON.stringify({ user: res.data.user, session: res.data.session }));
             localStorage.setItem('cvs_session_token', res.data.sessionToken);
             localStorage.setItem('cvs_user', JSON.stringify(res.data.user));
             showToast(`Welcome, ${res.data.user.name}! Redirecting...`, 'success');

@@ -33,33 +33,93 @@ export function showToast(message, type = 'info') {
   }, 4000);
 }
 
+// Cookie Helpers for Persistent Authorization State
+export function setCookie(name, value, days = 1) {
+  const expires = new Date(Date.now() + days * 864e5).toUTCString();
+  document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/; SameSite=Lax`;
+}
+
+export function getCookie(name) {
+  const match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
+  return match ? decodeURIComponent(match[1]) : null;
+}
+
+export function deleteCookie(name) {
+  document.cookie = `${name}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax`;
+}
+
 // Current User & Session State
 export let currentUser = null;
 export let currentSession = null;
 let sessionCountdownInterval = null;
 let checkSessionPromise = null;
-let lastSessionCheckTime = 0;
-const SESSION_CACHE_TTL = 30000; // 30 seconds cache for active session
 
 export async function checkSession(forceRefresh = false) {
-  const now = Date.now();
-  // Return cached session if valid and not expired, avoiding redundant network requests
-  if (!forceRefresh && currentUser && (now - lastSessionCheckTime < SESSION_CACHE_TTL)) {
+  // 1. If in-memory authorized user exists, return immediately (ZERO duplicate API calls)
+  if (!forceRefresh && currentUser) {
     return currentUser;
   }
 
-  // Deduplicate in-flight network requests
+  // 2. Check if authorized user is stored in cookies (Persistent Authorization)
+  const cookieData = getCookie('cvs_auth_user');
+  if (!forceRefresh && cookieData) {
+    try {
+      const parsed = JSON.parse(cookieData);
+      if (parsed && parsed.user) {
+        // Check if session expiry has passed
+        if (parsed.session && parsed.session.expiresAt) {
+          const diff = new Date(parsed.session.expiresAt).getTime() - Date.now();
+          if (diff <= 0) {
+            await logout();
+            return null;
+          }
+        }
+        currentUser = parsed.user;
+        currentSession = parsed.session || null;
+        updateUserUI(currentUser);
+        if (currentSession) {
+          mountSessionBadge(currentSession);
+          startSessionExpiryWatcher(currentSession);
+        }
+        return currentUser; // Returned from cookie! NO /auth/me network call!
+      }
+    } catch (_) {
+      deleteCookie('cvs_auth_user');
+    }
+  }
+
+  // 3. Fallback to localStorage
+  if (!forceRefresh) {
+    const cached = localStorage.getItem('cvs_user');
+    if (cached) {
+      try {
+        currentUser = JSON.parse(cached);
+        updateUserUI(currentUser);
+        return currentUser;
+      } catch (_) {}
+    }
+  }
+
+  const isPublicPage = window.location.pathname === '/login' ||
+                       window.location.pathname.endsWith('/login') ||
+                       window.location.pathname.endsWith('login.html') ||
+                       window.location.pathname === '/' ||
+                       window.location.pathname === '';
+
+  // 4. Deduplicate in-flight network requests
   if (checkSessionPromise) {
     return checkSessionPromise;
   }
 
+  // 5. Initial Authorization: call /auth/me ONCE upon login / initial entry
   checkSessionPromise = (async () => {
     try {
       const res = await API.auth.getMe();
       if (res && res.data && res.data.user) {
         currentUser = res.data.user;
         currentSession = res.data.session;
-        lastSessionCheckTime = Date.now();
+        // Store authorized user in cookie & storage for all subsequent page actions
+        setCookie('cvs_auth_user', JSON.stringify({ user: currentUser, session: currentSession }));
         localStorage.setItem('cvs_user', JSON.stringify(currentUser));
         updateUserUI(currentUser);
         mountSessionBadge(currentSession);
@@ -67,13 +127,18 @@ export async function checkSession(forceRefresh = false) {
         return currentUser;
       }
     } catch (err) {
-      // If auth failed, try fallback to cached user or prompt login
-      const cached = localStorage.getItem('cvs_user');
-      if (cached) {
-        currentUser = JSON.parse(cached);
-        updateUserUI(currentUser);
-        return currentUser;
+      // Unauthorized user attempting to access data -> kick out & redirect to login
+      deleteCookie('cvs_auth_user');
+      deleteCookie('cvs_session');
+      localStorage.removeItem('cvs_session_token');
+      localStorage.removeItem('cvs_user');
+      currentUser = null;
+      currentSession = null;
+
+      if (!isPublicPage) {
+        window.location.href = '/login?unauthorized=true';
       }
+      return null;
     } finally {
       checkSessionPromise = null;
     }
@@ -344,8 +409,9 @@ export async function logout() {
   } finally {
     currentUser = null;
     currentSession = null;
-    lastSessionCheckTime = 0;
     checkSessionPromise = null;
+    deleteCookie('cvs_auth_user');
+    deleteCookie('cvs_session');
     localStorage.removeItem('cvs_session_token');
     localStorage.removeItem('cvs_user');
     window.location.href = '/login';
@@ -358,6 +424,7 @@ export async function switchRole(role) {
     showToast(`Activating ${role.toUpperCase()} session...`, 'info');
     const res = await API.auth.devLogin(role);
     if (res && res.data && res.data.user) {
+      setCookie('cvs_auth_user', JSON.stringify({ user: res.data.user, session: res.data.session }));
       localStorage.setItem('cvs_session_token', res.data.sessionToken);
       localStorage.setItem('cvs_user', JSON.stringify(res.data.user));
       showToast(`Active profile: ${res.data.user.name} (${res.data.user.roles.join(', ')})`, 'success');

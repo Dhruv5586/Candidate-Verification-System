@@ -37,6 +37,24 @@ export class AuthController {
         },
       };
 
+      res.cookie('cvs_auth_user', JSON.stringify({
+        user: {
+          id: req.user.id,
+          email: req.user.email,
+          name: req.user.name,
+          roles: req.user.roles,
+        },
+        session: {
+          id: req.user.sessionId,
+          expiresAt: req.user.expiresAt,
+        },
+      }), {
+        httpOnly: false,
+        path: '/',
+        maxAge: 30 * 60 * 1000,
+        sameSite: 'lax',
+      });
+
       res.status(200).json(response);
     } catch (err) {
       next(err);
@@ -141,6 +159,24 @@ export class AuthController {
         sameSite: 'lax',
       });
 
+      res.cookie('cvs_auth_user', JSON.stringify({
+        user: {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          roles: user.roles,
+        },
+        session: {
+          id: session.id,
+          expiresAt: session.expires_at,
+        },
+      }), {
+        httpOnly: false,
+        path: '/',
+        maxAge: 30 * 60 * 1000,
+        sameSite: 'lax',
+      });
+
       res.status(200).json({
         success: true,
         data: {
@@ -182,6 +218,7 @@ export class AuthController {
         await pool.query('UPDATE sessions SET is_revoked = true WHERE token_hash = $1', [tokenHash]);
       }
 
+      res.clearCookie('cvs_auth_user', { path: '/' });
       res.clearCookie(SESSION_COOKIE_NAME, { path: '/' });
       res.status(200).json({
         success: true,
